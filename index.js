@@ -145,7 +145,8 @@ function Builder(){
 	    const child = execFile(
 		__dirname + '/build.sh',
 		[
-                    __dirname + '/builds/' + this.id + '/'
+                    __dirname + '/builds/' + this.id + '/',
+                    __dirname + '/public/builds/' + this.id + '/'
 		],
 		(error, _stdout, stderr) => {
 

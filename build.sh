@@ -1,3 +1,4 @@
-ROOT=$1
+SRC=$1
+OUT=$2
 
-echo "ROOT=$ROOT" > "build.bin"
+echo "SRC=$SRC\nOUT=$OUT"
