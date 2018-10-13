@@ -1,0 +1,48 @@
+<script type='text/javascript'>
+
+  var Module = {
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('output');
+          return function(text) {
+            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+            if (element) {
+  text
+  .split("\n")
+  .forEach( line => {
+  let e = document.createElement("div");
+  e.textContent = line;
+  element.appendChild(e);
+  } )
+              element.scrollTop = element.scrollHeight; // focus on bottom
+            }
+          };
+        })(),
+        printErr: (function() {
+          var element = document.getElementById('output');
+          return function(text) {
+          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+          element.textConent += text + "\n";
+          };
+        })(),
+  	canvas: null,
+        setStatus: function(text) {
+  	console.log(text);
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+        }
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function(event) {
+        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+        Module.setStatus('Exception thrown, see JavaScript console');
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+</script>
+<script async type="text/javascript" src="micropython.js"></script>
