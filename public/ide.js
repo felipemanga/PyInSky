@@ -1,7 +1,18 @@
 const DOM = {};
+let source = {};
 
-let source = {
-    "sprite.py":new ace.EditSession(`
+function createFile( name, src ){
+    let sess = new ace.EditSession(src);
+    source[ name ] = sess;
+    
+    sess.setMode("ace/mode/python");
+    sess.on('change', _ => {
+        mpy[name] = null;
+    });
+    return sess;
+}
+
+createFile("sprite.py", `
 # Slightly modified Pygame sprite classes
 # Author: Hannu Viitala, 2018
 
@@ -254,8 +265,9 @@ def spritecollideany(sprite, group, collided=None):
     return None
 
 
-`),
-    "example_data.py":new ace.EditSession(`import upygame as pygame
+`);
+
+createFile("example_data.py", `import upygame as pygame
 
 # pokitto picture
 w2 = 16
@@ -378,8 +390,9 @@ redcarPixels_f2 = [
 redcarBuf_f2 = bytearray(redcarPixels_f2)
 redcarSurf_f2 = pygame.surface.Surface(w, h, redcarBuf_f2)
 
-`),
-    "main.py":new ace.EditSession(`import upygame as pygame
+`);
+
+createFile("main.py", `import upygame as pygame
 import framebuf
 import urandom as random
 import example_data as spritedata
@@ -561,10 +574,7 @@ while True:
     frameNum += 1
     if frameNum > 1000000:
         frameNum = 0;
-`)};
-
-for( let fileName in source )
-    source[fileName].setMode("ace/mode/python");
+`);
 
 editor.setSession( source["main.py"] );
 
@@ -626,7 +636,7 @@ function compile(){
     
     for( let fileName in source ){
         
-        if( !(fileName in mpy) ){
+        if( !mpy[fileName] ){
             makeMPY( fileName );
             if( isAborted )
                 break;
@@ -721,7 +731,7 @@ const events = {
             if( !p )
                 return;
 
-            p = p.replace(/[a-z0-9_\.]*/g, '');
+            p = p.replace(/[^a-z0-9_\.]*/g, '');
             if( p in source ){
                 alert("File already exists");
                 return;
@@ -730,8 +740,8 @@ const events = {
             if( !/\.py$/i.test(p) )
                 p += '.py';
 
-            source[p] = new ace.EditSession('# ' + p);
-            editor.setSession( source[p] );
+            
+            editor.setSession( createFile(p, '# ' + p) );
 
             updateFileList();
 
