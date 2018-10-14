@@ -1,3 +1,25 @@
+#include "Pokitto.h"
+
+#include "PythonBindings.h"
+
+extern "C" int PythonMain(int argc, char **argv);
+
+const char* argv[] = {
+    (const char *) "",
+    (const char *) "main.py"
+};
+
+int main () {
+    Pokitto::Core game;
+    game.begin();
+    game.display.persistence = 0;
+    game.display.setFont(fontC64);
+    
+    PythonMain(2, (char **) argv);
+    return 1;
+}
+
+
 /**************************************************************************/
 /*!
     @file     MicroPythonMain.cpp
@@ -33,15 +55,8 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**************************************************************************/
-
+/*
 #include "Pokitto.h"
-
-#ifndef POK_SIM
-#include "USBSerial.h"
-#ifdef USE_SEGGER_SERIAL_PRINT
-#include "SEGGER_RTT.h"
-#endif
-#endif
 
 #include "PythonBindings.h"
 
@@ -76,7 +91,7 @@ int main () {
         #pragma GCC diagnostic ignored "-Wwrite-strings" // The strings below will not be changed in the function called
         char* argv[] = {
             "",
-            PYTHON_SOURCE_FILE_PATH"example_main.py"
+            PYTHON_SOURCE_FILE_PATH"main.py"
         };
         #pragma GCC diagnostic pop
 
@@ -89,3 +104,4 @@ int main () {
     return 1;
 }
 
+*/

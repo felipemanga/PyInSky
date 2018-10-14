@@ -1,4 +1,4 @@
-const { execFile, execSync } = require('child_process');
+const { exec, execFile, execSync } = require('child_process');
 const fs = require('fs');
 const rimraf = require('rimraf');
 const mkdirp = require('mkdirp');
@@ -123,7 +123,14 @@ function Builder(){
 
 	function writeFile(){
 
-	    fs.writeFile( fullPath, data[file], e => {
+            let str = data[file];
+
+            let buf = new Uint8Array( str.length );
+            for( let i=0; i<str.length; ++i ){
+                buf[i] = str.charCodeAt(i);
+            }
+
+	    fs.writeFile( fullPath, buf, e => {
 		
 		if( e ){
 		    this.state = 'DONE';
@@ -139,50 +146,42 @@ function Builder(){
     };
 
     this.compile = _ => {
-	
+
 	try{	    
 
-	    const child = execFile(
-		__dirname + '/build.sh',
+	    const child = exec(
 		[
-                    __dirname + '/builds/' + this.id + '/',
-                    __dirname + '/public/builds/' + this.id + '/'
-		],
+		    __dirname + '/build.sh',
+                    this.id
+		].join(" "),
 		(error, _stdout, stderr) => {
 
 		    stdout += _stdout;
-		    
+
 		    if( error ){
+                        
 			busy = false;
 			this.state = "DONE";
 			this.result = "ERROR: " + error + " " + stderr + stdout;
+                        
 		    }else{
-		        this.complete();
+                        
+	                busy = false;
+	                this.state = "DONE";
+	                this.result = 'DONE';
+                        
 		    }
 		    
 		});
 	    
 	}catch( ex ){
-	    
+	    console.error(ex);
 	    this.result = "ERROR: " + ex;
 	    this.state = "DONE";
 	    busy = false;
 	    
 	}
 	
-    };
-
-    this.complete = _ => {
-
-	busy = false;
-	this.state = "DONE";
-	
-	this.result = JSON.stringify({
-	    path:'/builds/' + this.id + '/build.bin',
-	    result: items,
-	    stdout
-	});
-		
     };
     
 }
@@ -215,6 +214,7 @@ express()
     .set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
     .get('/', (req, res) => res.render('pages/index'))
+    .get('/emulator', (req, res) => res.render('pages/emulator'))
     .get('/poll', (req, res) => {
 
 	let builder = builders[ req.query.id ];
@@ -222,9 +222,10 @@ express()
 	sendHeaders( res );
 	if( builder ){
 	    
-	    if( builder.state !== "DONE" )
+	    if( builder.state !== "DONE" ){
+	        builder.resetDestroy();
 		res.end( builder.state );
-	    else
+	    }else
 		res.end( builder.result );
 	    
 	}else

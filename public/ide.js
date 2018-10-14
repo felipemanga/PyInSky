@@ -563,13 +563,29 @@ while True:
         frameNum = 0;
 `)};
 
+for( let fileName in source )
+    source[fileName].setMode("ace/mode/python");
+
 editor.setSession( source["main.py"] );
-editor.session.setMode("ace/mode/python");
 
 
 let mpy = {};
 
 let busy = false;
+
+function updateFileList(){
+    while( DOM.fileList.children.length )
+        DOM.fileList.removeChild( DOM.fileList.firstElementChild );
+
+    for( let fileName in source ){
+        let e = document.createElement("option");
+        DOM.fileList.appendChild(e);
+        e.value = fileName;
+        e.textContent = fileName;
+        if( editor.session == source[fileName] )
+            DOM.fileList.value = fileName;
+    }
+}
 
 function setBusy( state ){
 
@@ -596,6 +612,11 @@ function TimeoutPromise(cb, time){
             }
         }, time);
     });
+}
+
+function focusEmulator(){
+    DOM.emulator.focus();
+    DOM.emulator.contentWindow.focus();
 }
 
 function compile(){
@@ -628,9 +649,19 @@ function compile(){
     fetch("/build", { method:"POST", body:JSON.stringify(mpyext) })
         .then( rsp => rsp.text() )
         .then( txt => pollCompilerService( txt|0 ) )
-        .then( json => {
-            Module.print( json.stdout );
+        .then( url => {
+            let e = document.createElement('div');
+            let a = document.createElement('a');
+            e.textContent = 'Build succeeded. ';
+            e.appendChild(a);
+            a.textContent = 'Download BIN';
+            a.style.color = 'white';
+            a.href = `builds/${url}/build.bin`;
+            DOM.output.appendChild(e);
+
+            DOM.emulator.src=`emulator?${url}`;
             setBusy(false);
+            focusEmulator();
         })
         .catch( ex => {
             console.warn(ex);
@@ -648,11 +679,10 @@ function compile(){
                         1000
                     );
 
-                if( txt == "DESTROYED" )
-                    throw new Error(txt);
+                if( txt == "DONE" )
+                    return id;
                 
-                console.log( "POLL: " + txt );
-                return JSON.parse(txt);
+                throw new Error(txt);
             });
     }
 
@@ -683,6 +713,37 @@ function compile(){
 
 
 const events = {
+
+    addFile:{
+        click(){
+            
+            let p = prompt("New file name:", "file.py");
+            if( !p )
+                return;
+
+            p = p.replace(/[a-z0-9_\.]*/g, '');
+            if( p in source ){
+                alert("File already exists");
+                return;
+            }
+
+            if( !/\.py$/i.test(p) )
+                p += '.py';
+
+            source[p] = new ace.EditSession('# ' + p);
+            editor.setSession( source[p] );
+
+            updateFileList();
+
+        }
+    },
+
+    fileList:{
+        change(){
+            editor.setSession( source[DOM.fileList.value] );
+        }
+    },
+
     compile:{
         click(){
             if( busy ) return;
@@ -734,3 +795,4 @@ const events = {
     
 })();
 
+updateFileList();

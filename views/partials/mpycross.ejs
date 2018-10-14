@@ -4,20 +4,32 @@
         preRun: [],
         postRun: [],
         print: (function() {
-          var element = document.getElementById('output');
-          return function(text) {
-            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-            if (element) {
-  text
-  .split("\n")
-  .forEach( line => {
-  let e = document.createElement("div");
-  e.textContent = line;
-  element.appendChild(e);
-  } )
-              element.scrollTop = element.scrollHeight; // focus on bottom
-            }
-          };
+            var element = document.getElementById('output');
+            return function(text) {
+		if (arguments.length > 1)
+		    text = Array.prototype.slice.call(arguments).join(' ');
+		if (!element){
+		    console.log(text);
+		    return;
+		}
+		
+		text.split("\n")
+		    .forEach( line => {
+			let e;
+			while( element.children.length > 20 ){
+			    e = element.firstElementChild;
+			    element.removeChild(e);
+			}
+
+			if(!e)
+			    e = document.createElement("div");
+			
+			e.textContent = line;
+			element.appendChild(e);
+		    } );
+
+		element.scrollTop = element.scrollHeight; // focus on bottom
+	    };
         })(),
         printErr: (function() {
           var element = document.getElementById('output');

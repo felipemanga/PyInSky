@@ -6,11 +6,11 @@
 # 1 "../../py/mpconfig.h" 1
 # 45 "../../py/mpconfig.h"
 # 1 "./mpconfigport.h" 1
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\lib\\gcc\\arm-none-eabi\\5.4.1\\include\\stdint.h" 1 3 4
-# 9 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\lib\\gcc\\arm-none-eabi\\5.4.1\\include\\stdint.h" 3 4
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\stdint.h" 1 3 4
-# 12 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\stdint.h" 3 4
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 1 3 4
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stdint.h" 1 3 4
+# 9 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stdint.h" 3 4
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/stdint.h" 1 3 4
+# 12 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/stdint.h" 3 4
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 1 3 4
 
 
 
@@ -18,52 +18,68 @@
 
 
 
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\features.h" 1 3 4
-# 28 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\features.h" 3 4
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\_newlib_version.h" 1 3 4
-# 29 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\features.h" 2 3 4
-# 9 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 2 3 4
-# 27 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 3 4
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/features.h" 1 3 4
+# 28 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/features.h" 3 4
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/_newlib_version.h" 1 3 4
+# 29 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/features.h" 2 3 4
+# 9 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 2 3 4
+# 41 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 3 4
 
-# 27 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 3 4
+# 41 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 3 4
 typedef signed char __int8_t;
 
 typedef unsigned char __uint8_t;
-# 41 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 3 4
+# 55 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 3 4
 typedef short int __int16_t;
 
 typedef short unsigned int __uint16_t;
-# 63 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 3 4
+# 77 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 3 4
 typedef long int __int32_t;
 
 typedef long unsigned int __uint32_t;
-# 89 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 3 4
+# 103 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 3 4
 typedef long long int __int64_t;
 
 typedef long long unsigned int __uint64_t;
-# 120 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 3 4
+# 134 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 3 4
 typedef signed char __int_least8_t;
 
 typedef unsigned char __uint_least8_t;
-# 146 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 3 4
+# 160 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 3 4
 typedef short int __int_least16_t;
 
 typedef short unsigned int __uint_least16_t;
-# 168 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 3 4
+# 182 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 3 4
 typedef long int __int_least32_t;
 
 typedef long unsigned int __uint_least32_t;
-# 186 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 3 4
+# 200 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 3 4
 typedef long long int __int_least64_t;
 
 typedef long long unsigned int __uint_least64_t;
-# 200 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_default_types.h" 3 4
+# 214 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_default_types.h" 3 4
+typedef long long int __intmax_t;
+
+
+
+
+
+
+
+typedef long long unsigned int __uintmax_t;
+
+
+
+
+
+
+
 typedef int __intptr_t;
 
 typedef unsigned int __uintptr_t;
-# 13 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\stdint.h" 2 3 4
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_intsup.h" 1 3 4
-# 49 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_intsup.h" 3 4
+# 13 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/stdint.h" 2 3 4
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_intsup.h" 1 3 4
+# 35 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_intsup.h" 3 4
        
        
        
@@ -71,7 +87,7 @@ typedef unsigned int __uintptr_t;
        
        
        
-# 201 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_intsup.h" 3 4
+# 187 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_intsup.h" 3 4
        
        
        
@@ -79,9 +95,9 @@ typedef unsigned int __uintptr_t;
        
        
        
-# 14 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\stdint.h" 2 3 4
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_stdint.h" 1 3 4
-# 20 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_stdint.h" 3 4
+# 14 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/stdint.h" 2 3 4
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_stdint.h" 1 3 4
+# 20 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_stdint.h" 3 4
 typedef __int8_t int8_t ;
 
 
@@ -129,13 +145,23 @@ typedef __uint64_t uint64_t ;
 
 
 
+typedef __intmax_t intmax_t;
+
+
+
+
+typedef __uintmax_t uintmax_t;
+
+
+
+
 typedef __intptr_t intptr_t;
 
 
 
 
 typedef __uintptr_t uintptr_t;
-# 15 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\stdint.h" 2 3 4
+# 15 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/stdint.h" 2 3 4
 
 
 
@@ -162,23 +188,19 @@ typedef __uint_least32_t uint_least32_t;
 
 typedef __int_least64_t int_least64_t;
 typedef __uint_least64_t uint_least64_t;
-# 51 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\stdint.h" 3 4
+# 51 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/stdint.h" 3 4
   typedef int int_fast8_t;
   typedef unsigned int uint_fast8_t;
-# 61 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\stdint.h" 3 4
+# 61 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/stdint.h" 3 4
   typedef int int_fast16_t;
   typedef unsigned int uint_fast16_t;
-# 71 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\stdint.h" 3 4
+# 71 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/stdint.h" 3 4
   typedef int int_fast32_t;
   typedef unsigned int uint_fast32_t;
-# 81 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\stdint.h" 3 4
+# 81 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/stdint.h" 3 4
   typedef long long int int_fast64_t;
   typedef long long unsigned int uint_fast64_t;
-# 130 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\stdint.h" 3 4
-  typedef long long int intmax_t;
-# 139 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\stdint.h" 3 4
-  typedef long long unsigned int uintmax_t;
-# 10 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\lib\\gcc\\arm-none-eabi\\5.4.1\\include\\stdint.h" 2 3 4
+# 10 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stdint.h" 2 3 4
 # 2 "./mpconfigport.h" 2
 # 89 "./mpconfigport.h"
 
@@ -190,52 +212,49 @@ typedef long mp_off_t;
 
 extern const struct _mp_obj_module_t mp_module_pygame;
 # 109 "./mpconfigport.h"
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\alloca.h" 1 3
-# 10 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\alloca.h" 3
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\_ansi.h" 1 3
-# 15 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\_ansi.h" 3
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\newlib.h" 1 3
-# 16 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\_ansi.h" 2 3
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\config.h" 1 3
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/alloca.h" 1 3
+# 10 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/alloca.h" 3
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/_ansi.h" 1 3
+# 15 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/_ansi.h" 3
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/newlib-nano/newlib.h" 1 3 4
+# 16 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/_ansi.h" 2 3
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/config.h" 1 3
 
 
 
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\ieeefp.h" 1 3
-# 5 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\config.h" 2 3
-# 17 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\_ansi.h" 2 3
-# 11 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\alloca.h" 2 3
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 1 3
-# 13 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 3
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\_ansi.h" 1 3
-# 14 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 2 3
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\lib\\gcc\\arm-none-eabi\\5.4.1\\include\\stddef.h" 1 3 4
-# 149 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\lib\\gcc\\arm-none-eabi\\5.4.1\\include\\stddef.h" 3 4
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/ieeefp.h" 1 3
+# 5 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/config.h" 2 3
+# 17 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/_ansi.h" 2 3
+# 11 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/alloca.h" 2 3
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 1 3
+# 13 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 3
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/_ansi.h" 1 3
+# 14 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 2 3
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stddef.h" 1 3 4
+# 149 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stddef.h" 3 4
 
-# 149 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\lib\\gcc\\arm-none-eabi\\5.4.1\\include\\stddef.h" 3 4
+# 149 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stddef.h" 3 4
 typedef int ptrdiff_t;
-# 216 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\lib\\gcc\\arm-none-eabi\\5.4.1\\include\\stddef.h" 3 4
+# 216 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stddef.h" 3 4
 typedef unsigned int size_t;
-# 328 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\lib\\gcc\\arm-none-eabi\\5.4.1\\include\\stddef.h" 3 4
+# 328 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stddef.h" 3 4
 typedef unsigned int wchar_t;
-# 426 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\lib\\gcc\\arm-none-eabi\\5.4.1\\include\\stddef.h" 3 4
+# 426 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stddef.h" 3 4
 typedef struct {
   long long __max_align_ll __attribute__((__aligned__(__alignof__(long long))));
   long double __max_align_ld __attribute__((__aligned__(__alignof__(long double))));
+# 437 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stddef.h" 3 4
 } max_align_t;
-# 15 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 2 3
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_types.h" 1 3
-# 24 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_types.h" 3
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\machine\\_types.h" 1 3
-# 25 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_types.h" 2 3
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\lock.h" 1 3
-
-
-
-
-
+# 15 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 2 3
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_types.h" 1 3
+# 24 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_types.h" 3
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/machine/_types.h" 1 3
+# 25 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_types.h" 2 3
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/lock.h" 1 3
+# 11 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/lock.h" 3
 typedef int _LOCK_T;
 typedef int _LOCK_RECURSIVE_T;
-# 26 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_types.h" 2 3
+# 26 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_types.h" 2 3
 
 
 typedef long __blkcnt_t;
@@ -284,7 +303,7 @@ typedef __uint32_t __id_t;
 
 
 typedef unsigned short __ino_t;
-# 88 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_types.h" 3
+# 88 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_types.h" 3
 typedef __uint32_t __mode_t;
 
 
@@ -312,18 +331,18 @@ typedef long __key_t;
 
 
 typedef long _fpos_t;
-# 129 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_types.h" 3
+# 129 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_types.h" 3
 typedef unsigned int __size_t;
-# 145 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_types.h" 3
+# 145 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_types.h" 3
 typedef signed int _ssize_t;
-# 156 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_types.h" 3
+# 156 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_types.h" 3
 typedef _ssize_t __ssize_t;
 
 
-# 1 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\lib\\gcc\\arm-none-eabi\\5.4.1\\include\\stddef.h" 1 3 4
-# 357 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\lib\\gcc\\arm-none-eabi\\5.4.1\\include\\stddef.h" 3 4
+# 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stddef.h" 1 3 4
+# 357 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stddef.h" 3 4
 typedef unsigned int wint_t;
-# 160 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\_types.h" 2 3
+# 160 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/_types.h" 2 3
 
 
 
@@ -348,10 +367,17 @@ typedef void *_iconv_t;
 
 
 
+
+
+
 typedef unsigned long __clock_t;
 
 
-typedef long __time_t;
+
+
+
+
+typedef __int_least64_t __time_t;
 
 
 typedef unsigned long __clockid_t;
@@ -375,7 +401,7 @@ typedef unsigned long __useconds_t;
 
 
 typedef char * __va_list;
-# 16 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 2 3
+# 16 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 2 3
 
 
 
@@ -383,8 +409,10 @@ typedef char * __va_list;
 
 
 typedef unsigned long __ULong;
-# 38 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 3
+# 38 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 3
 struct _reent;
+
+struct __locale_t;
 
 
 
@@ -427,20 +455,37 @@ struct _on_exit_args {
 
  __ULong _is_cxa;
 };
-# 91 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 3
+
+
 struct _atexit {
  struct _atexit *_next;
  int _ind;
-
  void (*_fns[32])(void);
-        struct _on_exit_args _on_exit_args;
+        struct _on_exit_args * _on_exit_args_ptr;
 };
-# 115 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 3
+# 117 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 3
 struct __sbuf {
  unsigned char *_base;
  int _size;
 };
-# 179 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 3
+# 153 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 3
+struct __sFILE_fake {
+  unsigned char *_p;
+  int _r;
+  int _w;
+  short _flags;
+  short _file;
+  struct __sbuf _bf;
+  int _lbfsize;
+
+  struct _reent *_data;
+};
+
+
+
+
+extern void __sinit (struct _reent *);
+# 181 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 3
 struct __sFILE {
   unsigned char *_p;
   int _r;
@@ -451,7 +496,7 @@ struct __sFILE {
   int _lbfsize;
 
 
-
+  struct _reent *_data;
 
 
 
@@ -482,7 +527,7 @@ struct __sFILE {
   _off_t _offset;
 
 
-  struct _reent *_data;
+
 
 
 
@@ -491,7 +536,7 @@ struct __sFILE {
   _mbstate_t _mbstate;
   int _flags2;
 };
-# 285 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 3
+# 287 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 3
 typedef struct __sFILE __FILE;
 
 
@@ -502,19 +547,49 @@ struct _glue
   int _niobs;
   __FILE *_iobs;
 };
-# 317 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 3
+# 319 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 3
 struct _rand48 {
   unsigned short _seed[3];
   unsigned short _mult[3];
   unsigned short _add;
 
 
-
+  __extension__ unsigned long long _rand_next;
 
 };
-# 568 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 3
+# 344 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 3
+struct _mprec
+{
+
+  struct _Bigint *_result;
+  int _result_k;
+  struct _Bigint *_p5s;
+  struct _Bigint **_freelist;
+};
+
+
+struct _misc_reent
+{
+
+  char *_strtok_last;
+  _mbstate_t _mblen_state;
+  _mbstate_t _wctomb_state;
+  _mbstate_t _mbtowc_state;
+  char _l64a_buf[8];
+  int _getdate_err;
+  _mbstate_t _mbrlen_state;
+  _mbstate_t _mbrtowc_state;
+  _mbstate_t _mbsrtowcs_state;
+  _mbstate_t _wcrtomb_state;
+  _mbstate_t _wcsrtombs_state;
+};
+
+
+
 struct _reent
 {
+
+
   int _errno;
 
 
@@ -523,65 +598,27 @@ struct _reent
   __FILE *_stdin, *_stdout, *_stderr;
 
   int _inc;
-  char _emergency[25];
 
-  int _current_category;
-  const char *_current_locale;
+  char *_emergency;
 
   int __sdidinit;
 
+  int _unspecified_locale_info;
+  struct __locale_t *_locale;
+
+  struct _mprec *_mp;
+
   void (* __cleanup) (struct _reent *);
 
-
-  struct _Bigint *_result;
-  int _result_k;
-  struct _Bigint *_p5s;
-  struct _Bigint **_freelist;
+  int _gamma_signgam;
 
 
   int _cvtlen;
   char *_cvtbuf;
 
-  union
-    {
-      struct
-        {
-          unsigned int _unused_rand;
-          char * _strtok_last;
-          char _asctime_buf[26];
-          struct __tm _localtime_buf;
-          int _gamma_signgam;
-          __extension__ unsigned long long _rand_next;
-          struct _rand48 _r48;
-          _mbstate_t _mblen_state;
-          _mbstate_t _mbtowc_state;
-          _mbstate_t _wctomb_state;
-          char _l64a_buf[8];
-          char _signal_buf[24];
-          int _getdate_err;
-          _mbstate_t _mbrlen_state;
-          _mbstate_t _mbrtowc_state;
-          _mbstate_t _mbsrtowcs_state;
-          _mbstate_t _wcrtomb_state;
-          _mbstate_t _wcsrtombs_state;
-   int _h_errno;
-        } _reent;
-
-
-
-      struct
-        {
-
-          unsigned char * _nextf[30];
-          unsigned int _nmalloc[30];
-        } _unused;
-    } _new;
-
-
-
-  struct _atexit *_atexit;
-  struct _atexit _atexit0;
-
+  struct _rand48 *_r48;
+  struct __tm *_localtime_buf;
+  char *_asctime_buf;
 
 
   void (**(_sig_func))(int);
@@ -589,15 +626,26 @@ struct _reent
 
 
 
+
+
+
   struct _glue __sglue;
-  __FILE __sf[3];
+  __FILE *__sf;
+  struct _misc_reent *_misc;
+  char *_signal_buf;
 };
-# 765 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\sys\\reent.h" 3
+
+extern const struct __sFILE_fake __sf_fake_stdin;
+extern const struct __sFILE_fake __sf_fake_stdout;
+extern const struct __sFILE_fake __sf_fake_stderr;
+# 775 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 3
 extern struct _reent *_impure_ptr ;
 extern struct _reent *const _global_impure_ptr ;
 
 void _reclaim_reent (struct _reent *);
-# 12 "c:\\program files (x86)\\embitz\\1.11\\share\\em_armgcc\\arm-none-eabi\\include\\alloca.h" 2 3
+# 794 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/sys/reent.h" 3
+extern struct _atexit *_global_atexit;
+# 12 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/alloca.h" 2 3
 # 110 "./mpconfigport.h" 2
 # 46 "../../py/mpconfig.h" 2
 # 28 "<stdin>" 2
@@ -615,9 +663,15 @@ Q()
 Q(*)
 Q(_)
 Q(/)
+
 Q(%#o)
 Q(%#x)
+
+
+
+
 Q({:#b})
+Q( )
 Q(\n)
 Q(maximum recursion depth exceeded)
 Q(<module>)
@@ -630,11 +684,13 @@ Q(<string>)
 Q(<stdin>)
 Q(utf-8)
 
-Q(ArithmeticError)
+
+
+
 
 Q(ArithmeticError)
 
-Q(AssertionError)
+Q(ArithmeticError)
 
 Q(AssertionError)
 
@@ -712,7 +768,11 @@ Q(FrameBuffer)
 
 Q(FrameBuffer1)
 
+Q(GS2_HMSB)
+
 Q(GS4_HMSB)
+
+Q(GS8)
 
 Q(GeneratorExit)
 
@@ -824,10 +884,6 @@ Q(Signal)
 
 Q(Signal)
 
-Q(Sound)
-
-Q(Sound)
-
 Q(StopIteration)
 
 Q(StopIteration)
@@ -855,6 +911,8 @@ Q(ValueError)
 Q(ZeroDivisionError)
 
 Q(ZeroDivisionError)
+
+Q(_0x0a_)
 
 Q(__add__)
 
@@ -863,16 +921,6 @@ Q(__bool__)
 Q(__build_class__)
 
 Q(__call__)
-
-Q(__class__)
-
-Q(__class__)
-
-Q(__class__)
-
-Q(__class__)
-
-Q(__class__)
 
 Q(__contains__)
 
@@ -906,13 +954,15 @@ Q(__gt__)
 
 Q(__hash__)
 
+Q(__iadd__)
+
 Q(__import__)
 
 Q(__init__)
 
 Q(__init__)
 
-Q(__init__)
+Q(__isub__)
 
 Q(__iter__)
 
@@ -928,12 +978,6 @@ Q(__main__)
 
 Q(__main__)
 
-Q(__module__)
-
-Q(__name__)
-
-Q(__name__)
-
 Q(__name__)
 
 Q(__name__)
@@ -983,10 +1027,6 @@ Q(__path__)
 Q(__path__)
 
 Q(__path__)
-
-Q(__qualname__)
-
-Q(__repl_print__)
 
 Q(__repl_print__)
 
@@ -1006,27 +1046,11 @@ Q(__traceback__)
 
 Q(_brace_open__colon__hash_b_brace_close_)
 
-Q(_lt_dictcomp_gt_)
-
-Q(_lt_genexpr_gt_)
-
-Q(_lt_lambda_gt_)
-
-Q(_lt_listcomp_gt_)
-
-Q(_lt_module_gt_)
-
-Q(_lt_setcomp_gt_)
-
-Q(_lt_string_gt_)
-
 Q(_percent__hash_o)
 
 Q(_percent__hash_x)
 
-Q(_star_)
-
-Q(_star_)
+Q(_space_)
 
 Q(abs)
 
@@ -1062,8 +1086,6 @@ Q(bytearray)
 
 Q(bytearray)
 
-Q(bytecode)
-
 Q(bytes)
 
 Q(bytes)
@@ -1095,8 +1117,6 @@ Q(classmethod)
 Q(clear)
 
 Q(clear)
-
-Q(close)
 
 Q(close)
 
@@ -1146,13 +1166,9 @@ Q(end)
 
 Q(endswith)
 
-Q(eval)
-
 Q(event)
 
 Q(event)
-
-Q(exec)
 
 Q(extend)
 
@@ -1161,8 +1177,6 @@ Q(extend)
 Q(fill)
 
 Q(fill)
-
-Q(fill_buffer)
 
 Q(fill_rect)
 
@@ -1208,13 +1222,7 @@ Q(generator)
 
 Q(get)
 
-Q(get_current_soundbuffer_index)
-
-Q(get_current_soundbuffer_pos)
-
 Q(get_rect)
-
-Q(get_soundbuffer_size)
 
 Q(getattr)
 
@@ -1344,25 +1352,13 @@ Q(mem8)
 
 Q(mem_alloc)
 
-Q(mem_current)
-
 Q(mem_free)
 
 Q(mem_info)
 
-Q(mem_peak)
-
-Q(mem_total)
-
 Q(micropython)
 
 Q(micropython)
-
-Q(micropython)
-
-Q(mixer)
-
-Q(mixer)
 
 Q(mode)
 
@@ -1386,15 +1382,11 @@ Q(on)
 
 Q(open)
 
-Q(opt_level)
-
 Q(ord)
 
-Q(pause)
+Q(pend_throw)
 
 Q(pixel)
-
-Q(play)
 
 Q(poll)
 
@@ -1416,8 +1408,6 @@ Q(range)
 
 Q(range)
 
-Q(range)
-
 Q(rect)
 
 Q(remove)
@@ -1425,8 +1415,6 @@ Q(remove)
 Q(replace)
 
 Q(repr)
-
-Q(reset)
 
 Q(reverse)
 
@@ -1474,6 +1462,8 @@ Q(sorted)
 
 Q(split)
 
+Q(stack_use)
+
 Q(start)
 
 Q(startswith)
@@ -1497,8 +1487,6 @@ Q(str)
 Q(strip)
 
 Q(sum)
-
-Q(super)
 
 Q(super)
 
