@@ -3,6 +3,7 @@ html, body {
     width: 100%;
     height: 100%;
     margin: 0;
+    background: url(../Sprites/bg.png);
 }
 
 body {
@@ -22,11 +23,12 @@ body>*, #pane>* {
 }
 
 #headPane {
+    display: flex;
     padding: 1px 5px 1px 5px;
     flex-grow: 0;
-    height: 25px;
-    background-color: #567;
+    height: 80px;
     color: #ABC;
+    background-color: rgba(0,0,0,0.7);
 }
 
 #outputContainer {
@@ -38,20 +40,75 @@ body>*, #pane>* {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: #567;
+    background-color: rgba(30,30,30,0.95);
+    font-family: monospace;
+    font-size: 1.5em;
+    color: #AAA;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
-#headPane>* {
+#headPane button, #headPane select {
     height: 100%;
+    background-color: rgba(255,255,255,0.8);
+    border: 1px solid black;
+    border-radius: 5px;
 }
 
-#compile {
-    float: right;
+#headPane button {
+    font-size: 0.75em;
+    background-repeat: no-repeat;
+    background-position: top;
+    margin: auto;
+    padding: 50px 0 0 0;
+    width: 60px;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+#headPane>button:disabled {
+    opacity: 0.4;
+}
+
+#addFile {
+    background-image: url(../Sprites/plus.png);
+}
+
+#headPane #deleteFile {
+    background-image: url(../Sprites/delete.png);
+}
+
+#headPane #deleteFile, #headPane #addFile{
+    margin:0;
+}
+
+#fileList {
+    margin-right: 5px;
+    font-size: 2.0em;
+}
+
+
+#headPane #compile {
+    background-image: url(../Sprites/open.png);
+    margin-right: 0;
+}
+
+#download {
+    background-image: url(../Sprites/import.png);
+}
+
+#fontInc {
+    background-image: url(../Sprites/zoomIn.png);
+    margin-left: 20px;
+}
+
+#fontDec {
+    background-image: url(../Sprites/zoomOut.png);
 }
 
 #emulator {
-    background-color: #345;
     min-height: 176px;
     min-width:  220px;
     border-width: 0;
+    background-color: rgba(0,0,0,0.7);
 }

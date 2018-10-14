@@ -1,6 +1,18 @@
 const DOM = {};
 let source = {};
 
+let fontSize = 3;
+let fontSizes = [8, 12, 14, 16, 18, 24, 48];
+
+function setFontSize( offset ){
+    fontSize += offset;
+    if( fontSize >= fontSizes.length )
+        fontSize = fontSizes.length - 1;
+    if( fontSize < 0 )
+        fontSize = 0;
+    editor.setFontSize( fontSizes[fontSize] );
+}
+
 function createFile( name, src ){
     let sess = new ace.EditSession(src);
     source[ name ] = sess;
@@ -759,7 +771,20 @@ const events = {
             if( busy ) return;
             compile();
         }
-    }
+    },
+
+    fontInc:{
+        click(){
+            setFontSize(1);
+        }
+    },
+    
+    fontDec:{
+        click(){
+            setFontSize(-1);
+        }
+    },
+
 };
 
 
@@ -806,3 +831,4 @@ const events = {
 })();
 
 updateFileList();
+setFontSize(0);
