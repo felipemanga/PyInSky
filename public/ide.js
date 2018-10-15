@@ -677,7 +677,7 @@ function compile(){
             e.textContent = 'Build succeeded. ';
             e.appendChild(a);
             a.textContent = 'Download BIN';
-            a.style.color = 'white';
+            // a.style.color = 'white';
             a.href = `builds/${url}/build.bin`;
             DOM.output.appendChild(e);
 
@@ -735,6 +735,59 @@ function compile(){
 
 
 const events = {
+
+    download:{
+        click(){
+            let zip = new JSZip();
+            for( let fileName in source )
+                zip.file( fileName, source[fileName].getValue() );
+            
+            zip.generateAsync({type:"uint8array"})
+                .then(function(arr){
+                    
+                    let a = document.createElement("a");
+                    a.href = URL.createObjectURL( new Blob([arr.buffer], {type:'application/bin'}) );
+                    a.download = "pokitto-mpy-project.zip";
+                    
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    URL.revokeObjectURL(a.href);
+                    
+                });
+        }
+    },
+
+    deleteFile:{
+        click(){
+            let fileName;
+            for( let key in source ){
+                if( source[key] == editor.session ){
+                    fileName = key;
+                    break;
+                }
+            }
+            if( !fileName )
+                return; // o_O
+
+            if( !confirm("Are you sure you want to delete " + fileName) )
+                return;
+
+            delete source[fileName];
+            delete mpy[fileName];
+
+            let names = Object.keys(source);
+
+            if( names.length == 0 )
+                editor.setSession( createFile(p, '# ' + p) );
+            else
+                editor.setSession( source[names[0]] );
+
+            updateFileList();
+            
+        }
+    },
 
     addFile:{
         click(){

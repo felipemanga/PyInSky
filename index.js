@@ -127,7 +127,7 @@ function Builder(){
 
             let buf = new Uint8Array( str.length );
             for( let i=0; i<str.length; ++i ){
-                buf[i] = str.charCodeAt(i);
+                buf[i] = str.charCodeAt(i) & 0xFF;
             }
 
 	    fs.writeFile( fullPath, buf, e => {

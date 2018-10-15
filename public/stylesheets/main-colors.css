@@ -61,7 +61,7 @@ body>*, #pane>* {
     background-position: top;
     margin: auto;
     padding: 50px 0 0 0;
-    width: 64px;
+    width: 60px;
     border-radius: 3px;
     box-sizing: border-box;
 }
@@ -72,23 +72,19 @@ body>*, #pane>* {
 
 #addFile {
     background-image: url(../Sprites/plus.png);
-    background-color: #9f8eff9e;
 }
 
 #headPane #deleteFile {
     background-image: url(../Sprites/delete.png);
-    background-color: #ff8e8eab;
 }
 
 #headPane #deleteFile, #headPane #addFile, #headPane #compile{
-    margin-left: 1px;
-    margin-right: 1px;
+    margin:0;
 }
 
 #fileList {
     margin-right: 5px;
     font-size: 2.0em;
-    background-color: #8effe59e;
 }
 
 
@@ -100,20 +96,17 @@ body>*, #pane>* {
 
 #headPane #download {
     background-image: url(../Sprites/import.png);
-    margin-right: 1px;
-    background-color: #e88eff9e;
+    margin-right: 0;
 }
 
 #headPane #fontInc {
     background-image: url(../Sprites/zoomIn.png);
-    margin-right: 1px;
-    background-color: #8eeaff9e;
+    margin-right:0;
 }
 
 #headPane #fontDec {
     background-image: url(../Sprites/zoomOut.png);
     margin-left:0;
-    background-color: #b9ff8e9e;
 }
 
 #emulator {

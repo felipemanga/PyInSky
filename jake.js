@@ -1,5 +1,6 @@
 
 const { execFile, execSync } = require('child_process');
+const fs = require('fs');
 
 const CSOURCES = []
 , CXXSOURCES = []
@@ -290,11 +291,15 @@ BUILD/%.o : %.c
 */
 
 CSOURCES.forEach( src => {
+    let outFile = src.replace(/\.c$/i, '.o');
+    if( fs.existsSync(outFile) )
+        return;
+        
     execSync([
         CC,
         C_FLAGS.join(" "),
         FLAGS.join(" "),
-        "-o", src.replace(/\.c$/i, '.o'),
+        "-o", outFile,
         src
     ].join(" "));
 });
