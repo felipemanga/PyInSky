@@ -733,8 +733,78 @@ function compile(){
 
 }
 
+function cancelEvent( event ){
+    event.stopPropagation();
+    event.preventDefault();    
+}
+
+
+function abtostr( ab ){
+    let str = "";
+    let b = new Uint8Array(ab);
+
+    for( let i=0; i<b.length; ++i )
+        str += String.fromCharCode(b[i]);
+
+    return str;
+}
+
+function importFile( file, reader ){
+
+    if( reader.result )
+        reader = reader.result;
+
+    let ext = file.replace(/.*?\.([^.]+)$/, '$1').toLowerCase();
+    
+    switch( ext ){
+    case 'zip':
+        
+        JSZip.loadAsync( reader )
+            .then( zip => {
+
+                for( let name in zip.files ){
+                    zip.file(name)
+                        .async("arraybuffer")
+                        .then( importFile.bind(null, name) );
+                }
+
+            });
+
+        break;
+
+    case 'py':
+
+        let isCurrent = source[file] == editor.session;
+
+        createFile( file, abtostr( reader ) );
+
+        if( isCurrent )
+            editor.setSession( source[file] );
+        
+        updateFileList();
+        
+        break;
+        
+    }
+
+}
 
 const events = {
+
+    BODY:{
+        dragenter:cancelEvent,
+        dragover:cancelEvent,
+        drop( event ){
+            cancelEvent(event);
+
+            for( let i=0, file; (file=event.dataTransfer.files[i]); ++i ){
+                let fr = new FileReader();
+                fr.onload = importFile.bind( null, file.name, fr );
+                fr.readAsArrayBuffer( file );
+            }
+            
+        }
+    },
 
     download:{
         click(){
@@ -771,7 +841,7 @@ const events = {
             if( !fileName )
                 return; // o_O
 
-            if( !confirm("Are you sure you want to delete " + fileName) )
+            if( !confirm("Are you sure you want to delete " + fileName + "?") )
                 return;
 
             delete source[fileName];
@@ -780,7 +850,7 @@ const events = {
             let names = Object.keys(source);
 
             if( names.length == 0 )
-                editor.setSession( createFile(p, '# ' + p) );
+                editor.setSession( createFile("main.py", '# main.py') );
             else
                 editor.setSession( source[names[0]] );
 
