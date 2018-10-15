@@ -4,6 +4,7 @@ html, body {
     height: 100%;
     margin: 0;
     background: url(../Sprites/bg.png);
+    font-family: monospace;
 }
 
 body {
@@ -91,6 +92,98 @@ body>*, #pane>* {
     background-color: #8effe59e;
 }
 
+#headPane #btnExamples {
+    background-image: url(../Sprites/examples.png);
+    background-color: rgba(150, 233, 241, 0.8);
+    margin-right: 0;
+    margin-left: 0;
+}
+
+#examplesContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    background-color: #4e4e4ed4;
+}
+
+#examplesContainer.visible {
+    display: initial;
+    z-index: 99;
+}
+
+#examplesWin {
+    position: absolute;
+    background-image: url(../Sprites/bg.png);
+    width: 400px;
+    height: 300px;
+    border-radius: 10px;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+#examplesWin h1 {
+    text-align: center;
+}
+
+
+#examplesWin h2 {
+    margin: 40px;
+}
+
+#exampleSelect {
+    left: 0;
+    right: 0;
+    position: absolute;
+    margin: auto;
+    width: 200px;
+    font-size: 2em;
+    background-color: #debfffb3;
+    border-radius: 3px;
+}
+
+#exampleCancel {
+    position: absolute;
+    bottom: 10px;
+    right: 150px;
+    background-color: #f3e97a9e;
+    border: 1px solid;
+    border-radius: 2px;
+    width: 120px;
+    height: 40px;
+    font-size: 2em;
+}
+
+
+#exampleApply {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: #8fff9869;
+    border: 1px solid;
+    border-radius: 3px;
+    width: 120px;
+    height: 40px;
+    font-size: 2em;
+}
+
+#examplesWin::after {
+    content: " ";
+    background-color: #ffffff87;
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
 
 #headPane #compile {
     background-image: url(../Sprites/open.png);
