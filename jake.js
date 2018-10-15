@@ -311,11 +311,15 @@ BUILD/%.o : %.cpp
 	@$(CPP) $(CXX_FLAGS) $(INCLUDE_PATHS) -o $@ $<
 */
 CXXSOURCES.forEach( src => {
+    let outFile = src.replace(/\.[^.]+$/i, '.o');
+    if( fs.existsSync(outFile) )
+        return;
+
     execSync([
         CPP,
         CXX_FLAGS.join(" "),
         FLAGS.join(" "),
-        "-o", src.replace(/\.[^.]+$/i, '.o'),
+        "-o", outFile,
         src
     ].join(" "));
 });
