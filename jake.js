@@ -312,7 +312,7 @@ BUILD/%.o : %.cpp
 */
 CXXSOURCES.forEach( src => {
     let outFile = src.replace(/\.[^.]+$/i, '.o');
-    if( fs.existsSync(outFile) )
+    if( src.indexOf("PokittoLib/") != -1 && fs.existsSync(outFile) )
         return;
 
     execSync([
