@@ -160,12 +160,16 @@ function compile(){
     }
 
     function makeMPY( name ){
+        let bin;
         
         FS.writeFile( name, source[name].getValue() );
-        
-        Module.callMain(["-o", "out.mpy", "-s", name, name]);
-        
-        let bin = FS.readFile( "out.mpy", {encoding:"binary"} );
+
+        try{
+            Module.callMain(["-o", "out.mpy", "-s", name, name]);
+            bin = FS.readFile( "out.mpy", {encoding:"binary"} );
+        }catch(ex){
+            Module.print("Syntax error: " + name);
+        }
         
         if( bin ){
             let str = "";
