@@ -240,7 +240,23 @@ function importFile( file, reader ){
 
 }
 
+function randomizeDude(){
+    let dudes = ["charR", "charG", "charB"];
+    let dude;
+    do{
+        dude = dudes[ Math.random()*dudes.length|0 ];
+    }while( document.body.classList.contains(dude) )
+    dudes.forEach( old => document.body.classList.remove(old) );
+    document.body.classList.add(dude);
+}
+
 const events = {
+
+    dude:{
+        click(){
+            randomizeDude();
+        }
+    },
 
     btnExamples:{
         click(){
@@ -427,6 +443,8 @@ const events = {
         }
         
     }
+
+    randomizeDude();
     
 })();
 

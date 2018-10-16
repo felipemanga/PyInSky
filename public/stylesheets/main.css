@@ -3,33 +3,57 @@ html, body {
     width: 100%;
     height: 100%;
     margin: 0;
-    background: url(../Sprites/bg.png);
     font-family: monospace;
 }
 
-body {
-    display: flex;
+.charR {
+    --head-pane-bgc: #9b41b9;
+    --button-bgc: #e531e5;
 }
 
-body>*, #pane>* {
+.charG {
+    --head-pane-bgc: #41b977;
+    --button-bgc: #9fff2c;
+}
+
+.charB {
+    --head-pane-bgc: #41b9ac;
+    --button-bgc: #00f9b8;
+}
+
+.row {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.row>*, .pane>* {
     flex-grow: 1;
 }
 
-#pane {
+.pane {
     display: flex;
     flex-direction: column;
+}
+
+.rightpane {
+    max-width: 450px;
 }
 
 #editor {
 }
 
 #headPane {
+    --text-color: #e7eae7;
     display: flex;
-    padding: 1px 5px 1px 5px;
+    padding: 18px 5px 18px 5px;
     flex-grow: 0;
-    height: 80px;
-    color: #ABC;
-    background-color: rgba(0,0,0,0.4);
+    height: 128px;
+    color: var(--text-color);
+    background-color: var(--head-pane-bgc);
+    font-family: 'VT323';
+    font-size: 1.5em;
+    box-sizing: border-box;
 }
 
 #outputContainer {
@@ -41,7 +65,7 @@ body>*, #pane>* {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(230,230,230,0.9);
+    background-color: #c4c4c4;
     font-family: monospace;
     font-size: 1.5em;
     color: #222;
@@ -49,36 +73,47 @@ body>*, #pane>* {
     box-sizing: border-box;
 }
 
-#headPane button, #headPane select {
+#headPane button {
     height: 100%;
-    /* background-color: rgba(255,255,255,0.8); */
-    border: 1px solid black;
-    border-radius: 5px;
+    border: 0 none;
+    background-color: transparent;
+    position: relative;
+    font-size: 0.75em;
+    margin: auto;
+    padding: 67px 0 0 0;
+    width: 80px;
+    box-sizing: border-box;
+    font: inherit;
+    color: inherit;
 }
 
-#headPane button {
-    font-size: 0.75em;
-    background-repeat: no-repeat;
-    background-position: top;
+#headPane button::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     margin: auto;
-    padding: 50px 0 0 0;
+    content: " ";
     width: 64px;
-    border-radius: 3px;
+    height: 64px;
+    border: 5px solid var(--text-color);
+    border-radius: 10px;
+    background-color: var(--button-bgc);
     box-sizing: border-box;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 #headPane>button:disabled {
     opacity: 0.4;
 }
 
-#addFile {
+#addFile::after {
     background-image: url(../Sprites/plus.png);
-    background-color: #9f8eff9e;
 }
 
-#headPane #deleteFile {
+#headPane #deleteFile::after {
     background-image: url(../Sprites/delete.png);
-    background-color: #ff8e8eab;
 }
 
 #headPane #deleteFile, #headPane #addFile, #headPane #compile{
@@ -86,18 +121,67 @@ body>*, #pane>* {
     margin-right: 1px;
 }
 
-#fileList {
+#fileListContainer {
     margin-right: 1px;
     margin-left: 1px;
-    font-size: 2.0em;
-    background-color: #8effe59e;
+    min-width: max-content;
+    position: relative;
+}
+#fileListContainer::after {
+    content: "Current file";
+    position: absolute;
+    bottom: -15px;
 }
 
-#headPane #btnExamples {
+#dude{
+    display: inline-block;
+    height: 64px;
+    width: 64px;
+    background-color: var(--text-color);
+    border-radius: 10px 0 0 10px;
+    background-image: url(../Sprites/pokittos.png);
+    background-repeat: no-repeat;
+    background-position-y: 3px;
+    background-size: 180px;
+}
+
+.charR #dude {
+    background-position-x: 3px;
+}
+
+.charB #dude {
+    background-position-x: -58px;
+}
+
+.charG #dude {
+    background-position-x: -119px;
+}
+
+#fileList {
+    background-color: var(--text-color);
+    height: 64px;
+    border: 0 none;
+    border-radius: 0 10px 10px 0;
+    vertical-align: top;
+    font: inherit;
+}
+#fileList:active, #fileList:focus {
+    outline: 0 none;
+}
+
+#headPane #btnExamples::after {
+    background-color: #f6ffa6;
     background-image: url(../Sprites/examples.png);
-    background-color: rgba(150, 233, 241, 0.8);
-    margin-right: 1px;
-    margin-left: 0;
+}
+
+#headPane #logo {
+    text-align: center;
+    height: 110%;
+    background-image: url(../Sprites/logo.png);
+    flex-grow: 0;
+    width: 185px;
+    background-position: center bottom;
+    background-repeat: no-repeat;    
 }
 
 #examplesContainer {
@@ -186,33 +270,41 @@ body>*, #pane>* {
     height: 100%;
 }
 
+
 #headPane #compile {
-    background-image: url(../Sprites/open.png);
-    background-color: rgba(150, 233, 241, 0.8);
     margin-right: 0;
 }
+#headPane #compile::after {
+    background-color: #2cff2c;
+    background-image: url(../Sprites/open.png);
+}
 
-#headPane #download {
+#headPane #download{
+    margin-right: 1px;
+}
+#headPane #download::after {
     background-image: url(../Sprites/import.png);
-    margin-right: 1px;
-    background-color: #e88eff9e;
 }
 
-#headPane #fontInc {
+#headPane #fontInc{
+    margin-right: 1px;
+}
+#headPane #fontInc::after {
+    background-color: #f6ffa6;
     background-image: url(../Sprites/zoomIn.png);
-    margin-right: 1px;
-    background-color: #8eeaff9e;
 }
 
-#headPane #fontDec {
-    background-image: url(../Sprites/zoomOut.png);
+#headPane #fontDec{
     margin-left:0;
-    background-color: #b9ff8e9e;
+}
+#headPane #fontDec::after {
+    background-color: #f6ffa6;
+    background-image: url(../Sprites/zoomOut.png);
 }
 
 #emulator {
     min-height: 176px;
     min-width:  220px;
     border-width: 0;
-    background-color: rgba(0,0,0,0.4);
+    background-color: black;
 }

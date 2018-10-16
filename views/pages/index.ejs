@@ -4,14 +4,16 @@
   <% include ../partials/header.ejs %>
 </head>
 
-<body>
-  <div id="pane">
-    <% include ../partials/headPane.ejs %>
-    <% include ../partials/ide.ejs %>
-  </div>
-  <div id="pane">
-    <% include ../partials/emulator.ejs %>
-    <% include ../partials/messages.ejs %>
+<body class="pane charR">
+  <% include ../partials/headPane.ejs %>
+  <div class="row">
+    <div class="pane">
+      <% include ../partials/ide.ejs %>
+    </div>
+    <div class="pane rightpane">
+      <% include ../partials/emulator.ejs %>
+      <% include ../partials/messages.ejs %>
+    </div>
   </div>
   <script>var examples = {}</script>
   <% include ../partials/examples.ejs %>
