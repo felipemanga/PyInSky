@@ -124,11 +124,7 @@ function Builder(){
 	function writeFile(){
 
             let str = data[file];
-
-            let buf = new Uint8Array( str.length );
-            for( let i=0; i<str.length; ++i ){
-                buf[i] = str.charCodeAt(i) & 0xFF;
-            }
+            let buf = Buffer.from(str, 'base64');
 
 	    fs.writeFile( fullPath, buf, e => {
 		

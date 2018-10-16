@@ -159,14 +159,27 @@ html, body {
 
 #fileList {
     background-color: var(--text-color);
+    background-size: 18px;
+    background-repeat-x: no-repeat;
+    background-position-x: right;
     height: 64px;
     border: 0 none;
     border-radius: 0 10px 10px 0;
     vertical-align: top;
     font: inherit;
+    padding-right: 10px;
 }
 #fileList:active, #fileList:focus {
     outline: 0 none;
+}
+.charR #fileList {
+    background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8avj0PwAG+gL8qhNzqQAAAABJRU5ErkJggg==)
+}
+.charG #fileList {
+    background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mOc/1/nPwAG2gLLa73ygAAAAABJRU5ErkJggg==)
+}
+.charB #fileList {
+    background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+LnjPwAFZAKySRvuvQAAAABJRU5ErkJggg==)
 }
 
 #headPane #btnExamples::after {

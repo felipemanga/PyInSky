@@ -171,7 +171,7 @@ function compile(){
             let str = "";
             for( let i=0; i<bin.length; ++i )
                 str += String.fromCharCode(bin[i]);
-            mpy[name] = str;
+            mpy[name] = btoa(str);
         }else{
             abort();
         }
