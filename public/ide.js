@@ -184,6 +184,12 @@ function compile(){
 
 }
 
+editor.commands.addCommand({
+    name: "compile",
+    bindKey: {win: "Ctrl-Enter", mac: "Command-Option-Enter"},
+    exec: () => compile()
+});	    
+
 function cancelEvent( event ){
     event.stopPropagation();
     event.preventDefault();    

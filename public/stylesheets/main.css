@@ -126,11 +126,14 @@ html, body {
     margin-left: 1px;
     min-width: max-content;
     position: relative;
+    height: 92px;
 }
+
 #fileListContainer::after {
     content: "Current file";
     position: absolute;
-    bottom: -15px;
+    bottom: 0px;
+    left: 0px;
 }
 
 #dude{
@@ -157,14 +160,34 @@ html, body {
     background-position-x: -119px;
 }
 
+#fileListCrop {
+    display: inline-block;
+    width: 200px;
+    overflow: hidden;
+    border-radius: 0 10px 10px 0;
+}
+#fileListCrop::after {
+    pointer-events: none;
+    content: '▾';
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding-top: 15px;
+    color: black;
+    background-color: var(--button-bgc);
+    height: 64px;
+    box-sizing: border-box;
+    width: 30px;
+    padding-left: 8px;
+    border-radius: 0 10px 10px 0;
+
+}
+
 #fileList {
     background-color: var(--text-color);
-    background-size: 18px;
-    background-repeat-x: no-repeat;
-    background-position-x: right;
     height: 64px;
+    width: 220px;
     border: 0 none;
-    border-radius: 0 10px 10px 0;
     vertical-align: top;
     font: inherit;
     padding-right: 10px;
@@ -172,13 +195,13 @@ html, body {
 #fileList:active, #fileList:focus {
     outline: 0 none;
 }
-.charR #fileList {
+.charR #fileListCrop {
     background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8avj0PwAG+gL8qhNzqQAAAABJRU5ErkJggg==)
 }
-.charG #fileList {
+.charG #fileListCrop {
     background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mOc/1/nPwAG2gLLa73ygAAAAABJRU5ErkJggg==)
 }
-.charB #fileList {
+.charB #fileListCrop {
     background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+LnjPwAFZAKySRvuvQAAAABJRU5ErkJggg==)
 }
 
@@ -192,7 +215,7 @@ html, body {
     height: 110%;
     background-image: url(../Sprites/logo.png);
     flex-grow: 0;
-    width: 185px;
+    width: 190px;
     background-position: center bottom;
     background-repeat: no-repeat;    
 }
@@ -318,6 +341,7 @@ html, body {
 #emulator {
     min-height: 176px;
     min-width:  220px;
+    max-height: 360px;
     border-width: 0;
     background-color: black;
 }
