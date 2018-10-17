@@ -27,6 +27,21 @@ function createFile( name, src ){
     return sess;
 }
 
+function showFile( name, line ){
+    if( !(name in source) )
+        return;
+
+    editor.setSession( source[name] );
+
+    if( line !== undefined ){
+        line |= 0;
+        editor.scrollToLine( line, true, true, function () {} );
+        editor.gotoLine( line, 0, true );
+        editor.selection.selectLineEnd();
+        editor.focus();
+    }
+}
+
 function loadExample( name ){
     if( source && !confirm("Loading an example will discard your current project.\nAre you sure you want to do this?") ){
         return;
@@ -90,6 +105,11 @@ function TimeoutPromise(cb, time){
 function focusEmulator(){
     DOM.emulator.focus();
     DOM.emulator.contentWindow.focus();
+}
+
+function closeEmulator(){
+    editor.focus();
+    DOM.emulator.src = "empty.html";    
 }
 
 function compile(){
@@ -168,8 +188,11 @@ function compile(){
             Module.callMain(["-o", "out.mpy", "-s", name, name]);
             bin = FS.readFile( "out.mpy", {encoding:"binary"} );
         }catch(ex){
-            Module.print("Syntax error: " + name);
         }
+
+        try{
+            FS.unlink("out.mpy");
+        }catch(ex){}
         
         if( bin ){
             let str = "";

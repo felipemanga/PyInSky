@@ -23,7 +23,18 @@
 
 			if(!e)
 			    e = document.createElement("div");
-			
+
+			let match = line.match(/in ([a-zA-Z0-9_]+\.[pP][yY]), line ([0-9]+):$/);
+			if( match && source[match[1]] ){
+			    e.classList.add("source-ref");
+			    e.onclick = _ => {
+				showFile( match[1], match[2] );
+			    };
+			}else{
+			    e.classList.remove("source-ref");
+			    e.onclick = null;
+			}
+
 			e.textContent = line;
 			element.appendChild(e);
 		    } );

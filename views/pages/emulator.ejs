@@ -42,6 +42,11 @@ document.addEventListener("DOMContentLoaded", function(){
     document.body.addEventListener("dragover", cancelEvent);
     document.body.addEventListener("drop", dropFile);
 
+    document.body.addEventListener("keydown", function(evt){
+	if( evt.key == "Escape" )
+	    parent.closeEmulator();
+    })
+
     let url = location.search.replace(/[^0-9]*/g, '')|0;
     if( url )
         url = `builds/${url}/build.bin`;

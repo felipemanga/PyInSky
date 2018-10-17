@@ -73,6 +73,13 @@ html, body {
     box-sizing: border-box;
 }
 
+.source-ref {
+    cursor: pointer;
+    font-weight: bold;
+    background-color: var(--head-pane-bgc);
+    color: var(--text-color)
+}
+
 #headPane button {
     height: 100%;
     border: 0 none;
@@ -345,3 +352,16 @@ html, body {
     border-width: 0;
     background-color: black;
 }
+
+/*
+.charR #emulator[src="empty.html"] {
+    filter: hue-rotate(-180deg);
+}
+.charG #emulator[src="empty.html"] {
+    filter: hue-rotate(-37deg);
+}
+.charB #emulator[src="empty.html"] {
+    filter: hue-rotate(54deg);
+}
+
+*/
