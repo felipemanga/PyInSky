@@ -17,7 +17,12 @@ function setFontSize( offset ){
 
 function createFile( name, src ){
     let sess = new ace.EditSession(src);
+
+    if( /^Win/.test(navigator.platform) )
+        sess.getDocument().setNewLineMode( "windows" );
+
     sess.setUndoManager( new ace.UndoManager() );
+
     source[ name ] = sess;
     mpy[name] = null;
     
