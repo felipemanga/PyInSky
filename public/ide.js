@@ -298,6 +298,12 @@ function randomizeDude(){
 
 const events = {
 
+    color:{
+        click( event ){
+            setActiveColor( DOM.color.indexOf(event.target) );
+        }
+    },
+
     dude:{
         click(){
             randomizeDude();
