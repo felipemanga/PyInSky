@@ -382,7 +382,7 @@ html, body {
     position: relative;
 }
 .pixelEditor .previewPixel{
-    margin-right: -0.5em;
+    margin-right: -0.51em;
     cursor: crosshair !important;
     pointer-events: all;
     display: inline-block;
