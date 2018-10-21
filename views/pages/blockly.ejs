@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<% include ../partials/header.ejs %>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/blockly.css" />
+    </head>
+
+    <body class="pane">
+	<% include ../partials/blocklyHeadPane.ejs %>
+	<div class="row">
+	    <div class="pane">
+		<% include ../partials/blockly.ejs %>
+	    </div>
+	    <div class="pane rightpane">
+		<% include ../partials/emulator.ejs %>
+		<% include ../partials/messages.ejs %>
+	    </div>
+	</div>
+	<% include ../partials/mpycross.ejs %>
+	<script src="/blocklyide.js"></script>
+	<script src="/common.js"></script>
+    </body>
+</html>

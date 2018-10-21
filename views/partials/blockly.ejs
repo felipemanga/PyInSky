@@ -1,0 +1,498 @@
+<div id="editor"></div>
+
+<xml id="toolbox" style="display: none">
+    <category name="%{BKY_CATLOGIC}" colour="%{BKY_LOGIC_HUE}">
+	<block type="controls_if"></block>
+	<block type="logic_compare"></block>
+	<block type="logic_operation"></block>
+	<block type="logic_negate"></block>
+	<block type="logic_boolean"></block>
+	<block type="logic_null"></block>
+	<block type="logic_ternary"></block>
+    </category>
+    <category name="%{BKY_CATLOOPS}" colour="%{BKY_LOOPS_HUE}">
+	<block type="controls_repeat_ext">
+            <value name="TIMES">
+		<shadow type="math_number">
+		    <field name="NUM">10</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="controls_whileUntil"></block>
+	<block type="controls_for">
+            <value name="FROM">
+		<shadow type="math_number">
+		    <field name="NUM">1</field>
+		</shadow>
+            </value>
+            <value name="TO">
+		<shadow type="math_number">
+		    <field name="NUM">10</field>
+		</shadow>
+            </value>
+            <value name="BY">
+		<shadow type="math_number">
+		    <field name="NUM">1</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="controls_forEach"></block>
+	<block type="controls_flow_statements"></block>
+    </category>
+    <category name="%{BKY_CATMATH}" colour="%{BKY_MATH_HUE}">
+	<block type="math_number">
+            <field name="NUM">123</field>
+	</block>
+	<block type="math_arithmetic">
+            <value name="A">
+		<shadow type="math_number">
+		    <field name="NUM">1</field>
+		</shadow>
+            </value>
+            <value name="B">
+		<shadow type="math_number">
+		    <field name="NUM">1</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="math_single">
+            <value name="NUM">
+		<shadow type="math_number">
+		    <field name="NUM">9</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="math_trig">
+            <value name="NUM">
+		<shadow type="math_number">
+		    <field name="NUM">45</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="math_constant"></block>
+	<block type="math_number_property">
+            <value name="NUMBER_TO_CHECK">
+		<shadow type="math_number">
+		    <field name="NUM">0</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="math_round">
+            <value name="NUM">
+		<shadow type="math_number">
+		    <field name="NUM">3.1</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="math_on_list"></block>
+	<block type="math_modulo">
+            <value name="DIVIDEND">
+		<shadow type="math_number">
+		    <field name="NUM">64</field>
+		</shadow>
+            </value>
+            <value name="DIVISOR">
+		<shadow type="math_number">
+		    <field name="NUM">10</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="math_constrain">
+            <value name="VALUE">
+		<shadow type="math_number">
+		    <field name="NUM">50</field>
+		</shadow>
+            </value>
+            <value name="LOW">
+		<shadow type="math_number">
+		    <field name="NUM">1</field>
+		</shadow>
+            </value>
+            <value name="HIGH">
+		<shadow type="math_number">
+		    <field name="NUM">100</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="math_random_int">
+            <value name="FROM">
+		<shadow type="math_number">
+		    <field name="NUM">1</field>
+		</shadow>
+            </value>
+            <value name="TO">
+		<shadow type="math_number">
+		    <field name="NUM">100</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="math_random_float"></block>
+    </category>
+    <category name="%{BKY_CATTEXT}" colour="%{BKY_TEXTS_HUE}">
+	<block type="text"></block>
+	<block type="text_join"></block>
+	<block type="text_append">
+            <value name="TEXT">
+		<shadow type="text"></shadow>
+            </value>
+	</block>
+	<block type="text_length">
+            <value name="VALUE">
+		<shadow type="text">
+		    <field name="TEXT">abc</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="text_isEmpty">
+            <value name="VALUE">
+		<shadow type="text">
+		    <field name="TEXT"></field>
+		</shadow>
+            </value>
+	</block>
+	<block type="text_indexOf">
+            <value name="VALUE">
+		<block type="variables_get">
+		    <field name="VAR">{textVariable}</field>
+		</block>
+            </value>
+            <value name="FIND">
+		<shadow type="text">
+		    <field name="TEXT">abc</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="text_charAt">
+            <value name="VALUE">
+		<block type="variables_get">
+		    <field name="VAR">{textVariable}</field>
+		</block>
+            </value>
+	</block>
+	<block type="text_getSubstring">
+            <value name="STRING">
+		<block type="variables_get">
+		    <field name="VAR">{textVariable}</field>
+		</block>
+            </value>
+	</block>
+	<block type="text_changeCase">
+            <value name="TEXT">
+		<shadow type="text">
+		    <field name="TEXT">abc</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="text_trim">
+            <value name="TEXT">
+		<shadow type="text">
+		    <field name="TEXT">abc</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="text_print">
+            <value name="TEXT">
+		<shadow type="text">
+		    <field name="TEXT">abc</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="text_prompt_ext">
+            <value name="TEXT">
+		<shadow type="text">
+		    <field name="TEXT">abc</field>
+		</shadow>
+            </value>
+	</block>
+    </category>
+    <category name="%{BKY_CATLISTS}" colour="%{BKY_LISTS_HUE}">
+	<block type="lists_create_with">
+            <mutation items="0"></mutation>
+	</block>
+	<block type="lists_create_with"></block>
+	<block type="lists_repeat">
+            <value name="NUM">
+		<shadow type="math_number">
+		    <field name="NUM">5</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="lists_length"></block>
+	<block type="lists_isEmpty"></block>
+	<block type="lists_indexOf">
+            <value name="VALUE">
+		<block type="variables_get">
+		    <field name="VAR">{listVariable}</field>
+		</block>
+            </value>
+	</block>
+	<block type="lists_getIndex">
+            <value name="VALUE">
+		<block type="variables_get">
+		    <field name="VAR">{listVariable}</field>
+		</block>
+            </value>
+	</block>
+	<block type="lists_setIndex">
+            <value name="LIST">
+		<block type="variables_get">
+		    <field name="VAR">{listVariable}</field>
+		</block>
+            </value>
+	</block>
+	<block type="lists_getSublist">
+            <value name="LIST">
+		<block type="variables_get">
+		    <field name="VAR">{listVariable}</field>
+		</block>
+            </value>
+	</block>
+	<block type="lists_split">
+            <value name="DELIM">
+		<shadow type="text">
+		    <field name="TEXT">,</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="lists_sort"></block>
+    </category>
+    <category name="%{BKY_CATCOLOUR}" colour="%{BKY_COLOUR_HUE}">
+	<block type="colour_picker"></block>
+	<block type="colour_random"></block>
+	<block type="colour_rgb">
+            <value name="RED">
+		<shadow type="math_number">
+		    <field name="NUM">100</field>
+		</shadow>
+            </value>
+            <value name="GREEN">
+		<shadow type="math_number">
+		    <field name="NUM">50</field>
+		</shadow>
+            </value>
+            <value name="BLUE">
+		<shadow type="math_number">
+		    <field name="NUM">0</field>
+		</shadow>
+            </value>
+	</block>
+	<block type="colour_blend">
+            <value name="COLOUR1">
+		<shadow type="colour_picker">
+		    <field name="COLOUR">#ff0000</field>
+		</shadow>
+            </value>
+            <value name="COLOUR2">
+		<shadow type="colour_picker">
+		    <field name="COLOUR">#3333ff</field>
+		</shadow>
+            </value>
+            <value name="RATIO">
+		<shadow type="math_number">
+		    <field name="NUM">0.5</field>
+		</shadow>
+            </value>
+	</block>
+    </category>
+    <sep></sep>
+    <category name="%{BKY_CATVARIABLES}" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>
+    <category name="%{BKY_CATFUNCTIONS}" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE"></category>
+    <sep></sep>
+    <category name="Pokitto" colour="#5ba55b">
+	<block type="draw_image"></block>
+	<block type="render"></block>
+    </category>
+</xml>
+
+
+<script src="blockly_compressed.js"></script>
+<script src="blocks_compressed.js"></script>
+<script src="python_compressed.js"></script>
+<script src="msg/js/en.js"></script>
+<script>
+ let MSG = {
+     catLogic: "Logic",
+     catLoops: "Loops",
+     catMath: "Math",
+     catText: "Text",
+     catLists: "Lists",
+     catColour: "Colour",
+     catVariables: "Variables",
+     catFunctions: "Functions",
+     listVariable: "list",
+     textVariable: "text",
+ };
+
+ for( let k in MSG )
+     Blockly.Msg[ k.toUpperCase() ] = MSG[k];
+
+
+ Blockly.Procedures._allProcedures = Blockly.Procedures.allProcedures;
+ Blockly.Procedures.allProcedures = function(){
+     let ret = [];
+     for( let name in source ){
+	 let procs = this._allProcedures(source[name]);
+	 procs.forEach( (p, i) => ret[i] = [...(ret[i]||[]), ...p] );
+     }
+     return ret;
+ }
+
+ Blockly.Procedures._getDefinition = Blockly.Procedures.getDefinition;
+
+ Blockly.Procedures.getDefinition = function( name, ed ){
+     let ret = null;
+     for( let file in source ){
+	 ret = this._getDefinition(name, source[file]);
+	 if( ret ) break;
+     }
+     return ret;
+ };
+
+ Object.defineProperty(
+     Blockly.Python.definitions,
+     'from_numbers_import_Number',
+     {
+	 value:'',
+	 enumerable:false
+     });
+ 
+ Blockly.Blocks['render'] = {
+     init: function() {
+	 this.appendDummyInput()
+	     .appendField("Update Screen");
+	 this.setColour(230);
+	 this.setPreviousStatement(true, null);
+	 this.setNextStatement(true, null);
+	 this.setTooltip("");
+	 this.setHelpUrl("");
+     }
+ };
+
+ Blockly.Python['render'] = function(block) {
+     var code = '__upygame__.display.flip()\n';
+     return code;
+ };
+ 
+ Blockly.Blocks['draw_image'] = {
+     init: function() {
+	 let image = new Blockly.FieldImage("/Sprites/blue.png", 73, 69, "*", onClickImage);
+	 image.EDITABLE = true;
+	 image.updateEditable();
+	 
+	 this.appendDummyInput()
+             .appendField("Draw ");
+	 this.appendValueInput("X")
+	     .setCheck("Number")
+	     .appendField("X");
+	 this.appendValueInput("Y")
+             .setCheck("Number")
+             .appendField("Y");
+	 this.appendDummyInput("Image")
+             .appendField(image);
+	 this.setInputsInline(false);
+	 this.setPreviousStatement(true, null);
+	 this.setNextStatement(true, null);
+	 this.setColour(230);
+	 this.setTooltip("");
+	 this.setHelpUrl("");
+
+
+	 function onClickImage( event ){
+	     console.log( this, event );
+	 }
+     }
+
+ }; 
+
+ var palette = [
+     {r:0x00,g:0x00,b:0x00}, //black
+     {r:0xFF,g:0xFF,b:0xFF}, //white
+     {r:0xff,g:0x00,b:0xff}, //magenta
+     {r:0x00,g:0xFF,b:0xFF}, //cyan
+     {r:0xFF,g:0xFF,b:0x00}, //yellow
+     {r:0x00,g:0xFF,b:0x00}, //green
+     {r:0x00,g:0x00,b:0xFF}, //blue
+     {r:0xFF,g:0x00,b:0x00}, //red
+     {r:0x3F,g:0x3F,b:0x3F}, //dark gray
+     {r:0x7F,g:0x7F,b:0x7F}, //light gray
+     {r:0x7F,g:0x00,b:0x7F}, //violet (dark magenta)
+     {r:0x00,g:0x7F,b:0x7F}, //teal (dark cyan)
+     {r:0x7F,g:0x3F,b:0x00}, //brown
+     {r:0x00,g:0x7F,b:0x00}, //dark green
+     {r:0x00,g:0x00,b:0x7F}, //dark blue
+     {r:0x7F,g:0x00,b:0x00}  //dark red
+ ];
+
+ Blockly.Python['draw_image'] = function(block) {
+     var value_x = Blockly.Python.valueToCode(block, 'X', Blockly.Python.ORDER_ATOMIC)||"0";
+     var value_y = Blockly.Python.valueToCode(block, 'Y', Blockly.Python.ORDER_ATOMIC)||"0";
+     var imgEl = block.getInput("Image").fieldRow[0].imageElement_;
+
+     let canvas = document.createElement("canvas");
+     let srcwidth = parseInt(imgEl.getAttribute("width"))|0;
+     let width = srcwidth;
+     if( width&1 ) width++;
+     canvas.width = width;
+     canvas.height = parseInt(imgEl.getAttribute("height"));
+     let ctx = canvas.getContext("2d");
+     ctx.drawImage( imgEl, 0, 0, srcwidth, canvas.height );     
+     let data = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+     let str = '', pal = palette;
+
+     for( let i=0; i<data.length; ++i ){
+	 let c = 0, d=0xFFFFFFFF;
+	 let r = data[i++];
+	 let g = data[i++];
+	 let b = data[i++];
+	 i++; // skip A
+	 
+	 for( let j=0; j<pal.length; ++j ){
+	     let rd = (r-pal[j].r);
+	     let gd = (g-pal[j].g);
+	     let bd = (b-pal[j].b);
+	     let nd = rd*rd + gd*gd + bd*bd;
+	     if( nd < d ){
+		 c = j;
+		 d = nd;
+	     }
+	 }
+	 
+	 str+='\\x' + c.toString(16).toUpperCase();
+	 
+	 d=0xFFFFFFFF;
+	 r = data[i++];
+	 g = data[i++];
+	 b = data[i++];
+	 
+	 for( let j=0; j<pal.length; ++j ){
+	     let rd = (r-pal[j].r);
+	     let gd = (g-pal[j].g);
+	     let bd = (b-pal[j].b);
+	     let nd = rd*rd + gd*gd + bd*bd;
+	     if( nd < d ){
+		 c = j;
+		 d = nd;
+	     }
+	 }
+	 
+	 str += c.toString(16).toUpperCase();
+
+     }
+     
+     var code = '__screen_sf__.blit(' +
+     '__upygame__.surface.Surface(' +
+		  (canvas.width-1) +
+     ', ' +
+		  (canvas.height-1) +
+     ', b\'' +
+	str +
+	'\'), ' +
+	value_x +
+	', ' +
+	value_y +
+	')\n';
+	 
+	 return code;
+ }; 
+</script>
+<script src="/jszip.min.js" type="text/javascript" charset="utf-8"></script>

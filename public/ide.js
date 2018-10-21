@@ -113,6 +113,9 @@ function closeEmulator(){
 }
 
 function compile(){
+    if( busy )
+        return;
+
     setBusy( true );
 
     let isAborted = false;

@@ -210,6 +210,7 @@ express()
     .set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
     .get('/', (req, res) => res.render('pages/index'))
+    .get('/blockly', (req, res) => res.render('pages/blockly'))
     .get('/emulator', (req, res) => res.render('pages/emulator'))
     .get('/poll', (req, res) => {
 
