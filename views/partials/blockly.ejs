@@ -301,6 +301,8 @@
     <category name="Pokitto" colour="#5ba55b">
 	<block type="draw_image"></block>
 	<block type="render"></block>
+	<block type="log"></block>
+	<block type="print"></block>
     </category>
 </xml>
 
@@ -348,13 +350,75 @@
      return ret;
  };
 
- Object.defineProperty(
-     Blockly.Python.definitions,
-     'from_numbers_import_Number',
-     {
-	 value:'',
-	 enumerable:false
-     });
+
+ Blockly.Python._procedures_callreturn = Blockly.Python.procedures_callreturn;
+
+ Blockly.Python._procedures_callnoreturn = Blockly.Python.procedures_callnoreturn;
+
+ Blockly.Python.procedures_callreturn = function(block){
+     let blockName = block.getFieldValue('NAME');
+     let prefix = Blockly.Python.__procedure_map[blockName];
+     if( prefix ) prefix += ".";
+     else prefix = "";
+     return prefix + Blockly.Python._procedures_callreturn(block);
+ }
+
+ Blockly.Python.procedures_callnoreturn = function(block){
+     let blockName = block.getFieldValue('NAME');
+     let prefix = Blockly.Python.__procedure_map[blockName];
+     if( prefix ) prefix += ".";
+     else prefix = "";
+     return prefix + Blockly.Python._procedures_callnoreturn(block);
+ }
+
+ Blockly.Blocks['print'] = {
+     init: function() {
+	 this.appendValueInput("text")
+             .setCheck(null)
+             .appendField("Write to screen");
+	 this.appendValueInput("X")
+             .setCheck("Number")
+             .setAlign(Blockly.ALIGN_RIGHT)
+             .appendField("X");
+	 this.appendValueInput("Y")
+             .setCheck("Number")
+             .setAlign(Blockly.ALIGN_RIGHT)
+             .appendField("Y");
+	 this.setColour(230);
+	 this.setPreviousStatement(true, null);
+	 this.setNextStatement(true, null);
+	 this.setTooltip("");
+	 this.setHelpUrl("");
+     }
+ };
+
+ Blockly.Python['print'] = function(block) {
+     var text = Blockly.Python.valueToCode(block, 'text', Blockly.Python.ORDER_ATOMIC)||"";
+     var x = Blockly.Python.valueToCode(block, 'X', Blockly.Python.ORDER_ATOMIC)||"0";
+     var y = Blockly.Python.valueToCode(block, 'Y', Blockly.Python.ORDER_ATOMIC)||"0";
+     var color = 2;
+     var code = `__umachine__.draw_text(${x},${y},${text},${color})`+'\n';
+     return code;
+ };
+ 
+ Blockly.Blocks['log'] = {
+     init: function() {
+	 this.appendValueInput("NAME")
+             .setCheck(null)
+             .appendField("Write to log");
+	 this.setPreviousStatement(true, null);
+	 this.setNextStatement(true, null);
+	 this.setColour(230);
+	 this.setTooltip("");
+	 this.setHelpUrl("");
+     }
+ };
+
+ Blockly.Python['log'] = function(block) {
+     var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC);
+     var code = `print(${value_name})\n`;
+     return code;
+ };
  
  Blockly.Blocks['render'] = {
      init: function() {
@@ -480,19 +544,19 @@
      }
      
      var code = '__screen_sf__.blit(' +
-     '__upygame__.surface.Surface(' +
-		  (canvas.width-1) +
-     ', ' +
-		  (canvas.height-1) +
-     ', b\'' +
-	str +
-	'\'), ' +
-	value_x +
-	', ' +
-	value_y +
-	')\n';
-	 
-	 return code;
+		'__upygame__.surface.Surface(' +
+			       (canvas.width-1) +
+		', ' +
+			       (canvas.height-1) +
+		', b\'' +
+		str +
+		'\'), ' +
+		value_x +
+		', ' +
+		value_y +
+		')\n';
+     
+     return code;
  }; 
 </script>
 <script src="/jszip.min.js" type="text/javascript" charset="utf-8"></script>

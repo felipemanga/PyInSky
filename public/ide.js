@@ -313,6 +313,12 @@ const events = {
         }
     },
 
+    btnSprites:{
+        click(){
+            togglePixelEditor();
+        }
+    },
+
     btnExamples:{
         click(){
             DOM.examplesContainer.classList.add("visible");

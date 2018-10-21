@@ -38,9 +38,21 @@ function createFile( name, src ){
 	 toolbox: document.getElementById('toolbox')
         });
 
+    if( source[ name ] ){
+        source[name]
+            .getInjectionDiv()
+            .parentElement
+            .remove();
+    }
+
     source[ name ] = editor;
     
     mpy[name] = null;
+
+    if( src ){
+        let xml = Blockly.Xml.textToDom(src);
+        Blockly.Xml.appendDomToWorkspace(xml, editor);
+    }
     
     editor.addChangeListener( event => {
         if( event.type == Blockly.Events.CHANGE )
@@ -68,19 +80,43 @@ function showFile( name ){
 }
 
 function getSource( name ){
-    let header = `
+    let imports = Object
+        .keys(source)
+        .filter( n => n != name )
+        .map( name => `import ${name}\n`)
+        .join('');
+
+    let procmap = {};
+    for( let key in source ){
+        if( key == name )
+            continue;
+
+        let procs = Blockly.Procedures._allProcedures( source[key] );
+        for( let proclist of procs ){
+            for( let proc of proclist ){
+                procmap[ proc[0] ] = key;
+            }
+        }
+    }
+
+    Blockly.Python.__procedure_map = procmap;
+
+    let code = Blockly.Python.workspaceToCode(source[ name ]);
+
+    return `
 import upygame as __upygame__
+import umachine as __umachine__
+${imports}
+
 __upygame__.display.init()
 __screen_sf__ = __upygame__.display.set_mode()
 
-`;
-    let tail = `
+${code}
+
 while True:
     __upygame__.display.flip()
+
 `;
-    return header +
-        Blockly.Python.workspaceToCode(source[ name ]) +
-        tail;
 }
 
 function importFile( file, reader ){
@@ -88,10 +124,11 @@ function importFile( file, reader ){
     if( reader.result )
         reader = reader.result;
 
-    let ext = file.replace(/.*?\.([^.]+)$/, '$1').toLowerCase();
+    let ext = file.replace(/.*?(?:\.([^.]+)|)$/, '$1').toLowerCase();
     
     switch( ext ){
     case 'zip':
+    case 'blocks':
         
         JSZip.loadAsync( reader )
             .then( zip => {
@@ -106,7 +143,7 @@ function importFile( file, reader ){
 
         break;
 
-    case '?':
+    case '':
 
         let isCurrent = isCurrentFile(file);
 
@@ -175,16 +212,29 @@ function getEventHandlers(){
 
         download:{
             click(){
+
                 let zip = new JSZip();
-                for( let fileName in source )
-                    zip.file( fileName, source[fileName].getValue() );
+                let serializer = new XMLSerializer();
+
+                for( let fileName in source ){
+                    
+                    let xml = Blockly.Xml.workspaceToDom(
+                        source[fileName],
+                        false
+                    );
+                    
+                    let str = serializer.serializeToString(xml);
+
+                    zip.file( fileName, str );
+                    
+                }
                 
                 zip.generateAsync({type:"uint8array"})
                     .then(function(arr){
                         
                         let a = document.createElement("a");
                         a.href = URL.createObjectURL( new Blob([arr.buffer], {type:'application/bin'}) );
-                        a.download = "pokitto-mpy-project.zip";
+                        a.download = "pokitto.blocks";
                         
                         document.body.appendChild(a);
                         a.click();

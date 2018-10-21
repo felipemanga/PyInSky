@@ -84,15 +84,6 @@ function afterRenderPreview( editor ){
             && expect("=")
             && (token=expect("["))
           ){
-
-            let brush = token.querySelector('.brush');
-            if( !brush ){
-                brush = document.createElement('div');
-                brush.onclick = togglePixelEditor;
-                brush.classList.add("brush");
-                token.appendChild(brush);
-                token.style.position = "relative";
-            }
             
             while( (token=next()) && token.classList.contains("ace_numeric") ){
                 cellInit( token );

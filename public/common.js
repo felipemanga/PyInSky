@@ -148,6 +148,7 @@ function compile(){
         if( !/\.py/i.test(name) )
             pyname = name + ".py";
         
+        Module.reset();
         FS.writeFile( pyname, getSource(name) );
 
         try{

@@ -42,6 +42,7 @@ html, body {
 }
 
 #editor {
+    font-family: 'Ubuntu Mono', monospace !important;
 }
 
 #headPane {
@@ -222,6 +223,13 @@ html, body {
     background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+LnjPwAFZAKySRvuvQAAAABJRU5ErkJggg==)
 }
 
+#headPane #btnSprites::after {
+    background-image: url(../Sprites/star.png);    
+}
+.pixelEditor #btnSprites {
+    display: none;
+}
+
 #headPane #btnExamples::after {
     background-color: #f6ffa6;
     background-image: url(../Sprites/examples.png);
@@ -235,7 +243,7 @@ html, body {
     height: 110%;
     background-image: url(../Sprites/logo.png);
     flex-grow: 0;
-    width: 190px;
+    width: 200px;
     background-position: center bottom;
     background-repeat: no-repeat;    
 }
@@ -481,7 +489,6 @@ html, body {
     display: none;
 }
 .pixelEditor #piskel{
-    margin-right: 1px;
     display: block;
 }
 .pixelEditor #piskel::after {
