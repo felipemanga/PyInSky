@@ -1,7 +1,23 @@
 <script type='text/javascript'>
 
   var Module = {
-        preRun: [],
+      initialHeapState:null,
+      reset:function(){
+	  HEAPU32.fill(0);
+	  let map = Module.initialHeapState;
+	  for( let k in map ){
+	      HEAPU32[k|0] = map[k];
+	  }
+      },
+      preRun: [function(){
+	  if( Module.initialHeapState )
+	      return;
+	  let map = Module.initialHeapState = {};
+	  for( let i=0; i<Module.HEAPU32.length; ++i ){
+	      if( Module.HEAPU32[i] )
+		  map[i] = Module.HEAPU32[i];
+	  }
+      }],
         postRun: [],
         print: (function() {
             var element = document.getElementById('output');

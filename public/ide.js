@@ -17,6 +17,12 @@ function setFontSize( offset ){
 
 function createFile( name, src ){
     let sess = new ace.EditSession(src);
+
+    if( /^Win/.test(navigator.platform) )
+        sess.getDocument().setNewLineMode( "windows" );
+
+    sess.setUndoManager( new ace.UndoManager() );
+
     source[ name ] = sess;
     mpy[name] = null;
     
@@ -112,11 +118,17 @@ function closeEmulator(){
     DOM.emulator.src = "empty.html";    
 }
 
+function clearOutput(){
+    while( DOM.output.children.length )
+        DOM.output.removeChild( DOM.output.firstElementChild );
+}
+
 function compile(){
     if( busy )
         return;
 
     setBusy( true );
+    clearOutput();
 
     let isAborted = false;
     
@@ -185,6 +197,7 @@ function compile(){
     function makeMPY( name ){
         let bin;
         
+        Module.reset();
         FS.writeFile( name, source[name].getValue() );
 
         try{
@@ -287,6 +300,12 @@ function randomizeDude(){
 }
 
 const events = {
+
+    color:{
+        click( event ){
+            setActiveColor( DOM.color.indexOf(event.target) );
+        }
+    },
 
     dude:{
         click(){
