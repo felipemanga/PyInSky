@@ -204,15 +204,21 @@ html, body {
 #fileList {
     background-color: var(--text-color);
     height: 64px;
-    width: 220px;
+    width: calc(100% - 64px);
     border: 0 none;
     vertical-align: top;
     font: inherit;
     padding-right: 10px;
+    position: absolute;
+    top: 0;
+    margin-left: 64px;
+    left: 0;
+    border-radius: 0 10px 10px 0;
 }
 #fileList:active, #fileList:focus {
     outline: 0 none;
 }
+
 .charR #fileListCrop {
     background-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8avj0PwAG+gL8qhNzqQAAAABJRU5ErkJggg==)
 }
