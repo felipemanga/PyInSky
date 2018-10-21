@@ -2,6 +2,7 @@ let activeColor = NaN;
 
 function togglePixelEditor(){
     document.body.classList.toggle("pixelEditor");
+    editor.setReadOnly( document.body.classList.contains("pixelEditor") );
 }
 
 function setActiveColor( c ){
@@ -129,6 +130,8 @@ function afterRenderPreview( editor ){
 
         if( !document.body.classList.contains("pixelEditor") )
             return;
+
+        editor.selection.clearSelection();
 
         if( event.type == "mousemove" && event.buttons == 0 )
             return;

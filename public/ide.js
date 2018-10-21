@@ -167,6 +167,11 @@ function compile(){
             a.href = `builds/${url}/build.bin`;
             DOM.output.appendChild(e);
 
+            setTimeout( _=>{
+                if( a.parentElement == e )
+                    e.remove();
+            }, 50000);
+
             DOM.emulator.src=`emulator?${url}`;
             setBusy(false);
             focusEmulator();
