@@ -403,15 +403,25 @@ html, body {
     display: inline-block;
     width: 2em;
 }
-.brush{
+
+.previewPalEntry{
     position: absolute;
-    right: -25px;
-    pointer-events: all;
     top: 0;
-    cursor: pointer;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid black;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    pointer-events: all;
 }
-.brush::after {
-    content: "🖌";
+input[type="color"]::-webkit-color-swatch-wrapper {
+	padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+	border: none;
 }
 
 .textOverlay{

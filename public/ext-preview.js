@@ -73,6 +73,17 @@ function afterRenderPreview( editor ){
                 if( color == activeColor )
                     DOM.activeColor.style.backgroundColor = DOM.color[color].style.backgroundColor;
 
+                let inp = token.querySelector('input[type=color]');
+                if( !inp ){
+                    inp = document.createElement('input');
+                    inp.className = 'previewPalEntry';
+                    inp.setAttribute('type', 'color');
+                    inp.onchange = editPalette.bind( null, color, token );
+                    token.style.position = "relative";
+                    token.appendChild(inp);
+                }
+                inp.value = `#${((R<<16)|(G<<8)|(B)).toString(16).padStart(6, '0')}`;
+
                 color++;
 
             }
@@ -147,6 +158,30 @@ function afterRenderPreview( editor ){
             cellValue = (cellValue&0x0F) | (activeColor<<4);
         }
 
+        editor.session.replace(
+            getElementRange(cell),
+            "0x"+cellValue.toString(16).padStart(2, "0")
+        );
+
+    }
+
+    function editPalette( color, cell, event ){
+        let c888 = parseInt(event.target.value.replace(/[^0-9a-fA-F]/g, ''), 16);
+
+        let cellValue = 0;
+
+        cellValue |= (c888&0xFF)/0xFF*0x1F>>>0;
+        cellValue |= ((c888&0xFF00)>>8)/0xFF*0x3F<<5;
+        cellValue |= ((c888&0xFF0000)>>16)/0xFF*0x1F<<11;
+
+        editor.session.replace(
+            getElementRange( cell ),
+            '0x' + cellValue.toString(16).padStart(4, "0")
+        );
+    }
+
+    function getElementRange( cell ){
+        
         let lineNum = editor.getFirstVisibleRow();
         lineNum += [...cell.parentElement.parentElement.children]
             .indexOf(cell.parentElement);        
@@ -156,16 +191,11 @@ function afterRenderPreview( editor ){
         for( let i=0; i<cellId; ++i )
             column += cell.parentElement.childNodes[i].textContent.length;
 
-        let range = new ace.Range(
+        return new ace.Range(
             lineNum,
             column,
             lineNum,
             column+cell.textContent.length
-        );
-
-        editor.session.replace(
-            range,
-            "0x"+cellValue.toString(16).padStart(2, "0")
         );
 
     }
