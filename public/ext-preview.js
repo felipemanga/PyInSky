@@ -49,14 +49,28 @@ function afterRenderPreview( editor ){
         let token = next();
         return token && token.textContent == tok && token;
     }
+
+    function expectSwitch( ...cases ){
+        let token = next();
+
+        if( token )
+            for( let i=0; i<cases.length; i+=2 )
+                if( cases[i] === token.textContent )
+                    return cases[i+1]();
+        
+        return false;
+    }
     
-    let token = next();
+    let token = next(), identifiers = [];
     while( token ){
 
         if( !token.classList.contains("ace_identifier") ){
+            identifiers.length = 0;
             token = next();
             continue;
         }
+
+        identifiers.push(token);
 
         if( token.textContent == "set_palette_16bit" ){
 
@@ -91,17 +105,66 @@ function afterRenderPreview( editor ){
             continue;
 
         }
-
+/*
+        if( identifiers.slice(1).join(".") == "surface.Surface" ){
+            
+        }
+*/        
         if( /Pixels/i.test(token.textContent)
             && expect("=")
-            && (token=expect("["))
-          ){
-            
-            while( (token=next()) && token.classList.contains("ace_numeric") ){
-                cellInit( token );
-            }
+            && expectSwitch(
+                "[", _=>{
+                    while( (token=next()) && token.classList.contains("ace_numeric") ){
+                        cellInit( token );
+                    }
+                    return true;
+                },
+
+                "b", _=>{
+                    
+                    token = next();
+                    if( !token || (token.textContent != "'" && token.textContent != "'\\") )
+                        return false;
+
+                    while( (token=next()) && (token.classList.contains("ace_escape") || token.textContent == '\\') ){
+                        const values = token.textContent.split(/\\x/);
+                        values.splice(0, 1);
+                        if( !values.length ) continue;
+                        
+                        let container = token.querySelector('.colorContainer');
+                        if( !container ){
+                            container = document.createElement('div');
+                            container.className = 'colorContainer';
+                            token.appendChild(container);
+                            token.classList.add("previewPixel");
+                        }
+                        
+                        while( container.children.length > values.length*2 )
+                            container.firstElementChild.remove();
+
+                        while( container.children.length < values.length*2 )
+                            container.appendChild( document.createElement('div') );
+
+                        for( let i=0; i<values.length; ++i ){
+                            const color = parseInt(values[i], 16);
+                            let child = container.children[i*2];
+                            child.style.backgroundColor = palette[ color >> 4 ];
+                            child.setAttribute("text", "\\x");
+                            child.onclick = setColorInline.bind(null, token);
+                            child.onmousemove = setColorInline.bind(null, token);
+                            
+                            child = container.children[i*2+1];
+                            child.style.backgroundColor = palette[ color&0xF ];
+                            child.setAttribute("text", values[i]);
+                            child.onclick = setColorInline.bind(null, token);
+                            child.onmousemove = setColorInline.bind(null, token);
+                        }
+                    }
+                    
+                    return true;
+                }
+            ) )
             continue;
-        }
         
         token = next();
     }
@@ -137,7 +200,8 @@ function afterRenderPreview( editor ){
         txt.setAttribute("text", cell.textContent);
     }
 
-    function setColor( cell, event ){
+
+    function setColorInline( cell, event ){
 
         if( !document.body.classList.contains("pixelEditor") )
             return;
@@ -150,6 +214,42 @@ function afterRenderPreview( editor ){
         event.stopPropagation();
         event.preventDefault();
 
+        const values = cell.textContent.split(/\\x/);
+        values.splice(0, 1);
+
+        let index = Array.prototype.indexOf.call(
+            event.target.parentElement.children,
+            event.target
+        );
+
+        let cellValue = parseInt(values[index>>1], 16);
+
+        if( index&1 ){
+            cellValue = (cellValue&0xF0) | activeColor;
+        }else{
+            cellValue = (cellValue&0x0F) | (activeColor<<4);
+        }
+
+        editor.session.replace(
+            getElementRange(cell, (index&~1)*2, 4),
+            "\\x"+cellValue.toString(16).padStart(2, "0")
+        );
+
+    }
+
+    function setColor( cell, event ){
+
+        if( !document.body.classList.contains("pixelEditor") )
+            return;
+
+        editor.selection.clearSelection();
+
+        if( event.type == "mousemove" && event.buttons == 0 )
+            return;
+
+        event.stopPropagation();
+        event.preventDefault();
+        
         let cellValue = parseInt(cell.textContent);
 
         if( event.target.classList.contains("altBGE") ){
@@ -180,7 +280,7 @@ function afterRenderPreview( editor ){
         );
     }
 
-    function getElementRange( cell ){
+    function getElementRange( cell, colOffset=0, length=-1 ){
         
         let lineNum = editor.getFirstVisibleRow();
         lineNum += [...cell.parentElement.parentElement.children]
@@ -191,11 +291,14 @@ function afterRenderPreview( editor ){
         for( let i=0; i<cellId; ++i )
             column += cell.parentElement.childNodes[i].textContent.length;
 
+        if( length == -1 )
+            length = cell.textContent.length;
+
         return new ace.Range(
             lineNum,
-            column,
+            column + colOffset,
             lineNum,
-            column+cell.textContent.length
+            column + colOffset + length
         );
 
     }
