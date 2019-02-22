@@ -18,9 +18,9 @@ function setActiveColor( c ){
     DOM.activeColor.setAttribute("colorIndex", c.toString(16).toUpperCase());
 }
 
-function preview( editor ){
+// function preview( editor ){
     editor.renderer.on("afterRender", afterRenderPreview.bind(null, editor));
-}
+// }
 
 function afterRenderPreview( editor ){
     let palette = DOM.color.map( e => e.style.backgroundColor );

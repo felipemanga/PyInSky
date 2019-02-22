@@ -435,6 +435,9 @@ input[type="color"]::-webkit-color-swatch {
 .pixelEditor .textOverlay {
     display: none;
 }
+.pixelEditor .colorContainer *::after {
+    visibility: hidden;
+}
 .textOverlay::after {
     content: attr(text);
 }
