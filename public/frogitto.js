@@ -1,7 +1,15 @@
 
 examples.Frogitto = {
 
-    "main.py": `import upygame as pygame
+    "main.py": `# Copyright (C) 2019 Hannu Viitala
+#
+# The source code in this file is released under the MIT license.
+# Go to http://opensource.org/licenses/MIT for the full license details.
+#
+# The graphics in this file are released under the Creative Commons Attribution license (CC-BY).
+# Go to https://creativecommons.org/licenses/by/4.0/ for the full license details.
+
+import upygame as pygame
 import framebuf
 import urandom as random
 import example_data as spritedata
@@ -186,7 +194,11 @@ while True:
 `,
     
 
-    "example_data.py":`import upygame as pygame
+    "example_data.py":`# Copyright (C) 2019 Fred Bednarski
+# This file is released under the Creative Commons Attribution license (CC-BY).
+# Go to https://creativecommons.org/licenses/by/4.0/ for the full license details.
+
+import upygame as pygame
 
 # pokitto picture
 w2 = 16

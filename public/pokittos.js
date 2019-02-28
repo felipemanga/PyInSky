@@ -1,5 +1,13 @@
 examples["Pokittos"] = {
     "main.py": `# uPyGame performance test
+# Copyright (C) 2019 Hannu Viitala
+#
+# The source code in this file is released under the MIT license.
+# Go to http://opensource.org/licenses/MIT for the full license details.
+#
+# The graphics in this file are released under the Creative Commons Attribution license (CC-BY).
+# Go to https://creativecommons.org/licenses/by/4.0/ for the full license details.
+
 # 1) Drawing a surface of 16x16 pixels 100 times a frame gives 16 Fps (full speed). 4-bit colors for both screen and the surface.
 # 2) Drawing a surface of 16x16 pixels 200 times a frame gives 12 Fps (full speed). 4-bit colors for both screen and the surface.
 

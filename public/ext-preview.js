@@ -23,6 +23,9 @@ function setActiveColor( c ){
 // }
 
 function afterRenderPreview( editor ){
+    if( typeof DOM === "undefined" )
+        return;
+    
     let palette = DOM.color.map( e => e.style.backgroundColor );
 
     if( isNaN(activeColor) )

@@ -1,6 +1,13 @@
 examples[`Python the Snake`] = {
     "main.py":`# Python the snake - demo
-
+# Copyright (C) 2019 Hannu Viitala
+#
+# The source code in this file is released under the MIT license.
+# Go to http://opensource.org/licenses/MIT for the full license details.
+#
+# The graphics in this file are released under the Creative Commons Attribution license (CC-BY).
+# Go to https://creativecommons.org/licenses/by/4.0/ for the full license details.
+    
 import upygame as upg
 
 # Setup the screen.

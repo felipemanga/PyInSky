@@ -289,9 +289,87 @@ function importFile( file, reader ){
         updateFileList();
         
         break;
+
+    case 'png':
+    case 'jpg':
+
+        let img = new Image();
+        let url = URL.createObjectURL(
+            new Blob(
+                [reader],
+                {type:"image/"+ext}
+            )
+        );
+
+        img.onload = importImage.bind(
+            null,
+            img,
+            file.replace(/^([^.]+)\..*$/, "$1")
+        );
+
+        img.src = url;
         
     }
 
+}
+
+function importImage( image, name ){
+
+    let canvas = document.createElement("canvas");
+    let W = canvas.width = image.width;
+    let H = canvas.height = image.height;
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage( image, 0, 0 );
+    URL.revokeObjectURL( image.src );
+    let {data} = ctx.getImageData( 0, 0, canvas.width, canvas.height );
+
+    let palette = DOM.color.map( e => e[0] == '#' ? [
+        parseInt(e.style.backgroundColor.substr(1, 2), 16),
+        parseInt(e.style.backgroundColor.substr(3, 2), 16),
+        parseInt(e.style.backgroundColor.substr(5, 2), 16)
+    ] : [
+        e.style.backgroundColor.replace(/rgba?\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+).*/, "$1")|0,
+        e.style.backgroundColor.replace(/rgba?\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+).*/, "$2")|0,
+        e.style.backgroundColor.replace(/rgba?\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+).*/, "$3")|0
+    ]);
+
+    let out = `${name}Pixels = b'`;
+    
+    for( let y=0; y<H; y++ ){
+
+        let line = [];
+        for( let x=0; x<W; x++ ){
+
+            let i = (y*W + x) * 4;
+            let closest = 0;
+            let closestDist = Number.POSITIVE_INFINITY;
+            let R = data[i++];
+            let G = data[i++];
+            let B = data[i++];
+            let c;
+
+            for( let c=0; c<palette.length; ++c ){
+                let ca = palette[c];
+		let dist = (R-ca[0])*(R-ca[0]) + (G-ca[1])*(G-ca[1]) + (B-ca[2])*(B-ca[2]);
+                if( dist < closestDist ){
+                    closest = c;
+                    closestDist = dist;
+                }
+            }
+
+            line[x>>1] = (line[x>>1]||"\\x") + closest.toString(16);
+
+        }
+
+        out += '\\\n' + line.join('');
+
+    }
+
+    out += "\\\n'\n";
+
+    out += `${name} = upygame.surface.Surface(${W}, ${H}, ${name}Pixels)\n`;
+
+    editor.session.insert( editor.getCursorPosition(), out );
 }
 
 function randomizeDude(){
