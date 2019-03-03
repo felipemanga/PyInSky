@@ -346,14 +346,17 @@ function importImage( image, name ){
             let R = data[i++];
             let G = data[i++];
             let B = data[i++];
+            let A = data[i++];
             let c;
 
-            for( let c=0; c<palette.length; ++c ){
-                let ca = palette[c];
-		let dist = (R-ca[0])*(R-ca[0]) + (G-ca[1])*(G-ca[1]) + (B-ca[2])*(B-ca[2]);
-                if( dist < closestDist ){
-                    closest = c;
-                    closestDist = dist;
+            if( A > 128 ){
+                for( let c=0; c<palette.length; ++c ){
+                    let ca = palette[c];
+		    let dist = (R-ca[0])*(R-ca[0]) + (G-ca[1])*(G-ca[1]) + (B-ca[2])*(B-ca[2]);
+                    if( dist < closestDist ){
+                        closest = c;
+                        closestDist = dist;
+                    }
                 }
             }
 
@@ -503,7 +506,7 @@ const events = {
             if( !p )
                 return;
 
-            p = p.replace(/[^a-z0-9_\.]*/g, '');
+            p = p.replace(/[^a-z0-9_\.]*/gi, '');
             if( p in source ){
                 alert("File already exists");
                 return;
