@@ -600,6 +600,8 @@ void Core::setVolLimit() {
     display.setCursor(0,0);
 }
 
+#define IS_EMULATOR (((volatile uint32_t *) 0xE000ED00)[0] == 0)
+
 void Core::begin() {
 
     init(); // original functions
@@ -617,15 +619,13 @@ void Core::begin() {
 	buttons.update();
 	battery.begin();
 	display.begin();
-	#if POK_DISPLAYLOGO
-        #if PROJ_DEVELOPER_MODE != 1
-        showLogo();
-        #endif // PROJ_DEVELOPER_MODE
-	#endif // POK_DISPLAYLOGO
+
+	if( !IS_EMULATOR ){
+	    showLogo();
+	}
 
 	display.enableDirectPrinting(true);
     display.directbgcolor = COLOR_BLACK;
-    display.clearLCD();
     display.setFont(fntC64UIGfx);
 
     display.enableDirectPrinting(true);
@@ -639,28 +639,25 @@ void Core::begin() {
 	jumpToLoader();
 	#endif
 
-    #ifndef DISABLE_LOADER
-    #if PROJ_DEVELOPER_MODE != 1
-    askLoader();
-    #endif // PROJ_DEVELOPER_MODE
-    #endif
+	if( !IS_EMULATOR ){
+	    
+	    askLoader();
+	    setVolLimit();
+	    display.clear();
+	    display.update();
 
-	#if PROJ_DEVELOPER_MODE==1
-	sound.setMaxVol(VOLUME_SPEAKER_MAX);
-	sound.setVolume(VOLUME_SPEAKER_MAX);
-	#else
-	//showWarning();
-	setVolLimit();
-	display.clear();
-	display.update();
+	    while(buttons.states[BTN_A])
+	    {
+		buttons.update();
+	    }
 
-	while(buttons.states[BTN_A])
-    {
-        buttons.update();
-    }
+	}else{
+	
+	    sound.setMaxVol(VOLUME_SPEAKER_MAX);
+	    sound.setVolume(VOLUME_SPEAKER_MAX);
+	
+	}
 
-	//sound.setVolume(sound.getVolume());//make sure we're at set volume before continue
-	#endif
 	display.enableDirectPrinting(false);
 	display.adjustCharStep=1;
 	display.adjustLineStep=1;

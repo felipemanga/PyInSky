@@ -4,7 +4,7 @@
 # 1 "<stdin>"
 # 27 "<stdin>"
 # 1 "../../py/mpconfig.h" 1
-# 45 "../../py/mpconfig.h"
+# 62 "../../py/mpconfig.h"
 # 1 "./mpconfigport.h" 1
 # 1 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stdint.h" 1 3 4
 # 9 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/include/stdint.h" 3 4
@@ -647,7 +647,7 @@ void _reclaim_reent (struct _reent *);
 extern struct _atexit *_global_atexit;
 # 12 "/home/manga/Projects/Pokitto/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/include/alloca.h" 2 3
 # 110 "./mpconfigport.h" 2
-# 46 "../../py/mpconfig.h" 2
+# 63 "../../py/mpconfig.h" 2
 # 28 "<stdin>" 2
 
 
@@ -691,6 +691,8 @@ Q(utf-8)
 Q(ArithmeticError)
 
 Q(ArithmeticError)
+
+Q(AssertionError)
 
 Q(AssertionError)
 
@@ -884,6 +886,10 @@ Q(Signal)
 
 Q(Signal)
 
+Q(Sound)
+
+Q(Sound)
+
 Q(StopIteration)
 
 Q(StopIteration)
@@ -921,6 +927,16 @@ Q(__bool__)
 Q(__build_class__)
 
 Q(__call__)
+
+Q(__class__)
+
+Q(__class__)
+
+Q(__class__)
+
+Q(__class__)
+
+Q(__class__)
 
 Q(__contains__)
 
@@ -962,6 +978,8 @@ Q(__init__)
 
 Q(__init__)
 
+Q(__int__)
+
 Q(__isub__)
 
 Q(__iter__)
@@ -978,6 +996,12 @@ Q(__main__)
 
 Q(__main__)
 
+Q(__module__)
+
+Q(__name__)
+
+Q(__name__)
+
 Q(__name__)
 
 Q(__name__)
@@ -1027,6 +1051,10 @@ Q(__path__)
 Q(__path__)
 
 Q(__path__)
+
+Q(__qualname__)
+
+Q(__repl_print__)
 
 Q(__repl_print__)
 
@@ -1046,11 +1074,29 @@ Q(__traceback__)
 
 Q(_brace_open__colon__hash_b_brace_close_)
 
+Q(_lt_dictcomp_gt_)
+
+Q(_lt_genexpr_gt_)
+
+Q(_lt_lambda_gt_)
+
+Q(_lt_listcomp_gt_)
+
+Q(_lt_module_gt_)
+
+Q(_lt_setcomp_gt_)
+
+Q(_lt_string_gt_)
+
 Q(_percent__hash_o)
 
 Q(_percent__hash_x)
 
 Q(_space_)
+
+Q(_star_)
+
+Q(_star_)
 
 Q(abs)
 
@@ -1085,6 +1131,8 @@ Q(builtins)
 Q(bytearray)
 
 Q(bytearray)
+
+Q(bytecode)
 
 Q(bytes)
 
@@ -1166,9 +1214,13 @@ Q(end)
 
 Q(endswith)
 
+Q(eval)
+
 Q(event)
 
 Q(event)
+
+Q(exec)
 
 Q(extend)
 
@@ -1177,6 +1229,8 @@ Q(extend)
 Q(fill)
 
 Q(fill)
+
+Q(fill_buffer)
 
 Q(fill_rect)
 
@@ -1222,7 +1276,13 @@ Q(generator)
 
 Q(get)
 
+Q(get_current_soundbuffer_index)
+
+Q(get_current_soundbuffer_pos)
+
 Q(get_rect)
+
+Q(get_soundbuffer_size)
 
 Q(getattr)
 
@@ -1360,6 +1420,12 @@ Q(micropython)
 
 Q(micropython)
 
+Q(micropython)
+
+Q(mixer)
+
+Q(mixer)
+
 Q(mode)
 
 Q(module)
@@ -1382,11 +1448,17 @@ Q(on)
 
 Q(open)
 
+Q(opt_level)
+
 Q(ord)
+
+Q(pause)
 
 Q(pend_throw)
 
 Q(pixel)
+
+Q(play)
 
 Q(poll)
 
@@ -1408,6 +1480,8 @@ Q(range)
 
 Q(range)
 
+Q(range)
+
 Q(rect)
 
 Q(remove)
@@ -1415,6 +1489,8 @@ Q(remove)
 Q(replace)
 
 Q(repr)
+
+Q(reset)
 
 Q(reverse)
 
@@ -1487,6 +1563,8 @@ Q(str)
 Q(strip)
 
 Q(sum)
+
+Q(super)
 
 Q(super)
 
