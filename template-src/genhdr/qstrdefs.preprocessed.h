@@ -688,6 +688,8 @@ Q(utf-8)
 
 
 
+Q(ANALOG_IN)
+
 Q(ArithmeticError)
 
 Q(ArithmeticError)
@@ -1579,6 +1581,8 @@ Q(text)
 Q(throw)
 
 Q(throw)
+
+Q(time_us)
 
 Q(to_bytes)
 
