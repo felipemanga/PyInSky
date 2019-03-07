@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013, 2014 Damien P. George
+ * Copyright (c) 2014-2017 Paul Sokolovsky
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,24 +23,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef MICROPY_INCLUDED_PY_OBJFUN_H
-#define MICROPY_INCLUDED_PY_OBJFUN_H
+#ifndef MICROPY_INCLUDED_PY_OBJNAMEDTUPLE_H
+#define MICROPY_INCLUDED_PY_OBJNAMEDTUPLE_H
 
-#include "py/obj.h"
+#include "py/objtuple.h"
 
-typedef struct _mp_obj_fun_bc_t {
-    mp_obj_base_t base;
-    mp_obj_dict_t *globals;         // the context within which this function was defined
-    const byte *bytecode;           // bytecode for the function
-    const mp_uint_t *const_table;   // constant table
-    // the following extra_args array is allocated space to take (in order):
-    //  - values of positional default args (if any)
-    //  - a single slot for default kw args dict (if it has them)
-    //  - a single slot for var args tuple (if it takes them)
-    //  - a single slot for kw args dict (if it takes them)
-    mp_obj_t extra_args[];
-} mp_obj_fun_bc_t;
+typedef struct _mp_obj_namedtuple_type_t {
+    mp_obj_type_t base;
+    size_t n_fields;
+    qstr fields[];
+} mp_obj_namedtuple_type_t;
 
-void mp_obj_fun_bc_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest);
+typedef struct _mp_obj_namedtuple_t {
+    mp_obj_tuple_t tuple;
+} mp_obj_namedtuple_t;
 
-#endif // MICROPY_INCLUDED_PY_OBJFUN_H
+size_t mp_obj_namedtuple_find_field(const mp_obj_namedtuple_type_t *type, qstr name);
+mp_obj_namedtuple_type_t *mp_obj_new_namedtuple_base(size_t n_fields, mp_obj_t *fields);
+
+#endif // MICROPY_INCLUDED_PY_OBJNAMEDTUPLE_H
