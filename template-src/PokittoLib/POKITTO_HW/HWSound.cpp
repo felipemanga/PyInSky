@@ -60,7 +60,18 @@ pwmout_t* obj = &audiopwm;
 
 /** Sound Variables **/
 #if (POK_STREAMING_MUSIC > 0)
+
+#if POK_HIGH_RAM == HIGH_RAM_MUSIC
+unsigned char *buffers[4] = {
+    (unsigned char *) 0x20000000,
+    (unsigned char *) 0x20000400,
+    (unsigned char *) 0x20004000,
+    (unsigned char *) 0x20004400
+};
+#else
     unsigned char buffers[4][BUFFER_SIZE];
+#endif
+
     volatile int currentBuffer = 0, oldBuffer = 0;
     volatile int bufindex = 0, vol=1;
     volatile unsigned char * currentPtr;
@@ -390,6 +401,12 @@ inline void pokSoundIRQ() {
         streamstep &= streamon; // streamon is used to toggle SD music streaming on and off
         if (streamstep) {
             output = (*currentPtr++);
+	    if( Pokitto::Sound::sfxDataPtr != Pokitto::Sound::sfxEndPtr ){
+		int32_t s = (int32_t(output) + int32_t(*Pokitto::Sound::sfxDataPtr++)) - 128;
+		if( s < 0 ) s = 0;
+		else if( s > 255 ) s = 255;
+		output = s;
+	    }
             if(streamvol && streamon) {
                 output >>= 3-streamvol;
                 streambyte = output;
@@ -419,7 +436,15 @@ inline void pokSoundIRQ() {
         osc1.count += osc1.cinc + (osc1.pitchbend); // counts to 65535 and overflows to zero WAS 8 !
         osc2.count += osc2.cinc + (osc2.pitchbend); // counts to 65535 and overflows to zero
         osc3.count += osc3.cinc + (osc3.pitchbend); // counts to 65535 and overflows to zero
+        #if POK_ALT_MIXING > 0 // heaviest cpu load, recalculate envelopes on each cycle
+        uint32_t o = 0;
+        Marr[3]();
+        Marr[2]();
+        Marr[1]();
+        if (tick==0) Marr[0]();
+        #else
         Marr[tick](); // call mixing function
+        #endif // ALT_MIXING
         --tick;
 
         /** mixing oscillator output **/

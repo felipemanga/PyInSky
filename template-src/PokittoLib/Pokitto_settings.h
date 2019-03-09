@@ -92,6 +92,15 @@
     #define POK_ENABLE_SYNTH PROJ_ENABLE_SYNTH
 #endif // PROJ_ENABLE_SYNTH
 
+#define HIGH_RAM_OFF 0 // SRAM1/SRAM2 are at the default setting
+#define HIGH_RAM_ON  1 // SRAM1/SRAM2 are enabled and free for use
+#define HIGH_RAM_MUSIC 2 // SRAM1/SRAM2 are enabled and used by music
+
+#ifndef PROJ_HIGH_RAM
+#define POK_HIGH_RAM HIGH_RAM_OFF
+#else
+#define POK_HIGH_RAM PROJ_HIGH_RAM
+#endif
 
 /** CONSOLE **/
 #define POK_USE_CONSOLE 0 //if debugging console is available or not
@@ -228,6 +237,8 @@
 #define BUFSIZE_MODE_12              4176 // 72 x 58
 #define MODE13                      13
 #define BUFSIZE_MODE13              9680 // 110*88
+#define MIXMODE                     32
+#define BUFSIZE_MIXMODE             9680 // 110*88
 #define MODE64                      64
 #define BUFSIZE_MODE64              19360 // 110*176
 #define MODE14                      14
@@ -291,6 +302,17 @@
     #define POK_STRETCH 0
     #define POK_FPS 30
 #endif
+
+#if PROJ_MIXMODE > 0
+    #undef POK_SCREENMODE //get rid of warnings
+    #undef POK_COLORDEPTH
+    #undef POK_FPS
+    #define POK_SCREENMODE MIXMODE
+    #define POK_COLORDEPTH 8
+    #define POK_STRETCH 0
+    #define POK_FPS 30
+#endif
+
 
 #if PROJ_MODE64 > 0 || PROJ_SCREENMODE == 64
     #undef POK_SCREENMODE //get rid of warnings
@@ -383,6 +405,11 @@
     #define LCDWIDTH 110
     #define LCDHEIGHT 88
     #define POK_BITFRAME 110*88
+#elif POK_SCREENMODE == MIXMODE
+    #define POK_SCREENBUFFERSIZE 110*88
+    #define LCDWIDTH 110
+    #define LCDHEIGHT 88
+    #define POK_BITFRAME 110*88
 #elif POK_SCREENMODE == MODE64
     #define POK_SCREENBUFFERSIZE 110*176
     #define LCDWIDTH 110
@@ -422,6 +449,9 @@
 #endif
 
 /** AUDIO **/
+
+#define POK_ALT_MIXING 1 // NEW! alternative more accurate mixing, uses more CPU
+
 #define POK_AUD_PIN P2_19
 #define POK_AUD_PWM_US 15 //31 //Default value 31
 #ifndef PROJ_AUD_FREQ
@@ -499,6 +529,7 @@
 #define EESETTINGS_RTCALARMMODE     4011 // 0xFAB RTC alarm mode (0=disabled, 1=enabled, 3 = enabled with sound)
 #define EESETTINGS_RESERVED         4012 // 0xFAC 4bytes reserved (additional sleep configuration)
 #define EESETTINGS_WAKEUPTIME       4016 // 0xFB0 Wake-up time as 32bit value for 1Hz RTC clock
+#define EESETTINGS_SKIPINTRO	    4020 // 0xFB4 Show Logo (0-Yes, 1-No, 2-Yes then switch to 0, 3-No, then switch to 1)
 
 /** USB SERIAL PORT **/
 
