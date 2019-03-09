@@ -229,7 +229,7 @@ void Pok_Display_blitFrameBuffer(int16_t x, int16_t y, int16_t w, int16_t h, int
     if( invisiblecol_ != -1)
         Display::invisiblecolor = (uint8_t)invisiblecol_;
     if( invisiblecol_ >= 16 )
-	SDL_RenderCopySolid( buffer, w, h, x, y );
+    	SDL_RenderCopySolid( buffer, w, h, x, y );
     else
 	Display::drawBitmapData(x, y, w, h, buffer );
 }

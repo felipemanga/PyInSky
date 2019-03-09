@@ -85,7 +85,8 @@ using std::max;
 
 extern "C" void CheckStack();
 extern char _ebss[];  // In map file
-extern char _vStackTop[];  // In map file
+extern void _vStackTop(void);
+// extern char _vStackTop[];  // In map file
 
 Pokitto::Core core;
 Pokitto::Sound _pdsound;

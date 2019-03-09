@@ -23,6 +23,8 @@ function createFile( name, src ){
 
     sess.setUndoManager( new ace.UndoManager() );
 
+    name = name.replace(/^.*[\\/]([^\\/]+)$/, "$1");
+
     source[ name ] = sess;
     mpy[name] = null;
     
@@ -268,9 +270,13 @@ function importFile( file, reader ){
             .then( zip => {
 
                 for( let name in zip.files ){
+                    if( zip.files[name].dir )
+                        continue;
+                    
                     zip.file(name)
                         .async("arraybuffer")
-                        .then( importFile.bind(null, name) );
+                        .then( importFile.bind(null, name) )
+                        .catch( ex => console.log(ex) )
                 }
 
             });
