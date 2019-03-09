@@ -17,7 +17,7 @@
 #define PROJ_GAMEBUINO 0
 #define PROJ_STREAMING_MUSIC 0
 #define PROJ_ENABLE_SYNTH 0
-
+#define PROJ_FPS 40
 // Python specific
 
 #define PROJ_PYTHON_REPL 0
