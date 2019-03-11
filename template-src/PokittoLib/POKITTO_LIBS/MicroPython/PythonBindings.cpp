@@ -36,6 +36,7 @@
 
 #include "PokittoCore.h"
 #include "PokittoDisplay.h"
+#include "Tilemap.hpp"
 #include "PythonBindings.h"
 #include "time.h"
 
@@ -115,6 +116,11 @@ bool Pok_readAndRemoveFromRingBuffer(EventRingBufferItem* itemOut){
     return true;
 }
 
+void Pok_Display_init( bool mustClearScreen )
+{
+    Display::persistence = !mustClearScreen;
+}
+
 uint8_t Pok_Display_getNumberOfColors() {
 
     return Display::getNumberOfColors();
@@ -179,12 +185,14 @@ void Pok_Display_setClipRect(int16_t x, int16_t y, int16_t w, int16_t h) {
 }
 
 // Draw the screen surface immediately to the display. Do not care about fps limits. Do not run event loops etc.
-void Pok_Display_update(bool useDirectMode, uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
+void Pok_Display_update(bool useDirectMode, uint8_t x, uint8_t y, uint8_t w, uint8_t h)
+{
     Display::update(useDirectMode, x, y, w, h);
 }
 
 // Run the event loops, audio loops etc. Draws the screen when the fps limit is reached and returns true.
-bool Pok_Core_update(bool useDirectMode, uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
+bool Pok_Core_update(bool useDirectMode, uint8_t x, uint8_t y, uint8_t w, uint8_t h )
+{
 
     bool ret = Core::update(useDirectMode, x, y, w, h);
     //printf("update, %d ms\n", Core::getTime()-s);
@@ -302,6 +310,43 @@ void Pok_Wait(uint32_t dur_ms) {
 #endif // POK_SIM
 }
 
+uint32_t Pok_Time_us()
+{
+    return Core::getTime();
+}
+
+// Tilemap functions.
+
+void* Pok_ConstructMap()
+{
+    return new Tilemap();
+}
+
+void Pok_DestroyMap( void* _this )
+{
+    delete(((Tilemap*)_this));
+}
+
+void Pok_SetTile( void* _this, uint8_t index, uint8_t width, uint8_t height, const uint8_t *data)
+{
+    if( _this == NULL ) return;
+    index &= 0xf; // Limit between 0 and 15.
+    ((Tilemap*)_this)->tiles[index].set( width, height, data );
+}
+
+void Pok_SetMap( void* _this, size_t width, size_t height, const uint8_t *map )
+{
+    if( _this == NULL ) return;
+   ((Tilemap*)_this)->set( width, height, map );
+}
+
+void Pok_DrawMap( void* _this, int32_t x, int32_t y )
+{
+    if( _this == NULL ) return;
+    ((Tilemap*)_this)->draw( x, y );
+}
+
+// For compatibility in linking
 
 struct tm * localtime_cpp(const time_t * timer)
 {

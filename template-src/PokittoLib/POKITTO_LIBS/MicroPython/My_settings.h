@@ -18,6 +18,9 @@
 #define PROJ_STREAMING_MUSIC 0
 #define PROJ_ENABLE_SYNTH 0
 
+#define PROJ_SHOW_FPS_COUNTER
+#define PROJ_FPS 200
+
 // Python specific
 
 #define PROJ_PYTHON_REPL 0
@@ -26,7 +29,7 @@
 #ifdef POK_SIM
 #define USE_USB_SERIAL_PRINT (0)
 #else
-#define USE_USB_SERIAL_PRINT (1)
+#define USE_USB_SERIAL_PRINT (0)
 #endif
 
 #endif

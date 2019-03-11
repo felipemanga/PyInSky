@@ -69,6 +69,7 @@ EXTERNC bool Pok_addToRingBuffer(uint8_t type, uint8_t key);
 EXTERNC bool Pok_readAndRemoveFromRingBuffer(EventRingBufferItem* itemOut);
 
 // Display
+EXTERNC void Pok_Display_init( bool mustClearScreen );
 EXTERNC uint8_t Pok_Display_getNumberOfColors();
 EXTERNC uint16_t Pok_Display_getWidth();
 EXTERNC uint16_t Pok_Display_getHeight();
@@ -99,8 +100,18 @@ EXTERNC void Pok_Sound_FillBuffer(void* buf, uint16_t len, uint8_t soundBufferIn
 EXTERNC void Pok_Sound_Play();
 EXTERNC void Pok_Sound_Pause();
 
+// Time related functions.
 EXTERNC void Pok_Wait(uint32_t dur_ms);
+EXTERNC uint32_t Pok_Time_us();
 
+// Tilemap functions.
+EXTERNC void* Pok_ConstructMap();
+EXTERNC void Pok_DestroyMap( void* _this );
+EXTERNC void Pok_SetTile( void* _this, uint8_t index, uint8_t width, uint8_t height, const uint8_t *data);
+EXTERNC void Pok_SetMap( void* _this, size_t width, size_t height, const uint8_t *map );
+EXTERNC void Pok_DrawMap( void* _this, int32_t x, int32_t y );
+
+// For compatibility in linking
 EXTERNC struct tm * localtime_cpp(const time_t * timer);
 EXTERNC time_t time_cpp(time_t* timer);
 

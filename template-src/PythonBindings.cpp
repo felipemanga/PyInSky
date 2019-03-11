@@ -36,6 +36,7 @@
 
 #include "PokittoCore.h"
 #include "PokittoDisplay.h"
+#include "Tilemap.hpp"
 #include "PythonBindings.h"
 #include "time.h"
 
@@ -43,98 +44,18 @@ using namespace Pokitto;
 
 #if MICROPY_ENABLE_GC==1  // This means micropython is used
 
-void SDL_RenderCopySolid( const uint8_t *data, uint32_t width, uint32_t height, int32_t x, int32_t y )
-{
-    struct rect {
-	uint32_t x, y, w, h;
-    };
-    
-    rect srcClipped, dstClipped;
-    srcClipped.x = 0;
-    srcClipped.y = 0;
-    srcClipped.w = width;
-    srcClipped.h = height;
-    dstClipped.x = x;
-    dstClipped.y = y;
-
-    if( x < 0 )
-    {
-	srcClipped.x -= x;
-	dstClipped.x = 0;
-        srcClipped.w += x;
-    }
-
-    if( y < 0 )
-    {
-        srcClipped.y -= y;
-        srcClipped.h += y;
-        dstClipped.y = 0;
-    }
-
-    if( dstClipped.x + srcClipped.w >= Pokitto::Display::width )
-    {
-        int16_t w = Pokitto::Display::width - dstClipped.x;
-        if( w&1) w--;
-        srcClipped.w = w;
-    }
-
-    if( dstClipped.y + srcClipped.h >= Pokitto::Display::height )
-    {
-        srcClipped.h = Pokitto::Display::height - dstClipped.y;
-    }
-
-    if( srcClipped.x & 1 )
-    {
-	srcClipped.x++;
-	dstClipped.x++;
-        srcClipped.w--;
-    }
-
-    if( srcClipped.w <= 0 || srcClipped.h <= 0 )
-        return;
-
-    const uint8_t *pd;
-    uint8_t *out;
-    int offsett = 0;
-    int offsetty = 0;
-    int dsty = dstClipped.y * (Pokitto::Display::width >> 1);
-    offsetty = srcClipped.y * width;
-
-    for (uint32_t y=0; y < srcClipped.h; y++, offsetty += width, dsty += Pokitto::Display::width >> 1 )
-    {
-        offsett = offsetty + srcClipped.x;
-	pd = &data[(offsett>>1)];
-	out = Pokitto::Display::screenbuffer + dsty + (dstClipped.x>>1);
-	
-        if( dstClipped.x & 1 )
-        {
-            for (uint32_t x = 0; x < srcClipped.w-1; x+=2, out++, pd++)
-            {
-		out[1] = (out[1]&0x0F) | (*pd<<4);
-		out[0] = (out[0]&0xF0) | (*pd>>4);
-            }
-        }
-        else
-        {
-            for (uint32_t x = 0; x < srcClipped.w-1; x+=2 )
-            {
-		*out++ = *pd++;
-            }
-        }
-
-    }
-
-}
-
-
 // Ring buffer size
 #define EVENT_RING_BUFFER_SIZE 10
+
+void SDL_RenderCopySolid( const uint8_t *data, uint32_t width, uint32_t height, int32_t x, int32_t y );
 
 // Ring buffer Local data
 EventRingBufferItem eventRingBuffer[EVENT_RING_BUFFER_SIZE];
 int rbNextFreeItemIndex = 0;
 int rbOldestItemIndex = -1; // empty
 
+extern "C" {
+    
 // Add item to the end of ring buffer
 bool Pok_addToRingBuffer(uint8_t type, uint8_t key) {
 
@@ -199,6 +120,11 @@ bool Pok_readAndRemoveFromRingBuffer(EventRingBufferItem* itemOut){
     return true;
 }
 
+void Pok_Display_init( bool mustClearScreen )
+{
+    Display::persistence = !mustClearScreen;
+}
+
 uint8_t Pok_Display_getNumberOfColors() {
 
     return Display::getNumberOfColors();
@@ -226,12 +152,13 @@ void Pok_Display_print(uint8_t x, uint8_t y, const char str[], uint8_t color) {
 }
 
 void Pok_Display_blitFrameBuffer(int16_t x, int16_t y, int16_t w, int16_t h, int16_t invisiblecol_, const uint8_t *buffer) {
-    if( invisiblecol_ != -1)
-        Display::invisiblecolor = (uint8_t)invisiblecol_;
     if( invisiblecol_ >= 16 )
     	SDL_RenderCopySolid( buffer, w, h, x, y );
-    else
-	Display::drawBitmapData(x, y, w, h, buffer );
+    else{
+        if( invisiblecol_ != -1)
+            Display::invisiblecolor = (uint8_t)invisiblecol_;
+        Display::drawBitmapData(x, y, w, h, buffer );
+    }
 }
 
 void Pok_Display_setSprite(uint8_t index, int16_t x, int16_t y, int16_t w, int16_t h, int16_t invisiblecol_, uint8_t *buffer, uint16_t* palette16x16bit, bool doResetDirtyRect) {
@@ -266,12 +193,14 @@ void Pok_Display_setClipRect(int16_t x, int16_t y, int16_t w, int16_t h) {
 }
 
 // Draw the screen surface immediately to the display. Do not care about fps limits. Do not run event loops etc.
-void Pok_Display_update(bool useDirectMode, uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
+void Pok_Display_update(bool useDirectMode, uint8_t x, uint8_t y, uint8_t w, uint8_t h)
+{
     Display::update(useDirectMode, x, y, w, h);
 }
 
 // Run the event loops, audio loops etc. Draws the screen when the fps limit is reached and returns true.
-bool Pok_Core_update(bool useDirectMode, uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
+bool Pok_Core_update(bool useDirectMode, uint8_t x, uint8_t y, uint8_t w, uint8_t h )
+{
 
     bool ret = Core::update(useDirectMode, x, y, w, h);
     //printf("update, %d ms\n", Core::getTime()-s);
@@ -394,6 +323,38 @@ uint32_t Pok_Time_us()
     return Core::getTime();
 }
 
+// Tilemap functions.
+
+void* Pok_ConstructMap()
+{
+    return new Tilemap();
+}
+
+void Pok_DestroyMap( void* _this )
+{
+    delete(((Tilemap*)_this));
+}
+
+void Pok_SetTile( void* _this, uint8_t index, uint8_t width, uint8_t height, const uint8_t *data)
+{
+    if( _this == NULL ) return;
+    index &= 0xf; // Limit between 0 and 15.
+    ((Tilemap*)_this)->tiles[index].set( width, height, data );
+}
+
+void Pok_SetMap( void* _this, size_t width, size_t height, const uint8_t *map )
+{
+    if( _this == NULL ) return;
+   ((Tilemap*)_this)->set( width, height, map );
+}
+
+void Pok_DrawMap( void* _this, int32_t x, int32_t y )
+{
+    if( _this == NULL ) return;
+    ((Tilemap*)_this)->draw( x, y );
+}
+
+// For compatibility in linking
 
 struct tm * localtime_cpp(const time_t * timer)
 {
@@ -404,5 +365,6 @@ time_t time_cpp(time_t* timer){
     return(time(timer));
 }
 
+}
 
 #endif // MICROPY_ENABLE_GC

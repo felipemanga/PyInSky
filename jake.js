@@ -71,6 +71,7 @@ CSOURCES.push('PokittoLib/POKITTO_HW/clock_11u6x.c');
 CSOURCES.push('PokittoLib/POKITTO_HW/dma_11u6x.c');
 CXXSOURCES.push('PokittoLib/POKITTO_HW/iap.cpp');
 CSOURCES.push('PokittoLib/POKITTO_HW/timer_11u6x.c');
+CXXSOURCES.push('PokittoLib/POKITTO_LIBS/Tilemap/Tilemap.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_LIBS/Synth/Synth.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_LIBS/Synth/Synth_envfuncs.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_LIBS/Synth/Synth_helpers.cpp');
@@ -162,7 +163,7 @@ C_FLAGS.push(
 );
 
 CXX_FLAGS.push(
-    '-std=gnu++98',
+    '-std=c++11',
     '-fno-rtti',
     '-Wvla',
     '-c',
@@ -219,7 +220,7 @@ C_FLAGS.push('-DDEVICE_PWMOUT=1');
 C_FLAGS.push('-DTARGET_LIKE_CORTEX_M0');
 
 
-CXX_FLAGS.push('-std=gnu++98');
+CXX_FLAGS.push('-std=c++11');
 CXX_FLAGS.push('-fno-rtti');
 CXX_FLAGS.push('-Wvla');
 CXX_FLAGS.push('-DTARGET_LPC11U68');
@@ -260,6 +261,7 @@ FLAGS.push('-I./PokittoLib/POKITTO_CORE/FONTS');
 FLAGS.push('-I./PokittoLib/POKITTO_CORE/PALETTES');
 FLAGS.push('-I./PokittoLib/POKITTO_HW');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS');
+FLAGS.push('-I./PokittoLib/POKITTO_LIBS/Tilemap');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS/ImageFormat');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS/Synth');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS/USBDevice');

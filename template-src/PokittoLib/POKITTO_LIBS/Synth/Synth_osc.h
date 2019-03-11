@@ -61,6 +61,14 @@ struct OSC {
   uint8_t kick;
 
   uint32_t duration;
+
+  uint32_t samplepos;
+  uint32_t samplestep;
+  uint32_t samplelength;
+  uint8_t* sample;
+  //uint32_t samplebendcount;
+  //uint32_t samplebendtick;
+
 };
 
 
