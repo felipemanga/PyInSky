@@ -371,11 +371,13 @@ function importImage( image, name ){
         }
 
         out += '\\\n' + line.join('');
-
+        if( W&1 ) out += "0";
     }
 
     out += "\\\n'\n";
 
+    if( W&1 ) W++;
+    
     out += `${name} = upygame.surface.Surface(${W}, ${H}, ${name}Pixels)\n`;
 
     editor.session.insert( editor.getCursorPosition(), out );

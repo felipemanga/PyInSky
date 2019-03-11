@@ -104,6 +104,13 @@ private:
     static uint16_t volumeMax;
 
 public:
+    static const uint8_t *sfxDataPtr;
+    static const uint8_t *sfxEndPtr;
+    static void playSFX( const uint8_t *sfx, uint32_t length ){
+	sfxDataPtr = sfx;
+	sfxEndPtr = sfx + length;
+    };
+    
 	static void begin();
 
 	// Headphonemode
@@ -112,6 +119,9 @@ public:
     static uint16_t getMaxVol();
     static void volumeUp();
     static void volumeDown();
+
+    // Synth using samples support
+    static void loadSampleToOsc(uint8_t os, uint8_t* sampdata, uint32_t sampsize);
 
 	// Original functions
 	static void updateStream();

@@ -68,6 +68,11 @@
 
 #ifndef POK_SIM
 #include "HWSound.h"
+
+#ifdef PROJ_SDFS_STREAMING
+#include "SDFSDisk.h"
+#endif
+
 #else
 #include "SimSound.h"
 #include "PokittoSimulator.h"
@@ -89,6 +94,9 @@ uint8_t const Pokitto::discrete_vol_hw_levels[8]   {0,27,64,96,36,117,127,127};
 uint8_t const Pokitto::discrete_vol_multipliers[8] {0,127,127,127,192,192,255,255};
 
 Pokitto::Core _soundc;
+
+const uint8_t *Sound::sfxDataPtr = 0;
+const uint8_t *Sound::sfxEndPtr = 0;
 
 uint8_t Sound::prescaler;
 uint16_t Sound::globalVolume;
@@ -853,8 +861,11 @@ uint8_t Sound::getVolume(uint8_t channel) {
 
 void Sound::playTone(uint8_t os, int frq, uint8_t amp, uint8_t wav,uint8_t arpmode)
 {
-    if (wav>5) wav=0;
+    if (wav>MAX_WAVETYPES) wav=0;
     if (arpmode>MAX_ARPMODE) arpmode=MAX_ARPMODE;
+    if (frq>58) {
+        volatile uint32_t jumpu = frq;
+    }
     if (os==1) setOSC(&osc1,1,wav,1,0,0,frq,amp,0,0,0,0,0,0,arpmode,0,0);
     else if (os==2) setOSC(&osc2,1,wav,1,0,0,frq,amp,0,0,0,0,0,0,arpmode,0,0);
     else if (os==3) setOSC(&osc3,1,wav,1,0,0,frq,amp,0,0,0,0,0,0,arpmode,0,0);
@@ -915,12 +926,16 @@ void Sound::pauseMusicStream() {
 int Sound::playMusicStream(char* filename, uint8_t options)
 {
     #if POK_STREAMING_MUSIC
+
         uint8_t result;
         result = pokInitSD();
         if (!isThisFileOpen(filename)) {
             fileClose(); // close any open files
             result = fileOpen(filename,FILE_MODE_READONLY | FILE_MODE_BINARY);
-        }
+        }else{
+	    fileRewind();
+	    result = 0;
+	}
 
         if (result) {
                 currentPtr = 0; // mark that no stream is available
@@ -954,4 +969,14 @@ uint32_t Sound::getMusicStreamElapsedMilliSec() {
     return streamcounter/(POK_AUD_FREQ/1000);
     #endif
     return 0;
+}
+
+void Sound::loadSampleToOsc(uint8_t os, uint8_t* data, uint32_t datasize) {
+    OSC* o;
+    if (os==3) o = &osc3;
+    else if (os==2) o = &osc2;
+    else o = &osc1;
+    o->sample = data;
+    o->samplelength = datasize;
+    o->samplepos = 0;
 }

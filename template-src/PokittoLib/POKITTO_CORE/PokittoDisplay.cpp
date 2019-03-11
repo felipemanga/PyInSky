@@ -85,8 +85,7 @@ using std::max;
 
 extern "C" void CheckStack();
 extern char _ebss[];  // In map file
-extern void _vStackTop(void);
-// extern char _vStackTop[];  // In map file
+extern char _vStackTop[];  // In map file
 
 Pokitto::Core core;
 Pokitto::Sound _pdsound;
@@ -163,6 +162,11 @@ uint8_t Display::bpp = POK_COLORDEPTH;
     uint8_t Display::width = 110;
     uint8_t Display::height = 88;
     uint8_t Display::screenbuffer[110*88]; // 8bit 110x88
+#elif (POK_SCREENMODE == MIXMODE)
+    uint8_t Display::width = 110;
+    uint8_t Display::height = 88;
+    uint8_t Display::screenbuffer[110*88]; // 8bit 110x88 or 4bit 110x176
+    uint8_t Display::scanType[88]; // scanline bit depth indicator
 #elif (POK_SCREENMODE == MODE64)
     uint8_t Display::width = 110;
     uint8_t Display::height = 176;
@@ -290,6 +294,10 @@ void Display::update(bool useDirectDrawMode, uint8_t updRectX, uint8_t updRectY,
     if (! useDirectDrawMode) {
 		#if POK_SCREENMODE == MODE13
 		lcdRefreshMode13(m_scrbuf, paletteptr, palOffset);
+		#endif
+
+		#if POK_SCREENMODE == MIXMODE
+		lcdRefreshMixMode(m_scrbuf, paletteptr, scanType);
 		#endif
 
 		#if POK_SCREENMODE == MODE64
@@ -488,9 +496,11 @@ int Display::bufferChar(int16_t x, int16_t y, uint16_t index){
     // GLCD fonts are arranged LSB = topmost pixel of char, so its easy to just shift through the column
     uint16_t bitcolumn; //16 bits for 2x8 bit high characters
 
+    if( fontSize != 2 ) fontSize = 1;
+
     void (*drawPixelFG)(int16_t,int16_t, uint8_t) = &Display::drawPixelNOP;
     void (*drawPixelBG)(int16_t,int16_t, uint8_t) = &Display::drawPixelNOP;
-    if( x>=0 && y >= 0 && x+w<width && y+h<height ){
+    if( x>=0 && y >= 0 && x+w*fontSize<width && y+(h+1)*fontSize<height ){
 	if( color != invisiblecolor )
 	    drawPixelFG = &Display::drawPixelRaw;
 	if( bgcolor != invisiblecolor )
@@ -1513,7 +1523,8 @@ void Display::drawBitmapData(int16_t x, int16_t y, int16_t w, int16_t h, const u
     else if (m_colordepth==4) {
 
     /** 4bpp fast version */
-	int16_t scrx,scry,xclip,xjump,scrxjump;
+	int16_t scrx,scry,xjump,scrxjump;
+	int16_t xclip;
     xclip=xjump=scrxjump=0;
     /** y clipping */
     if (y<0) { h+=y; bitmap -= y*(w>>1); y=0;}
@@ -1550,8 +1561,9 @@ void Display::drawBitmapData(int16_t x, int16_t y, int16_t w, int16_t h, const u
                         uint8_t sourcepixel = *bitmap;
                         if ((sourcepixel&0x0F) != invisiblecolor) {
                             sourcepixel <<=4;
-                            uint8_t targetpixel = *scrptr;// & 0x0F;
-                            targetpixel |= sourcepixel;
+                            volatile uint8_t targetpixel = *scrptr;// & 0x0F;
+                            targetpixel &= 0xF; //clear upper nibble
+                            targetpixel |= sourcepixel; //now OR it
                             *scrptr = targetpixel;
                         }
                         //scrptr++;
@@ -1561,9 +1573,11 @@ void Display::drawBitmapData(int16_t x, int16_t y, int16_t w, int16_t h, const u
                 }
                 bitmap += xjump; // needed if x<0 clipping occurs
             } else { /** ODD pixel starting line **/
+                uint8_t sourcepixel;
+                uint8_t targetpixel;
                 for (scrx = x; scrx < w+x-xclip; scrx+=2) {
-                    uint8_t sourcepixel = *bitmap;
-                    uint8_t targetpixel = *scrptr;
+                    sourcepixel = *bitmap;
+                    targetpixel = *scrptr;
                     // store higher nibble of source pixel in lower nibble of target
                     if((sourcepixel>>4)!=invisiblecolor) targetpixel = (targetpixel & 0xF0) | (sourcepixel >> 4 );
                     *scrptr = targetpixel;
@@ -1573,6 +1587,12 @@ void Display::drawBitmapData(int16_t x, int16_t y, int16_t w, int16_t h, const u
                     if((sourcepixel&0x0F)!=invisiblecolor) targetpixel = (targetpixel & 0x0F) | (sourcepixel << 4);
                     *scrptr = targetpixel;
                     bitmap++;
+                }
+                if (xclip) {
+                    // last line, store higher nibble of last source pixel in lower nibble of last address
+                    sourcepixel = *bitmap >> 4;
+                    if(sourcepixel!=invisiblecolor) targetpixel = (targetpixel & 0xF0) | sourcepixel;
+                    *scrptr = targetpixel;
                 }
                 bitmap+=xjump;
             }
@@ -2436,6 +2456,10 @@ void Display::lcdRefresh(unsigned char* scr, bool useDirectDrawMode) {
     if (useDirectDrawMode) return;
 #if POK_SCREENMODE == MODE13
     lcdRefreshMode13(m_scrbuf, paletteptr, palOffset);
+#endif
+
+#if POK_SCREENMODE == MIXMODE
+    lcdRefreshMixMode(m_scrbuf, paletteptr, scanType);
 #endif
 
 #if POK_SCREENMODE == MODE64
