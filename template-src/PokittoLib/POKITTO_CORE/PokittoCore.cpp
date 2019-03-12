@@ -891,7 +891,7 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
     #endif
 
     uint32_t now = getTime();
-	if ((((nextFrameMillis - now)) > timePerFrame) && frameEndMicros) { //if time to render a new frame is reached and the frame end has ran once
+    // if ((((nextFrameMillis - now)) > timePerFrame) && frameEndMicros) { //if time to render a new frame is reached and the frame end has ran once
 		nextFrameMillis = now + timePerFrame;
 		frameCount++;
 
@@ -913,9 +913,9 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
         }
         #endif
 
-		return true;
+        // return true;
 
-	} else {
+	// } else {
 		if (!frameEndMicros) { //runs once at the end of the frame
 			#if POK_ENABLE_SOUND > 0
 			sound.updateTrack();
@@ -930,8 +930,8 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
             frameEndMicros = 1; //jonne
 
 		}
-		return false;
-	}
+		return true;
+                // }
 }
 
 void Core::displayBattery(){
