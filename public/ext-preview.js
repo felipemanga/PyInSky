@@ -64,21 +64,20 @@ function afterRenderPreview( editor ){
         return false;
     }
     
-    let token = next(), identifiers = [];
+    let token = next();
     while( token ){
 
         if( !token.classList.contains("ace_identifier") ){
-            identifiers.length = 0;
             token = next();
             continue;
         }
 
-        identifiers.push(token);
-
         if( token.textContent == "set_palette_16bit" ){
 
-            if( !expect("([") )
+            if( !expect("([") ){
+                token = next();
                 continue;
+            }
 
             let color = 0;
             while( (token = next()) && token.classList.contains("ace_numeric") ){
@@ -108,11 +107,7 @@ function afterRenderPreview( editor ){
             continue;
 
         }
-/*
-        if( identifiers.slice(1).join(".") == "surface.Surface" ){
-            
-        }
-*/        
+
         if( /Pixels/i.test(token.textContent)
             && expect("=")
             && expectSwitch(
