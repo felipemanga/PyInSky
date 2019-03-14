@@ -4,7 +4,13 @@
 <script src="jszip.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="localforage.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
 <script>
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/kuroir");
+ var editor = ace.edit("editor");
+ editor.setTheme("ace/theme/kuroir");
+ editor.setOptions({
+     enableBasicAutocompletion:true,
+     enableSnippets:true,
+     enableLiveAutocompletion:true
+ });
 </script>
