@@ -10,14 +10,17 @@
     <div class="pane">
       <% include ../partials/ide.ejs %>
     </div>
-    <div class="pane rightpane">
+    <div class="pane rightpane" mode="project">
       <% include ../partials/emulator.ejs %>
       <% include ../partials/messages.ejs %>
+      <% include ../partials/project.ejs %>
     </div>
   </div>
   <script>var examples = {}</script>
   <% include ../partials/examples.ejs %>
   <% include ../partials/mpycross.ejs %>
+  <script src="compile.js"></script>
+  <script src="uuid-random.min.js"></script>
   <script src="ide.js"></script>
   <script src="ext-preview.js" type="text/javascript" charset="utf-8"></script>
 </body>

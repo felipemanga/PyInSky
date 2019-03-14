@@ -2,7 +2,8 @@ const DOM = {};
 let source = null;
 let mpy = {};
 let busy = false;
-
+let project = {};
+let projectIdList = [];
 let fontSize = 3;
 let fontSizes = [8, 12, 14, 16, 18, 24, 48];
 
@@ -15,6 +16,28 @@ function setFontSize( offset ){
     editor.setFontSize( fontSizes[fontSize] );
 }
 
+function scheduleSave( project, force=false ){
+
+    if( project.saveHandle )
+        clearTimeout( project.saveHandle );
+
+    if( !force )
+        project.saveHandle = setTimeout(doSave, 1000);
+    else
+        return doSave();
+
+    function doSave(){
+        
+        delete project.saveHandle;
+
+        if( !project.id )
+            project.id = `proj:${uuid()}`;
+
+        return localforage.setItem(project.id, project);
+
+    }
+}
+
 function createFile( name, src ){
     let sess = new ace.EditSession(src);
 
@@ -25,13 +48,18 @@ function createFile( name, src ){
 
     name = name.replace(/^.*[\\/]([^\\/]+)$/, "$1");
 
+    project.files[ name ] = src;
     source[ name ] = sess;
     mpy[name] = null;
     
     sess.setMode("ace/mode/python");
     sess.on('change', _ => {
         mpy[name] = null;
+        project.files[name] = sess.getValue();
+        scheduleSave(project);
     });
+
+    scheduleSave(project);
     return sess;
 }
 
@@ -50,23 +78,59 @@ function showFile( name, line ){
     }
 }
 
-function loadExample( name ){
-    if( source && !confirm("Loading an example will discard your current project.\nAre you sure you want to do this?") ){
-        return;
-    }
+function loadProject( projectId ){
+    localforage.setItem("lastProjectId", projectId)
+        .then(_=>{})
+        .catch(_=>{});
 
+    localforage.getItem(projectId)
+        .then( _project=>{
+            
+            if( !_project || !_project.files || typeof _project.files != "object" )
+                _project = {
+                    files:{"main.py":"# Unnamed Project"}
+                };
+            
+            project = _project;
+
+            if( !project.name )
+                project.name = "Unnamed Project";
+
+            DOM.projectList.value = projectId;
+            DOM.projectName.value = project.name;
+
+            mpy = {};
+            source = {};
+
+            for( let fileName in project.files ){
+                createFile( fileName, project.files[fileName] );
+            }
+            
+            editor.setSession( source[ Object.keys(source)[0] ] );
+            updateFileList();
+            updateProjectList();
+        })
+        .catch( ex => console.error(ex) );
+}
+
+function loadExample( name ){
+    project = {name, id:`proj:${uuid()}`, files:{}};
     source = {};
     mpy = {};
+    projectIdList.push( project.id );
 
     let example = examples[name];
     
     for( let fileName in example ){
         createFile( fileName, example[fileName] );
     }
-    
-    editor.setSession( source[ Object.keys(source)[0] ] );
 
+    DOM.projectName.value = name;
+
+    editor.setSession( source[ Object.keys(source)[0] ] );
     updateFileList();
+    scheduleSave(project, true)
+        .then( _=>updateProjectList() );
 }
 
 function updateFileList(){
@@ -80,6 +144,33 @@ function updateFileList(){
         e.textContent = fileName;
         if( editor.session == source[fileName] )
             DOM.fileList.value = fileName;
+    }
+}
+
+
+function updateProjectList(){
+
+    let current = project.id;
+
+    while( DOM.projectList.children.length )
+        DOM.projectList.removeChild( DOM.projectList.firstElementChild );
+
+    for( let key of projectIdList ){
+        localforage.getItem(key)
+            .then(project => {
+
+                if( !project )
+                    return;
+                
+                let opt = document.createElement("option");
+                opt.value = project.id;
+                opt.textContent = project.name;
+                DOM.projectList.appendChild(opt);
+
+                if( project.id == current )
+                    DOM.projectList.value = current;
+            })
+            .catch( ex => console.error(ex) );
     }
 }
 
@@ -113,125 +204,18 @@ function TimeoutPromise(cb, time){
 function focusEmulator(){
     DOM.emulator.focus();
     DOM.emulator.contentWindow.focus();
+    DOM.rightpane[0].setAttribute("mode", "output");
 }
 
 function closeEmulator(){
     editor.focus();
-    DOM.emulator.src = "empty.html";    
+    DOM.emulator.src = "empty.html";
+    DOM.rightpane[0].setAttribute("mode", "project");
 }
 
 function clearOutput(){
     while( DOM.output.children.length )
         DOM.output.removeChild( DOM.output.firstElementChild );
-}
-
-function compile(){
-    if( busy )
-        return;
-
-    setBusy( true );
-    clearOutput();
-
-    let isAborted = false;
-    
-    for( let fileName in source ){
-        
-        if( !mpy[fileName] ){
-            makeMPY( fileName );
-            if( isAborted )
-                break;
-        }
-        
-    }
-
-    if( isAborted ){
-        setBusy(false);
-        return;
-    }
-
-    let mpyext = {};
-    
-    for( let fileName in mpy ){
-        let nameExt = fileName.replace(/\.py$/i, '.mpy');
-        mpyext[ nameExt ] = mpy[ fileName ];
-    }
-
-    fetch("/build", { method:"POST", body:JSON.stringify(mpyext) })
-        .then( rsp => rsp.text() )
-        .then( txt => pollCompilerService( txt|0 ) )
-        .then( url => {
-            let e = document.createElement('div');
-            let a = document.createElement('a');
-            e.textContent = 'Build succeeded. ';
-            e.appendChild(a);
-            a.textContent = 'Download BIN';
-            // a.style.color = 'white';
-            a.href = `builds/${url}/build.bin`;
-            DOM.output.appendChild(e);
-
-            setTimeout( _=>{
-                if( a.parentElement == e )
-                    e.remove();
-            }, 50000);
-
-            DOM.emulator.src=`emulator?${url}`;
-            setBusy(false);
-            focusEmulator();
-        })
-        .catch( ex => {
-            console.warn(ex);
-            setBusy(false);
-        });
-
-    function pollCompilerService( id ){
-        return fetch(`/poll?id=${id}`)
-            .then( rsp => rsp.text() )
-            .then( txt => {
-                
-                if( txt == "QUEUED" || txt == "BUILDING" )
-                    return TimeoutPromise(
-                        _=>pollCompilerService(id),
-                        1000
-                    );
-
-                if( txt == "DONE" )
-                    return id;
-                
-                throw new Error(txt);
-            });
-    }
-
-    function makeMPY( name ){
-        let bin;
-        
-        Module.reset();
-        FS.writeFile( name, source[name].getValue() );
-
-        try{
-            Module.callMain(["-o", "out.mpy", "-s", name, name]);
-            bin = FS.readFile( "out.mpy", {encoding:"binary"} );
-        }catch(ex){
-        }
-
-        try{
-            FS.unlink("out.mpy");
-        }catch(ex){}
-        
-        if( bin ){
-            let str = "";
-            for( let i=0; i<bin.length; ++i )
-                str += String.fromCharCode(bin[i]);
-            mpy[name] = btoa(str);
-        }else{
-            abort();
-        }
-        
-    }
-
-    function abort(){
-        isAborted = true;
-    }
-
 }
 
 editor.commands.addCommand({
@@ -465,7 +449,7 @@ const events = {
                     
                     let a = document.createElement("a");
                     a.href = URL.createObjectURL( new Blob([arr.buffer], {type:'application/bin'}) );
-                    a.download = "pokitto-mpy-project.zip";
+                    a.download = (project.name || "pokitto-mpy-project") + ".zip";
                     
                     document.body.appendChild(a);
                     a.click();
@@ -556,6 +540,48 @@ const events = {
         }
     },
 
+    projectList:{
+        change(){
+            loadProject( DOM.projectList.value );
+        }
+    },
+
+    projectName:{
+        change(){
+
+            project.name = DOM.projectName.value;
+
+            let option = [...DOM.projectList.children]
+                .find( child => {
+                    return child.value == project.id;
+                });
+            
+            if( option )
+                option.textContent = project.name;
+            
+            scheduleSave(project);
+
+        }
+    },
+
+    deleteProject:{
+        click(){
+            if( !confirm(`Are you sure you want to delete ${project.name}?`) )
+                return;
+
+            let index = projectIdList.indexOf(project.id);
+            projectIdList.splice(index, 1);
+
+            localforage.removeItem( project.id )
+                .then( _=>{
+                    if( projectIdList.length == 0 )
+                        loadExample( Object.keys(examples)[0] );
+                    else
+                        loadProject( projectIdList[ projectIdList.length-1 ] );
+                });
+        }
+    }
+
 };
 
 
@@ -606,14 +632,39 @@ const events = {
 
 (function(){
 
+    localforage.config({
+        name:"pokittopython"
+    });
+
     for( let name in examples ){
         let opt = document.createElement("option");
         opt.value = name;
         opt.textContent = name;
         DOM.exampleSelect.appendChild(opt);
     }
-    
-    loadExample( Object.keys(examples)[0] );
+
+    localforage.keys().then(keys => {
+        for( let key of keys ){
+            if( /^proj:.*$/.test(key) ){
+                projectIdList.push(key);
+            }
+        }
+
+        localforage.getItem("lastProjectId")
+            .then( lastProjectId => {
+
+                if( !lastProjectId )
+                    lastProjectId = projectIdList[ projectIdList.length-1 ];
+
+                if( lastProjectId )
+                    loadProject( lastProjectId );
+                else
+                    loadExample( Object.keys(examples)[0] );
+
+            }).catch( ex => console.log(ex) );
+            
+    });
+
     setFontSize(0);
 
 })();

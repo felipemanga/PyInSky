@@ -58,8 +58,38 @@ html, body {
     box-sizing: border-box;
 }
 
-#outputContainer {
+.rightpane[mode=output] #outputContainer,
+.rightpane[mode=project] #projectContainer
+{
+    display: initial;
+}
+
+.rightpane>div {
+    display: none;
     position: relative;
+}
+
+#projectContainer {
+    text-align: center;
+    color: var(--text-color);
+    background-color: var(--head-pane-bgc);
+    font-family: 'VT323';
+    font-size: 1.5em;
+}
+
+#projectContainer label {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.center {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    height: 5em;
 }
 
 #output {
