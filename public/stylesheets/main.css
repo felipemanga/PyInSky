@@ -9,16 +9,19 @@ html, body {
 .charR {
     --head-pane-bgc: #9b41b9;
     --button-bgc: #e531e5;
+    --text-color: #e7eae7;
 }
 
 .charG {
     --head-pane-bgc: #41b977;
     --button-bgc: #9fff2c;
+    --text-color: #e7eae7;
 }
 
 .charB {
     --head-pane-bgc: #41b9ac;
     --button-bgc: #00f9b8;
+    --text-color: #e7eae7;
 }
 
 .row {
@@ -46,7 +49,6 @@ html, body {
 }
 
 #headPane {
-    --text-color: #e7eae7;
     display: flex;
     padding: 18px 5px 18px 5px;
     flex-grow: 0;
@@ -58,28 +60,65 @@ html, body {
     box-sizing: border-box;
 }
 
-.rightpane[mode=output] #outputContainer,
-.rightpane[mode=project] #projectContainer
+#tabContainer{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--head-pane-bgc);
+    color: var(--text-color)
+}
+
+#tabContainer[mode=output] #outputContainer,
+#tabContainer[mode=project] #projectContainer
 {
     display: initial;
 }
 
-.rightpane>div {
+#tabContainer[mode=output] #outputTab,
+#tabContainer[mode=project] #projectTab
+{
+    background-color: var(--head-pane-bgc);
+}
+
+#tabContainer>div {
     display: none;
     position: relative;
+    flex-grow: 1;
+}
+
+#tabsHeader {
+    display: flex !important;
+    flex-direction: row;
+    flex-grow: 0 !important;
+    height: 2em;
+    background-color: rgba(0,0,0,0.3);
+}
+
+#tabsHeader button {
+    margin: 2px 2px 0 2px;
+    border-color: rgba(0,0,0,0.5);
+    border-style: none;
+    border-width: 1px 1px 0px 1px;
+    border-radius: 10px 20px 0 0;
+    background: rgba(0,0,0,0.3);
+    font-family: 'VT323';
+    font-size: 1.2em;
 }
 
 #projectContainer {
     text-align: center;
     color: var(--text-color);
-    background-color: var(--head-pane-bgc);
     font-family: 'VT323';
     font-size: 1.5em;
 }
 
-#projectContainer label {
-    display: block;
+#projectContainer .center div {
     margin-bottom: 15px;
+}
+
+#projectContainer #deleteProject {
+    margin-left: 30px;
+    background-color: red;
 }
 
 .center {
@@ -448,10 +487,10 @@ html, body {
     pointer-events: all;
 }
 input[type="color"]::-webkit-color-swatch-wrapper {
-	padding: 0;
+    padding: 0;
 }
 input[type="color"]::-webkit-color-swatch {
-	border: none;
+    border: none;
 }
 
 .textOverlay{

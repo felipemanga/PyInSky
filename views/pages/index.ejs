@@ -12,8 +12,18 @@
     </div>
     <div class="pane rightpane" mode="project">
       <% include ../partials/emulator.ejs %>
-      <% include ../partials/messages.ejs %>
-      <% include ../partials/project.ejs %>
+      <div id="tabContainer" class="tabs" mode="project">
+          <div id="tabsHeader">
+              <button id="projectTab" onclick="tabContainer.setAttribute('mode', 'project')">
+                  Project
+              </button>
+              <button id="outputTab" onclick="tabContainer.setAttribute('mode', 'output')">
+                  Log
+              </button>
+          </div>
+          <% include ../partials/messages.ejs %>
+          <% include ../partials/project.ejs %>
+      </div>
     </div>
   </div>
   <script>var examples = {}</script>

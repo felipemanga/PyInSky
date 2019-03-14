@@ -204,13 +204,13 @@ function TimeoutPromise(cb, time){
 function focusEmulator(){
     DOM.emulator.focus();
     DOM.emulator.contentWindow.focus();
-    DOM.rightpane[0].setAttribute("mode", "output");
+    DOM.tabContainer.setAttribute("mode", "output");
 }
 
 function closeEmulator(){
     editor.focus();
     DOM.emulator.src = "empty.html";
-    DOM.rightpane[0].setAttribute("mode", "project");
+    DOM.tabContainer.setAttribute("mode", "project");
 }
 
 function clearOutput(){
@@ -248,19 +248,62 @@ function importFile( file, reader ){
     let ext = file.replace(/.*?\.([^.]+)$/, '$1').toLowerCase();
     
     switch( ext ){
+    case 'ppp':
+        try{
+            let tmp = JSON.parse( abtostr(reader) );
+            delete tmp.files;
+            delete tmp.id;
+            Object.assign(project, tmp);
+        }catch(ex){
+            console.warn(ex);
+        }
+
+        DOM.projectName.value = project.name;
+        break;
+
     case 'zip':
         
         JSZip.loadAsync( reader )
             .then( zip => {
 
+                let isNewProject = zip.files["PokittoPythonProject.ppp"];
+
+                if( isNewProject ){
+                    mpy = {};
+                    source = {};
+                    project = {files:{}, id:`proj:${uuid()}`};
+                    projectIdList.push( project.id );
+                }
+
+                let pending = 1;
+
                 for( let name in zip.files ){
+                    
                     if( zip.files[name].dir )
                         continue;
+
+                    pending++;
                     
                     zip.file(name)
                         .async("arraybuffer")
-                        .then( importFile.bind(null, name) )
-                        .catch( ex => console.log(ex) )
+                        .then( data => {
+                            importFile( name, data );
+                            done();
+                        })
+                        .catch( ex => console.log(ex) );
+                }
+
+                done();
+
+                function done( ){
+                    pending--;
+                    if( pending )
+                        return;
+
+                    showFile( Object.keys(project.files).pop(), 0 );
+                    
+                    scheduleSave(project, true)
+                        .then( x=>updateProjectList() );
                 }
 
             });
@@ -443,6 +486,10 @@ const events = {
             let zip = new JSZip();
             for( let fileName in source )
                 zip.file( fileName, source[fileName].getValue() );
+
+            let ppp = Object.assign({}, project);
+            delete ppp.files;
+            zip.file( "PokittoPythonProject.ppp", JSON.stringify(ppp) );
             
             zip.generateAsync({type:"uint8array"})
                 .then(function(arr){

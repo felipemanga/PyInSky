@@ -43,8 +43,10 @@ document.addEventListener("DOMContentLoaded", function(){
     document.body.addEventListener("drop", dropFile);
 
     document.body.addEventListener("keydown", function(evt){
-	if( evt.key == "Escape" )
-	    parent.closeEmulator();
+	if( evt.key == "Escape" ){
+            parent.closeEmulator();
+            evt.preventDefault();
+        }
     })
 
     let url = location.search.replace(/[^0-9]*/g, '')|0;
