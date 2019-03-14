@@ -148,7 +148,7 @@ function updateFileList(){
 }
 
 
-function updateProjectList(){
+function updateProjectList( ){
 
     let current = project.id;
 
