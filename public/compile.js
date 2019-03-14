@@ -19,6 +19,7 @@ function compile(){
 
     if( isAborted ){
         setBusy(false);
+        DOM.tabContainer.setAttribute("mode", "output");
         return;
     }
 
