@@ -240,7 +240,7 @@ function abtostr( ab ){
     return str;
 }
 
-function importFile( file, reader ){
+function importFile( file, reader, paletteMode=false ){
 
     if( reader.result )
         reader = reader.result;
@@ -259,6 +259,10 @@ function importFile( file, reader ){
         }
 
         DOM.projectName.value = project.name;
+        break;
+
+    case 'pal':
+        importPalette( abtostr(reader), file.replace(/^([^.]+)\..*$/, "$1") );
         break;
 
     case 'zip':
@@ -334,15 +338,78 @@ function importFile( file, reader ){
             )
         );
 
-        img.onload = importImage.bind(
-            null,
-            img,
-            file.replace(/^([^.]+)\..*$/, "$1")
-        );
+        if( paletteMode === true ){
+            img.onload = importPaletteFromImage.bind(
+                null,
+                img,
+                file.replace(/^([^.]+)\..*$/, "$1")
+            );
+        }else{
+            img.onload = importImage.bind(
+                null,
+                img,
+                file.replace(/^([^.]+)\..*$/, "$1")
+            );
+        }
 
         img.src = url;
         
     }
+
+}
+
+function importPalette( pal, name ){
+    let str = pal.split(/\r?\n/);
+    let acc = [];
+    
+    if( str.shift() != "JASC-PAL" )
+        return alert("Invalid palette file!"); // JASC-PAL
+    str.shift(); // 0100 version
+
+    let max = parseInt( str.shift() ); // color count
+
+    for( let i=0; i<max && str.length; ++i ){
+	var line = str.shift().split(/\s/).map( x => parseInt(x) );
+        
+	acc.push(
+	    '0x' + (
+		((line[0]/0xFF*0x1F|0)<<11)
+		    + ((line[1]/0xFF*0x3F|0)<<5)
+		    + ((line[2]/0xFF*0x1F|0))
+	    ).toString(16).padStart(4, '0')
+	);
+        
+    }
+
+    pal = `upygame.display.set_palette_16bit([${acc.join(", ")}]);\n`;
+
+    editor.session.insert( editor.getCursorPosition(), pal );
+
+}
+
+function importPaletteFromImage( image, name ){
+    let q = new RgbQuant({
+        method: 1,
+        colors: 16,
+        minHueCols: 0
+    });
+
+    q.sample(image);
+
+    URL.revokeObjectURL( image.src );
+
+    let pal = q.palette( true, true );
+
+    pal = pal.map( c => "0x" + ( (c[0]/0xFF*0x1F>>>0) |
+                          (c[1]/0xFF*0x3F<<5>>>0) |
+                          (c[2]/0xFF*0x1F<<11>>>0)
+                        ).toString(16)
+                 ).join(", ");
+
+    editor.session.insert(
+        editor.getCursorPosition(),
+        `upygame.display.set_palette_16bit([${pal}]);\n`
+    );
 
 }
 
@@ -627,7 +694,66 @@ const events = {
                         loadProject( projectIdList[ projectIdList.length-1 ] );
                 });
         }
+    },
+
+    importPalette:{
+        change(){
+            let files = DOM.importPalette.files;
+            for( let i=0, file; (file=files[i]); ++i ){
+                let fr = new FileReader();
+                fr.onload = importFile.bind( null, file.name, fr, true );
+                fr.readAsArrayBuffer( file );
+            }
+        }
+    },
+
+    importImage:{
+        change(){
+            let files = DOM.importImage.files;
+            for( let i=0, file; (file=files[i]); ++i ){
+                let fr = new FileReader();
+                fr.onload = importFile.bind( null, file.name, fr );
+                fr.readAsArrayBuffer( file );
+            }
+        }
+    },
+
+    imageCreate:{
+        click(){
+            let w = parseInt(DOM.imageWidth.value)|0;
+            let h = parseInt(DOM.imageHeight.value)|0;
+            if( w < 0 || h < 0 )
+                return;
+
+            let n = DOM.imageName.value;
+
+            w += w&1;
+
+            let str = `${n}Pixels = b'\\\n`;
+            for( let y=0; y<h; ++y ){
+                for( let x=0; x<w; x+=2 ){
+                    str += "\\x00";
+                }
+                str += "\\\n";
+            }
+            str += `'\n${n} = upygame.surface.Surface(${w}, ${h}, ${n}Pixels);\n`;
+            editor.session.insert( editor.getCursorPosition(), str );
+            
+        }
+    },
+
+    imageWidth:{
+        change(){
+            DOM.imageWidth.value = parseInt(DOM.imageWidth.value);
+        }
+    },
+
+    imageHeight:{
+        change(){
+            DOM.imageHeight.value = parseInt(DOM.imageHeight.value);
+        }
     }
+
 
 };
 

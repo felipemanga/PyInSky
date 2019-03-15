@@ -20,9 +20,13 @@
               <button id="outputTab" onclick="tabContainer.setAttribute('mode', 'output')">
                   Log
               </button>
+              <button id="imageTab" onclick="tabContainer.setAttribute('mode', 'image')">
+                  Image
+              </button>
           </div>
           <% include ../partials/messages.ejs %>
           <% include ../partials/project.ejs %>
+          <% include ../partials/image.ejs %>
       </div>
     </div>
   </div>
@@ -31,6 +35,7 @@
   <% include ../partials/mpycross.ejs %>
   <script src="compile.js"></script>
   <script src="uuid-random.min.js"></script>
+  <script src="rgbquant.js"></script>  
   <script src="ide.js"></script>
   <script src="ext-preview.js" type="text/javascript" charset="utf-8"></script>
 </body>
