@@ -106,6 +106,7 @@ function loadProject( projectId ){
 
             DOM.projectList.value = projectId;
             DOM.projectName.value = project.name;
+            DOM.fontPreview.src = DOM.PROJ_FONT.value.replace(/^font/, "fonts/").toLowerCase() + ".png";
 
             mpy = {};
             source = {};
@@ -767,6 +768,12 @@ const events = {
     imageHeight:{
         change(){
             DOM.imageHeight.value = parseInt(DOM.imageHeight.value);
+        }
+    },
+
+    PROJ_FONT:{
+        change(){
+            DOM.fontPreview.src = DOM.PROJ_FONT.value.replace(/^font/, "fonts/").toLowerCase() + ".png";
         }
     },
 
