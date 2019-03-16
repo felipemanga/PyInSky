@@ -96,6 +96,14 @@ function loadProject( projectId ){
             if( !project.name )
                 project.name = "Unnamed Project";
 
+            if( !project.flags )
+                project.flags = {};
+
+            for( let k in project.flags ){
+                if( DOM[k] )
+                    DOM[k].value = project.flags[k];
+            }
+
             DOM.projectList.value = projectId;
             DOM.projectName.value = project.name;
 
@@ -259,6 +267,14 @@ function importFile( file, reader, paletteMode=false ){
         }
 
         DOM.projectName.value = project.name;
+        if( !project.flags || typeof project.flags != "object" )
+            project.flags = {};
+
+        for( let k in project.flags ){
+            if( DOM[k] )
+                DOM[k].value = project.flags[k];
+        }
+
         break;
 
     case 'pal':
@@ -759,6 +775,7 @@ const events = {
             if( !project.flags )
                 project.flags = {};
             project.flags[ evt.target.id ] = evt.target.value;
+            scheduleSave( project );
         }
     }
 
