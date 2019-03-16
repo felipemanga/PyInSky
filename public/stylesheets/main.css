@@ -132,6 +132,12 @@ html, body {
     padding-top: 2px;
 }
 
+#fontPreview {
+    width: 220px;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+
 .center div:after {
     content:" ";
     clear: both;
