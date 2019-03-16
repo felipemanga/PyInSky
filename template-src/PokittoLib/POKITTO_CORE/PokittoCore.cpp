@@ -664,10 +664,12 @@ void Core::begin() {
 	display.fontSize=1;
 	display.textWrap=true;
 	#if POK_GAMEBUINO_SUPPORT > 0
-	display.setFont(font5x7);
+	// display.setFont(font5x7);
 	#else
-	display.setFont(fontC64);
+	// display.setFont(fontC64);
     #endif
+        display.setFont(DEFAULT_FONT);
+
 	#if POK_ENABLE_SOUND > 0
         sound.begin();
 
@@ -891,7 +893,7 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
     #endif
 
     uint32_t now = getTime();
-    // if ((((nextFrameMillis - now)) > timePerFrame) && frameEndMicros) { //if time to render a new frame is reached and the frame end has ran once
+    if ((((nextFrameMillis - now)) > timePerFrame) && frameEndMicros) { //if time to render a new frame is reached and the frame end has ran once
 		nextFrameMillis = now + timePerFrame;
 		frameCount++;
 
@@ -913,9 +915,9 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
         }
         #endif
 
-        // return true;
+        return true;
 
-	// } else {
+    } else {
 		if (!frameEndMicros) { //runs once at the end of the frame
 			#if POK_ENABLE_SOUND > 0
 			sound.updateTrack();
@@ -930,8 +932,8 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
             frameEndMicros = 1; //jonne
 
 		}
-		return true;
-                // }
+		return false;
+    }
 }
 
 void Core::displayBattery(){

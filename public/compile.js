@@ -30,7 +30,13 @@ function compile(){
         mpyext[ nameExt ] = mpy[ fileName ];
     }
 
-    fetch("/build", { method:"POST", body:JSON.stringify(mpyext) })
+    let flags = "PROJ_ID=" + project.id.replace(/proj:|-/g, "").toUpperCase();
+
+    for( let k in project.flags ){
+        flags += "&" + k + "=" + project.flags[k];
+    }
+
+    fetch(`/build?` + flags, { method:"POST", body:JSON.stringify(mpyext) })
         .then( rsp => rsp.text() )
         .then( txt => pollCompilerService( txt|0 ) )
         .then( url => {

@@ -3,6 +3,8 @@
 STARTDIR=$PWD
 
 BUILDID=$1
+DIRTYLIB=$2
+
 SRCDIR=$STARTDIR/builds/$BUILDID
 OUTDIR=$STARTDIR/public/builds/$BUILDID
 
@@ -16,7 +18,7 @@ CMD=$CMD" > frozen_mpy.c"
 
 eval $CMD
 
-node ../../jake.js
+node ../../jake.js $DIRTYLIB
 
 cd $STARTDIR
 

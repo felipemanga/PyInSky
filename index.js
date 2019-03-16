@@ -9,6 +9,35 @@ const PORT = process.env.PORT || 5000;
 
 let nbid = 1;
 let queue = [], builders = {}, busy = false;
+let projects = {};
+
+let settings = `
+#ifndef MY_SETTINGS_H
+#define MY_SETTINGS_H
+
+#define PROJ_HIRES 0
+#define PROJ_STARTUPLOGO 1
+#define PROJ_GAMEBUINO 0
+#define PROJ_HIGH_RAM HIGH_RAM_MUSIC
+#define PROJ_STREAMING_MUSIC 1
+#define PROJ_ENABLE_SYNTH 0
+#define PROJ_ENABLE_SOUND       1
+#define PROJ_AUD_FREQ           8000
+#define PROJ_STREAM_TO_DAC      1
+#define PROJ_USE_PWM            1
+#define PROJ_GBSOUND 0
+#define PROJ_ENABLE_SYNTH 0
+#define PROJ_FPS 40
+
+// Python specific
+#define PROJ_PYTHON_REPL 0
+#define MICROPY_ENABLE_GC 1
+#define USE_USB_SERIAL_PRINT (0)
+
+$flags
+
+#endif
+`;
 
 function sendHeaders( res ){
 
@@ -18,7 +47,7 @@ function sendHeaders( res ){
     
 }
 
-function Builder(){
+function Builder( PROJ_ID ){
 
     this.id = nbid++;
 
@@ -27,20 +56,38 @@ function Builder(){
     this.state = "INIT";
 
     builders[ this.id ] = this;
+    
+    if( PROJ_ID )
+        projects[ PROJ_ID ] = this.id;
+
+    console.log("New builder: " + PROJ_ID);
 
     fs.mkdirSync(__dirname + '/builds/' + this.id);
     fs.mkdirSync(__dirname + '/public/builds/' + this.id);
 
-    let data = '', stdout = '', disassembly = '', items = [], buildpath;
+    let data = '', stdout = '', files;
+
+    let flags = {}, dirtyLib = true;
 
     let main = null;
 
     let retry = {};
 
-    buildpath = __dirname + '/public/builds/' + this.id + '/';
+    this.addFlags = obj => {
+        for( let k in obj ){
+            let v = obj[k];
+            if( /^[A-Z0-9_]+$/.test(k) && /^[A-Z0-9_]+$/i.test(v) && flags[k] != v ){
+                console.log(`Dirty: ${flags[k]} != ${v}`);
+                flags[k] = v;
+                dirtyLib = true;
+            }
+        }
+    };
     
     this.destroy = _ => {
 	this.destroyHND = 0;
+
+        delete projects[ PROJ_ID ];
 
 	if( builders[ this.id ] == this )
 	    delete builders[ this.id ];
@@ -60,7 +107,7 @@ function Builder(){
         if( this.destroyHND )
             clearTimeout( this.destroyHND );
 
-	this.destroyHND = setTimeout( this.destroy, 60 * 1000 );
+	this.destroyHND = setTimeout( this.destroy, 5 * 60 * 1000 );
     };
     
     this.resetDestroy();
@@ -78,7 +125,7 @@ function Builder(){
     this.start = _ => {
 	
 	try{
-	    data = JSON.parse(data);
+            files = JSON.parse(data);
 	}catch( ex ){
 	    data = '';
 	    this.result = ex.toString();
@@ -86,6 +133,7 @@ function Builder(){
 	    return;
 	}
 	
+	data = '';
 	this.resetDestroy();
 	queue.push( this );
 	this.state = "QUEUED";
@@ -100,17 +148,29 @@ function Builder(){
 	this.state = "BUILDING";
 	busy = true;
 
-	let files = Object.keys( data );
+        let strflags = '';
+        for( let k in flags ){
+            strflags += `
+#if defined(${k})
+#undef ${k}
+#endif
+#define ${k} ${flags[k]}
+`;
+        }
 
-	this.pop( files );
+        files["My_settings.h"] = settings.replace("$flags", strflags);
+
+	let fileList = Object.keys( files );
+
+	this.pop( fileList );
     };
 
-    this.pop = files => {
+    this.pop = fileList => {
 	
-	if( !files.length )
+	if( !fileList.length )
 	    return this.compile();
 	
-	let file = files.shift().replace(/\\/g, '/'); // convert \ to /
+	let file = fileList.shift().replace(/\\/g, '/'); // convert \ to /
 	let fullPath = __dirname + '/builds/' + this.id + '/' + file.replace(/\/\.+\//g, '/'); // remove shenanigans
 	
 	let parts = fullPath.split('/');
@@ -119,12 +179,12 @@ function Builder(){
 	if( parts.length ){
 	    mkdirp( parts.join('/'), e => writeFile.call( this ) );
 	}else
-	    writeFile.call(this)
+	    writeFile.call(this);
 
 	function writeFile(){
 
-            let str = data[file];
-            let buf = Buffer.from(str, 'base64');
+            let str = files[file];
+            let buf = Buffer.from(str, file == "My_settings.h" ? 'utf-8' : 'base64');
 
 	    fs.writeFile( fullPath, buf, e => {
 		
@@ -135,7 +195,7 @@ function Builder(){
 		    return;
 		}
 
-		this.pop(files);
+		this.pop(fileList);
 
 	    });
 	}
@@ -148,7 +208,8 @@ function Builder(){
 	    const child = exec(
 		[
 		    __dirname + '/build.sh',
-                    this.id
+                    this.id,
+                    dirtyLib|0
 		].join(" "),
 		(error, _stdout, stderr) => {
 
@@ -161,7 +222,8 @@ function Builder(){
 			this.result = "ERROR: " + error + " " + stderr + stdout;
                         
 		    }else{
-                        
+
+                        dirtyLib = false;
 	                busy = false;
 	                this.state = "DONE";
 	                this.result = 'DONE';
@@ -232,25 +294,15 @@ express()
     .post('/build', (req, res) => {
 
 	let builder;
-	if( req.query.id ){
-	    
-	    builder = builders[req.query.id];
-	    if( !builder ){
-		
-		sendHeaders( res );
-		res.end( "DESTROYED" );
-		return;
-		
-	    }else if( builder.state != "DONE" ){
-		
-		sendHeaders( res );
-		res.end( builder.state );
-		return;
-		
-	    }
-		
-	}else
-	    builder = new Builder();
+	if( req.query.PROJ_ID && projects[req.query.PROJ_ID] )
+	    builder = builders[ projects[req.query.PROJ_ID] ];
+
+        console.log("Build request: " + req.query.PROJ_ID + ", " + projects[req.query.PROJ_ID] );
+
+        if( !builder )
+	    builder = new Builder( req.query.PROJ_ID );
+
+        builder.addFlags( req.query );
 
 	req.on('data', function (data) {
 	    if( !builder.addData( data ) )

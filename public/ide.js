@@ -752,6 +752,14 @@ const events = {
         change(){
             DOM.imageHeight.value = parseInt(DOM.imageHeight.value);
         }
+    },
+
+    flag:{
+        change( evt ){
+            if( !project.flags )
+                project.flags = {};
+            project.flags[ evt.target.id ] = evt.target.value;
+        }
     }
 
 

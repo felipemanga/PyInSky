@@ -68,16 +68,22 @@ html, body {
     color: var(--text-color)
 }
 
+#tabContainer select, #tabContainer input, #tabContainer button {
+    float: right;
+}
+
 #tabContainer[mode=output] #outputContainer,
 #tabContainer[mode=project] #projectContainer,
-#tabContainer[mode=image] #imageContainer
+#tabContainer[mode=image] #imageContainer,
+#tabContainer[mode=flags] #flagsContainer
 {
     display: initial;
 }
 
 #tabContainer[mode=output] #outputTab,
 #tabContainer[mode=project] #projectTab,
-#tabContainer[mode=image] #imageTab
+#tabContainer[mode=image] #imageTab,
+#tabContainer[mode=flags] #flagsTab
 {
     background-color: var(--head-pane-bgc);
 }
@@ -114,14 +120,20 @@ html, body {
 }
 
 #projectContainer {
-    text-align: center;
     color: var(--text-color);
     font-family: 'VT323';
     font-size: 1.5em;
 }
 
-#projectContainer .center div {
-    margin-bottom: 15px;
+#projectContainer .center div, #flagsContainer .center div {
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+
+.center div:after {
+    content:" ";
+    clear: both;
+    display: block;
 }
 
 #projectContainer #deleteProject {
@@ -131,11 +143,11 @@ html, body {
     border-radius: 10px;
 }
 
-#imageContainer div {
+.center>div {
     margin-left: 20px;
     margin-right: 20px;
-    margin-top: 10px;
-    padding-bottom: 10px;
+    margin-top: 2px;
+    padding-bottom: 2px;
 }
 
 #imageWidth, #imageHeight {

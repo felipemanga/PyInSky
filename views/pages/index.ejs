@@ -23,10 +23,14 @@
               <button id="imageTab" onclick="tabContainer.setAttribute('mode', 'image')">
                   Image
               </button>
+              <button id="flagsTab" onclick="tabContainer.setAttribute('mode', 'flags')">
+                  Flags
+              </button>
           </div>
           <% include ../partials/messages.ejs %>
           <% include ../partials/project.ejs %>
           <% include ../partials/image.ejs %>
+          <% include ../partials/flags.ejs %>
       </div>
     </div>
   </div>

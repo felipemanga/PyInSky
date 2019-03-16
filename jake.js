@@ -1,6 +1,7 @@
 
 const { execFile, execSync } = require('child_process');
 const fs = require('fs');
+const process = require("process");
 
 const CSOURCES = []
 , CXXSOURCES = []
@@ -9,6 +10,8 @@ const CSOURCES = []
 , CXX_FLAGS=[]
 ;
 
+let cleanBuild = process.argv[2] == 1;
+console.log(cleanBuild + " " + process.argv[2]);
 let CC='../../gcc-arm-none-eabi/bin/arm-none-eabi-gcc';
 let CPP='../../gcc-arm-none-eabi/bin/arm-none-eabi-g++';
 let LD='../../gcc-arm-none-eabi/bin/arm-none-eabi-gcc';
@@ -39,6 +42,7 @@ CXXSOURCES.push('PokittoLib/POKITTO_CORE/FONTS/mini4x6.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/FONTS/runes6x8.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/FONTS/tight4x7.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/FONTS/tiny5x7.cpp');
+CXXSOURCES.push('PokittoLib/POKITTO_CORE/FONTS/fontMonkey.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PALETTES/palAction.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PALETTES/palCGA.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PALETTES/palDB16.cpp');
@@ -159,7 +163,8 @@ C_FLAGS.push(
     '-g1',             
     '-DMBED_RTOS_SINGLE_THREAD',
     '-mcpu=cortex-m0plus',
-    '-mthumb'
+    '-mthumb',
+    '-D_OSCT=2'
 );
 
 CXX_FLAGS.push(
@@ -184,7 +189,8 @@ CXX_FLAGS.push(
     '-g1',
     '-DMBED_RTOS_SINGLE_THREAD',
     '-mcpu=cortex-m0plus',
-    '-mthumb'
+    '-mthumb',
+    '-D_OSCT=2'
 );
 
 C_FLAGS.push('-std=gnu99');
@@ -292,9 +298,13 @@ BUILD/%.o : %.c
 	@$(CC) $(C_FLAGS) $(INCLUDE_PATHS) -o $@ $<
 */
 
+function obj(src){
+    return src.replace(/.*\/([^\/]+)/, '$1').replace(/\.[^.]+$/i, '.o');
+}
+
 CSOURCES.forEach( src => {
-    let outFile = src.replace(/\.c$/i, '.o');
-    if( fs.existsSync(outFile) )
+    let outFile = obj(src)
+    if( !cleanBuild && fs.existsSync(outFile) )
         return;
         
     execSync([
@@ -313,8 +323,8 @@ BUILD/%.o : %.cpp
 	@$(CPP) $(CXX_FLAGS) $(INCLUDE_PATHS) -o $@ $<
 */
 CXXSOURCES.forEach( src => {
-    let outFile = src.replace(/\.[^.]+$/i, '.o');
-    if( src.indexOf("PokittoLib/") != -1 && fs.existsSync(outFile) )
+    let outFile = obj(src);
+    if( !cleanBuild && src.indexOf("PokittoLib/") != -1 && fs.existsSync(outFile) )
         return;
 
     execSync([
@@ -334,8 +344,8 @@ execSync([
     LD_FLAGS,
     '-T', LINKER_SCRIPT,
     '--output build.elf',
-    CSOURCES.map(s => s.replace(/\.c$/i, '.o')).join(" "),
-    CXXSOURCES.map(s => s.replace(/\.[^.]+$/i, '.o')).join(" "),
+    CSOURCES.map(obj).join(" "),
+    CXXSOURCES.map(obj).join(" "),
     LD_SYS_LIBS,
     LIBRARIES
 ].join(" "));

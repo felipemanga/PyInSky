@@ -13,7 +13,6 @@ int main () {
     Pokitto::Core game;
     game.begin();
     game.display.persistence = 0;
-    game.display.setFont(fontC64);
     
     PythonMain(2, (char **) argv);
     return 1;
