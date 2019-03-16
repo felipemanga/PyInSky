@@ -143,6 +143,11 @@ CXXSOURCES.push('PythonBindings.cpp');
 CXXSOURCES.push('UartSerialPrint.cpp');
 CSOURCES.push('frozen_mpy.c');
 
+let forceCompile = [
+    'main.cpp',
+    'frozen_mpy.c'
+];
+
 
 C_FLAGS.push(
     '-c',             
@@ -304,7 +309,7 @@ function obj(src){
 
 CSOURCES.forEach( src => {
     let outFile = obj(src)
-    if( !cleanBuild && fs.existsSync(outFile) )
+    if( forceCompile.indexOf(src) == -1 && !cleanBuild && fs.existsSync(outFile) )
         return;
         
     execSync([
@@ -324,7 +329,7 @@ BUILD/%.o : %.cpp
 */
 CXXSOURCES.forEach( src => {
     let outFile = obj(src);
-    if( !cleanBuild && src.indexOf("PokittoLib/") != -1 && fs.existsSync(outFile) )
+    if( forceCompile.indexOf(src) == -1 && !cleanBuild && src.indexOf("PokittoLib/") != -1 && fs.existsSync(outFile) )
         return;
 
     execSync([
