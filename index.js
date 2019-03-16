@@ -154,6 +154,9 @@ function Builder( PROJ_ID ){
 #if defined(${k})
 #undef ${k}
 #endif
+`;
+            if( flags[k] != "undefined" )
+                strflags += `
 #define ${k} ${flags[k]}
 `;
         }

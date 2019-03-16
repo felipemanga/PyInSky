@@ -75,6 +75,7 @@ html, body {
 #tabContainer[mode=output] #outputContainer,
 #tabContainer[mode=project] #projectContainer,
 #tabContainer[mode=image] #imageContainer,
+#tabContainer[mode=help] #helpContainer,
 #tabContainer[mode=flags] #flagsContainer
 {
     display: initial;
@@ -83,6 +84,7 @@ html, body {
 #tabContainer[mode=output] #outputTab,
 #tabContainer[mode=project] #projectTab,
 #tabContainer[mode=image] #imageTab,
+#tabContainer[mode=help] #helpTab,
 #tabContainer[mode=flags] #flagsTab
 {
     background-color: var(--head-pane-bgc);

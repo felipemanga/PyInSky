@@ -1082,16 +1082,24 @@ void Pokitto::lcdRefreshMode1Spr(
 
 
 void Pokitto::lcdRefreshMode2(uint8_t * scrbuf, uint16_t* paletteptr ) {
-  uint32_t x,y,byte,c,t=1<<12;
+  uint32_t x,y=0,byte,c,t=1<<12;
   uint32_t scanline[110];
 
   write_command(0x03); write_data(0x1038);
   write_command(0x20);  // Horizontal DRAM Address
   write_data(0);  // 0
   write_command(0x21);  // Vertical DRAM Address
+  write_data(0); // pixel 0 bug fixed
 
 #ifndef __ARMCC_VERSION
-  write_data(0); // pixel 0 bug fixed
+  
+
+  #ifdef PROJ_SHOW_FPS_COUNTER
+  setDRAMptr(0, 8);
+  wait_us(200); // Add wait to compensate skipping of 8 lines. Makes FPS counter to show the correct value.
+  scrbuf += 4*55;
+  #endif
+
   write_command(0x22); // write data to DRAM
   CLR_CS_SET_CD_RD_WR;
   SET_MASK_P2;
@@ -1101,8 +1109,15 @@ void Pokitto::lcdRefreshMode2(uint8_t * scrbuf, uint16_t* paletteptr ) {
 
 	"mov r10, %[scanline]"    "\n"
 	"mov r11, %[t]"           "\n"
+        
+  #ifdef PROJ_SHOW_FPS_COUNTER
+	"movs %[t], 4"		  "\n"
+  #else
+	"movs %[t], 0"		  "\n"
+  #endif
+        "mov %[y], %[t]"	  "\n"
 
-	"mode2OuterLoop:"        "\n"
+	"mode2OuterLoop:"         "\n"
 
 	"movs %[x], 110"          "\n"
 	"mode2InnerLoopA:"
@@ -1183,7 +1198,6 @@ void Pokitto::lcdRefreshMode2(uint8_t * scrbuf, uint16_t* paletteptr ) {
 
 
 #else
-  write_data(0); // does not have pixel 0 bug
   write_command(0x22); // write data to DRAM
   CLR_CS_SET_CD_RD_WR;
   SET_MASK_P2;

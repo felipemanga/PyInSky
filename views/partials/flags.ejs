@@ -1,22 +1,33 @@
 <div id="flagsContainer">
     <div class="center">
+
+        <div style="border-bottom: solid 1px rgba(0,0,0,0.5);">
+            <label>
+                High Res:
+                <select id="PROJ_HIRES" class="flag">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </label>
+        </div>
+        
         <div style="border-bottom: solid 1px rgba(0,0,0,0.5);">
             <label>
                 Maximum FPS:
                 <input id="PROJ_FPS" class="flag" value="40" type="number" min="1" max="255" />
             </label>
         </div>
-        <!-- 
-             <div style="border-bottom: solid 1px rgba(0,0,0,0.5);">
-             <label>
-             Print FPS:
-             <select id="PROJ_SHOW_FPS_COUNTER" class="flag">
-             <option value="0">No</option>
-             <option value="1">Yes</option>
-             </select>
-             </label>
-             </div>
-        -->
+
+        <div style="border-bottom: solid 1px rgba(0,0,0,0.5);">
+            <label>
+                Print FPS:
+                <select id="PROJ_SHOW_FPS_COUNTER" class="flag">
+                    <option value="undefined">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </label>
+        </div>
+
         <div style="border-bottom: solid 1px rgba(0,0,0,0.5);">
             <label>
                 Font:
