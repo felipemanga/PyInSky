@@ -38,7 +38,7 @@ class LibAudio {
         src.start();
         ctx.startRendering()
             .then(buffer=>ok( [...buffer.getChannelData(0)]
-                              .map( x => (x*0.5+0.5)*(~0>>>1) >> (31 - bpp) )
+                              .map( x => (x*0.5+0.5)*((~0) >>> (32 - bpp)) )
                             ))
             .catch(ex => nok(ex));
 
