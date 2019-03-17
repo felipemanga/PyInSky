@@ -344,6 +344,34 @@ function importFile( file, reader, paletteMode=false ){
         
         break;
 
+    case 'mp3':
+    case 'wav':
+    case 'ogg':
+        let libaudio = new LibAudio();
+        libaudio.downSample( reader, 4, 8000 )
+            .then( data => {
+                let name = file.replace(/^([^.]+)\..*$/, "$1");
+                
+                let strdata = "", hi=0;
+                for( let i=0; i<data.length; ++i ){
+                    if( i&1 ){
+                        let b=data[i]|hi;
+                        strdata += "\\x" + b.toString(16).padStart(2, "0");
+                    }else{
+                        hi=data[i]<<4;
+                    }
+                }
+                
+                strdata=strdata.replace(/((?:\\x[^\\]*){20,20})/g, "$1\\\n");
+                strdata=`${name} = b'\\\n${strdata}\\\n'`;
+                
+                editor.session.insert( editor.getCursorPosition(), strdata );
+            })
+            .catch( ex => {
+                console.error(ex);
+            });
+        break;
+
     case 'png':
     case 'jpg':
 
