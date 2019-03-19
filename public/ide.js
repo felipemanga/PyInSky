@@ -55,8 +55,12 @@ function createFile( name, src ){
     sess.setMode("ace/mode/python");
     sess.on('change', _ => {
         mpy[name] = null;
-        project.files[name] = sess.getValue();
-        scheduleSave(project);
+        try{
+            project.files[name] = sess.getValue();
+            scheduleSave(project);
+        }catch(ex){
+            console.log(ex);
+        }
     });
 
     scheduleSave(project);
@@ -645,6 +649,7 @@ const events = {
             else
                 editor.setSession( source[names[0]] );
 
+            scheduleSave(project);
             updateFileList();
             
         }
