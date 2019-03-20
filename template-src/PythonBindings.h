@@ -53,7 +53,7 @@
 #define BTN_C       6
 
 // Main function in uPy library
-EXTERNC int PythonMain(int argc, char **argv);
+EXTERNC int PythonMain( unsigned int heapSize, char *heapMem );
 
 // Pokitto simulator API for uPython.
 
