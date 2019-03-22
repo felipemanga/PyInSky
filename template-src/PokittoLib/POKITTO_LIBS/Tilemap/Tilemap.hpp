@@ -96,4 +96,43 @@ public:
 
         }
     }
+
+    // Get the tile under the given x and y
+    uint8_t GetTileId( std::int32_t x, std::int32_t y, uint8_t tileSize ){
+
+        // Get tile x and y
+        uint32_t tx = 0;
+        uint32_t ty = 0;
+        if( tileSize == 8 ) {
+            tx = x>>3;
+            ty = y>>3;
+        }
+        else if( tileSize == 16 ) {
+            tx = x>>4;
+            ty = y>>4;
+        }
+        else { // any size
+            tx = x/tileSize;
+            ty = y/tileSize;
+        }
+
+        // Get the tile id.
+        uint8_t id = map[ (ty*width + tx)>>1 ];
+        if(tx&1)
+            id >>= 4;
+        else
+            id &= 0xF;
+
+        return id;
+    }
+
+    // Get the tiles at the rect corners.
+    void GetTileIds( std::int32_t tlx, std::int32_t tly, std::int32_t brx, std::int32_t bry, uint8_t tileSize,
+                   /*OUT*/ uint8_t& tileIdTl, uint8_t& tileIdTr, uint8_t& tileIdBl, uint8_t& tileIdBr ){
+
+        tileIdTl = GetTileId( tlx, tly, tileSize );
+        tileIdTr = GetTileId( brx, tly, tileSize );
+        tileIdBl = GetTileId( tlx, bry, tileSize );
+        tileIdBr = GetTileId( brx, bry, tileSize );
+    }
 };

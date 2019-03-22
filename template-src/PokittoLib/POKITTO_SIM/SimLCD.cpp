@@ -125,7 +125,7 @@ inline void Pokitto::toggle_data(){
 }
 
 void Pokitto::lcdRefreshGB(uint8_t * scrbuf, uint16_t* paletteptr) {
-uint16_t x,y,data,xptr;
+uint16_t x,y,xptr;
 uint16_t scanline[48];
 uint8_t *d, yoffset=0;
 //lcdClear();
@@ -333,7 +333,7 @@ for(x=0;x<84;x++)
 */
 void Pokitto::lcdRefreshMode1(uint8_t * scrbuf, uint8_t updRectX, uint8_t updRectY, uint8_t updRectW, uint8_t updRectH, uint16_t* paletteptr) {
 
-    uint16_t x,y,xptr;
+    uint16_t x,y;
     uint16_t scanline[4][176]; // read 4 half-nibbles = 4 pixels at a time
     uint8_t *d, yoffset=0;
 
@@ -352,10 +352,8 @@ void Pokitto::lcdRefreshMode1(uint8_t * scrbuf, uint8_t updRectX, uint8_t updRec
 
 
     #ifdef PROJ_SHOW_FPS_COUNTER
-    xptr = 8;
     setDRAMptr(8, 0);
     #else
-    xptr = 0;
     setDRAMptr(0, 0);
     #endif
 
@@ -363,7 +361,7 @@ void Pokitto::lcdRefreshMode1(uint8_t * scrbuf, uint8_t updRectX, uint8_t updRec
         d = scrbuf+(x>>2);// point to beginning of line in data
 
         /** find colours in one scanline **/
-        uint8_t s=0;
+
         d += (updRectY * 220/4);
         for (y=updRectY; y<updRectY+updRectH; y++) {
             uint8_t tdata = *d;
@@ -977,7 +975,7 @@ for(x=0;x<220;x+=2)
 
 
 void Pokitto::lcdRefreshAB(uint8_t * scrbuf, uint16_t* paletteptr) {
-uint16_t x,y,data,xptr;
+uint16_t x,y,xptr;
 uint16_t scanline[64];
 uint8_t *d, yoffset=0;
 //lcdClear();
@@ -1151,9 +1149,9 @@ for(x=0;x<128;x++)
 
 
 void Pokitto::lcdRefreshT1(uint8_t* tilebuf, uint8_t* tilecolorbuf, uint8_t* tileset, uint16_t* paletteptr) {
-uint16_t x,y,data,xptr;
+uint16_t xptr;
 uint16_t scanline[176];
-uint8_t yoffset=0, tilebyte, tileindex, tilex=0, tiley=0,xcount;
+uint8_t yoffset=0, tilebyte, tileindex, tilex=0, tiley=0, xcount;
 
 if (!tileset) return;
 
@@ -1345,70 +1343,48 @@ for(x=0;x<160;x+=4)
 
 void Pokitto::lcdRefreshMode13(uint8_t * scrbuf, uint16_t* paletteptr, uint8_t offset){
 uint16_t x,y;
-uint16_t scanline[2][110]; // read two nibbles = pixels at a time
+uint16_t scanline[110];
 uint8_t *d;
 
 setDRAMptr(0,0);
 
-for(x=0;x<110;x+=2)
-  {
+for(x=0;x<110;x++)
+ {
     d = scrbuf+x;// point to beginning of line in data
     uint8_t s=0;
     for(y=0;y<88;y++)
     {
         uint8_t t = *d;
-        uint8_t t1 = *(d+1);
-        scanline[0][s] = paletteptr[(t+offset)&255];
-        scanline[1][s++] = paletteptr[(t1+offset)&255];
+        scanline[s++] = paletteptr[(t+offset)&255];
         d+=110; // jump to read byte directly below in screenbuffer
     }
     s=0;
     for (s=0;s<88;) {
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
     }
     for (s=0;s<88;) {
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[0][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-    }
-    for (s=0;s<88;) {
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-    }
-    for (s=0;s<88;) {
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-        setup_data_16(scanline[1][s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
-    }
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
+        setup_data_16(scanline[s++]);CLR_WR;SET_WR;CLR_WR;SET_WR;
   }
 
+ }
 }
 
 void Pokitto::lcdRefreshMode14(uint8_t * scrbuf, uint16_t* paletteptr) {
-uint16_t x,y,data,xptr;
+uint16_t x,y,xptr;
 uint16_t scanline[176];
 uint8_t *d, yoffset=0;
 xptr = 0; //was 26

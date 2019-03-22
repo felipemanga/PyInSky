@@ -97,6 +97,8 @@ Pokitto::Core _soundc;
 
 const uint8_t *Sound::sfxDataPtr = 0;
 const uint8_t *Sound::sfxEndPtr = 0;
+bool Sound::sfxIs4bitSamples = false;
+uint8_t Sound::sfxBytePos = 0;
 
 uint8_t Sound::prescaler;
 uint16_t Sound::globalVolume;
@@ -147,7 +149,10 @@ uint8_t Sound::stepPitch[NUM_CHANNELS];
 uint8_t Sound::chanVolumes[NUM_CHANNELS];
 
 #if (POK_ENABLE_SOUND < 1)
+ #ifdef NUM_CHANNELS
+ #undef NUM_CHANNELS
  #define NUM_CHANNELS 0
+ #endif // NUM_CHANNELS
 #endif
 
 #if(NUM_CHANNELS > 0)
@@ -863,9 +868,6 @@ void Sound::playTone(uint8_t os, int frq, uint8_t amp, uint8_t wav,uint8_t arpmo
 {
     if (wav>MAX_WAVETYPES) wav=0;
     if (arpmode>MAX_ARPMODE) arpmode=MAX_ARPMODE;
-    if (frq>58) {
-        volatile uint32_t jumpu = frq;
-    }
     if (os==1) setOSC(&osc1,1,wav,1,0,0,frq,amp,0,0,0,0,0,0,arpmode,0,0);
     else if (os==2) setOSC(&osc2,1,wav,1,0,0,frq,amp,0,0,0,0,0,0,arpmode,0,0);
     else if (os==3) setOSC(&osc3,1,wav,1,0,0,frq,amp,0,0,0,0,0,0,arpmode,0,0);

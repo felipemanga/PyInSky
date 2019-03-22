@@ -1228,6 +1228,10 @@ Q(get_rect)
 
 Q(get_soundbuffer_size)
 
+Q(get_tile_id)
+
+Q(get_tile_ids)
+
 Q(getattr)
 
 Q(getrandbits)
@@ -1408,6 +1412,10 @@ Q(pixel)
 
 Q(play)
 
+Q(play_from_sd)
+
+Q(play_sfx)
+
 Q(poll)
 
 Q(pop)
@@ -1532,7 +1540,7 @@ Q(tilemap)
 
 Q(tilemap)
 
-Q(time_us)
+Q(time_ms)
 
 Q(to_bytes)
 

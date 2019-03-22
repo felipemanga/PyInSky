@@ -43,6 +43,7 @@
 					<Add option="-g" />
 					<Add option="-DPOK_SIM" />
 					<Add directory="../POKITTO_LIBS/MicroPython" />
+					<Add directory="../POKITTO_LIBS/Tilemap" />
 				</Compiler>
 				<Linker>
 					<Add library="../POKITTO_LIBS/MicroPython/libmicropython_win.a" />
@@ -324,6 +325,18 @@
 					<Add directory="../../Examples/PlayMusic" />
 				</Compiler>
 			</Target>
+			<Target title="TileMap">
+				<Option output="bin/Debug/Pokitto_sim" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/Debug" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="../../Examples/TileMap" />
+				</Compiler>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
@@ -343,6 +356,7 @@
 			<Add directory="../POKITTO_CORE/FONTS" />
 			<Add directory="tinydir" />
 			<Add directory="../POKITTO_LIBS/ImageFormat" />
+			<Add directory="../POKITTO_LIBS/Tilemap" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,-Map=main.map" />
@@ -749,6 +763,12 @@
 			<Option target="SynthTest" />
 			<Option target="SFXeditor" />
 		</Unit>
+		<Unit filename="../../Examples/TileMap/My_settings.h">
+			<Option target="TileMap" />
+		</Unit>
+		<Unit filename="../../Examples/TileMap/main.cpp">
+			<Option target="TileMap" />
+		</Unit>
 		<Unit filename="../../Examples/Tracker/Arrays.cpp">
 			<Option target="Tracker" />
 		</Unit>
@@ -822,8 +842,32 @@
 		<Unit filename="../POKITTO_CORE/PokittoBattery.h" />
 		<Unit filename="../POKITTO_CORE/PokittoButtons.cpp" />
 		<Unit filename="../POKITTO_CORE/PokittoButtons.h" />
-		<Unit filename="../POKITTO_CORE/PokittoConsole.cpp" />
-		<Unit filename="../POKITTO_CORE/PokittoConsole.h" />
+		<Unit filename="../POKITTO_CORE/PokittoConsole.h">
+			<Option target="Introduction" />
+			<Option target="MicroPython" />
+			<Option target="Bitmap" />
+			<Option target="SynthTest" />
+			<Option target="Sprites" />
+			<Option target="Tracker" />
+			<Option target="Mode13" />
+			<Option target="Mode15" />
+			<Option target="Zuzupong" />
+			<Option target="SDCardFileIO" />
+			<Option target="SaveHighscore" />
+			<Option target="Jetpack" />
+			<Option target="Armageddon" />
+			<Option target="Digger_GB" />
+			<Option target="Artillery_GB" />
+			<Option target="Pakman_GB" />
+			<Option target="Cratebuino_GB" />
+			<Option target="101Starships_GB" />
+			<Option target="Flappy_GB" />
+			<Option target="Lander_GB" />
+			<Option target="Minesweeper_AB" />
+			<Option target="Scroll2Layers" />
+			<Option target="SFXeditor" />
+			<Option target="PlayMusic" />
+		</Unit>
 		<Unit filename="../POKITTO_CORE/PokittoCookie.cpp" />
 		<Unit filename="../POKITTO_CORE/PokittoCookie.h" />
 		<Unit filename="../POKITTO_CORE/PokittoCore.cpp" />
@@ -839,6 +883,7 @@
 		<Unit filename="../POKITTO_CORE/PokittoPalette.cpp" />
 		<Unit filename="../POKITTO_CORE/PokittoPrintf.cpp">
 			<Option target="HelloWorld" />
+			<Option target="TileMap" />
 		</Unit>
 		<Unit filename="../POKITTO_CORE/PokittoSound.cpp" />
 		<Unit filename="../POKITTO_CORE/PokittoSound.h" />
@@ -960,6 +1005,13 @@
 		<Unit filename="../POKITTO_LIBS/Synth/Synth_song.h" />
 		<Unit filename="../POKITTO_LIBS/Synth/Synth_songfuncs.cpp" />
 		<Unit filename="../POKITTO_LIBS/Synth/Synth_wavefuncs.cpp" />
+		<Unit filename="../POKITTO_LIBS/Tilemap/Tilemap.cpp">
+			<Option target="TileMap" />
+			<Option target="MicroPython" />
+		</Unit>
+		<Unit filename="../POKITTO_LIBS/Tilemap/Tilemap.hpp">
+			<Option target="TileMap" />
+		</Unit>
 		<Unit filename="../POKITTO_XTERNALS/Arduboy2/src/Arduboy2.cpp">
 			<Option target="Minesweeper_AB" />
 		</Unit>
