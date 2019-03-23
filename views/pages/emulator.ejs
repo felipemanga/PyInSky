@@ -131,6 +131,7 @@ function dropFile( event ){
     <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
 
     <script type='text/javascript'>
+      var isFirst = true;
       var progressElement = document.getElementById('progress');
 
       var Module = {
@@ -142,7 +143,12 @@ function dropFile( event ){
 	      }
 	  ],
 	  
-          print: parent.Module.print,
+          print: msg => {
+              if( isFirst && /^Preallocating.*/.test(msg) )
+                  return;
+              isFirst = false;
+              parent.Module.print(msg);
+          },
           printErr: parent.Module.printErr,
           canvas: document.getElementById('canvas'),
 	  

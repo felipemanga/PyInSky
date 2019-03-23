@@ -12,7 +12,6 @@ examples["Pokittos"] = {
 # 2) Drawing a surface of 16x16 pixels 200 times a frame gives 12 Fps (full speed). 4-bit colors for both screen and the surface.
 
 import upygame as upg
-import framebuf
 import urandom as random
 
 upg.display.init()
