@@ -7,7 +7,7 @@ extern "C" int PythonMain( unsigned int heapSize, char *heapMem );
 int main () {
     int *tmp = new int;
     uintptr_t p = (uintptr_t)(void *)(&tmp) - (uintptr_t)(void *)(tmp);
-    p -= 1024*2; // stack and stuff
+    p -= 1024*3; // stack and stuff
     
     Pokitto::Core game;
     game.begin();

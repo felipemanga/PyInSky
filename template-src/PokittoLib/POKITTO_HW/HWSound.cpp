@@ -200,7 +200,6 @@ void Pokitto::changeHWvolume(int8_t v) {
 #endif // POK_BOARDREV == 2
 
 void Pokitto::dac_write(uint8_t value) {
-    
     #if POK_USE_DAC > 0
     #if POK_BOARDREV == 1 // was 1
     if (value & 1) SET_DAC0 else CLR_DAC0;
@@ -434,6 +433,7 @@ inline void pokSoundIRQ() {
                 streambyte = 0; // duty cycle
                 output = 0;
             }
+
             if (currentPtr >= endPtr)
             {
             currentBuffer++;
@@ -516,7 +516,7 @@ inline void pokSoundIRQ() {
                     uint32_t t_on = (uint32_t)((((obj->pwm->MATCHREL0)*op)>>8)); //cut out float
                     obj->pwm->MATCHREL1 = t_on;
                 #endif
-            #else // POK_STREAMING_MUSIC
+            #else // ! POK_STREAM_TO_DAC
                 op = output;
                 op *= discrete_vol_multipliers[discrete_vol];
                 op >>= 8;

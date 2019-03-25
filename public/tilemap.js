@@ -5,7 +5,7 @@ examples.Tilemap = {
 # Go to http://opensource.org/licenses/MIT for the full license details.
 #
 
-# *** A TILEMAP DEMO FOR THE POKITTO MICROPYTHON ***
+# *** A TILEMAP AND SOUND DEMO FOR THE POKITTO MICROPYTHON ***
 
 import upygame as pygame
 import data
@@ -27,10 +27,12 @@ tilemap.set_tile(0x8, 16, 16, data.water16);
 # The main loop
 vx = 0;
 vy = 0;
-x = -200;
-y = -200;
+x = -120;
+y = -100;
 mapW = 16*16 # 16 tiles of 16 pixels
 mapH = 16*16 # 16 tiles of 16 pixels
+heroOnScreenX = 55
+heroOnScreenY = 44
 while True:
 
     # Read keys
@@ -47,17 +49,31 @@ while True:
             if eventtype.key == pygame.K_UP:    vy = 0
             if eventtype.key == pygame.K_DOWN:  vy = 0
 
-    # Move
+    # Move.
+    oldX = x
+    oldY = y
     x += vx
+    y += vy
+
+    # Check the map tile under the girl.
+    girlCenterInMapX = (heroOnScreenX + 6) - x
+    girlCerterInMapY = (herthe OnScreenY + 7) - y
+    tileId = tilemap.get_tile_id(girlCenterInMapX, girlCerterInMapY, 16)
+
+    # If the tile is not grass, do not move.
+    if(tileId != 0xb):
+        x = oldX
+        y = oldY
+
+    # Check for out of bounds.
     if(x>0): x=0
     if(x + mapW < 110): x = 110 - mapW
-    y += vy
     if(y>0): y=0
     if(y + mapH < 88): y = 88- mapH
 
     # Draw
     tilemap.draw(x, y)
-    screen.blit(data.girl12x15, 55, 44)
+    screen.blit(data.girl12x15, heroOnScreenX, heroOnScreenY)
     pygame.display.flip()`,
 
     "data.py": `# Graphics by Lanea Zimmerman
@@ -66,24 +82,26 @@ while True:
 
 import upygame
 
+# *** GRAPHICS DATA
+
 # map, 16x16
 mapPixels1 = b'\\
 \\x88\\x88\\x88\\x88\\x88\\x88\\x88\\x88\\
 \\x88\\x88\\x88\\x88\\x88\\x88\\x88\\x88\\
-\\x44\\xbb\\xbb\\xb8\\x8b\\xbb\\x55\\xbb\\
-\\x44\\x5b\\xbb\\xb8\\x8b\\xb5\\x55\\x5b\\
-\\x44\\x4b\\xbb\\xb8\\x8b\\xb5\\x55\\x5b\\
-\\x44\\x4b\\xb4\\xbb\\x88\\xbb\\x55\\xbb\\
-\\x44\\x4b\\x44\\x4b\\xb8\\x8b\\xbb\\xbb\\
-\\x44\\x44\\x45\\x44\\xbb\\x88\\x88\\x88\\
-\\x44\\x4b\\x44\\x4b\\xbb\\xbb\\xbb\\x4b\\
-\\x44\\x44\\xb4\\xbb\\xbb\\xbb\\xb4\\x54\\
-\\x44\\x44\\xbb\\xbb\\xbb\\x44\\xbb\\x4b\\
-\\x44\\x44\\x4b\\xbb\\xb4\\x44\\x4b\\xbb\\
-\\x44\\x54\\x4b\\xbb\\xb4\\x44\\x4b\\xbb\\
-\\x44\\x44\\x44\\xb5\\xbb\\xb4\\xbb\\xbb\\
-\\x44\\x44\\x44\\xbb\\xbb\\xbb\\xbb\\xbb\\
-\\x44\\x44\\x44\\x4b\\xbb\\xbb\\xbb\\xbb\\
+\\x88\\x88\\x88\\x88\\x88\\x88\\x88\\x88\\
+\\x55\\x5b\\xbb\\x88\\x88\\xbb\\xb4\\x55\\
+\\x55\\x4b\\x4b\\xb8\\x88\\xbb\\x44\\x45\\
+\\x54\\x44\\xbb\\xbb\\x88\\xbb\\xb4\\x55\\
+\\x55\\x5b\\xbb\\xbb\\xb8\\x8b\\xb5\\x55\\
+\\x55\\x4b\\xb4\\xbb\\xbb\\x8b\\xb5\\x55\\
+\\x55\\x5b\\x45\\x4b\\xbb\\x8b\\xb4\\x44\\
+\\x55\\x4b\\xb4\\xbb\\xbb\\x8b\\xb4\\x54\\
+\\x54\\x4b\\xbb\\xbb\\xb8\\xbb\\xb5\\x55\\
+\\x45\\x44\\xbb\\xbb\\xbb\\xbb\\xb4\\x54\\
+\\x55\\x54\\xbb\\x44\\xbb\\xbb\\x44\\x44\\
+\\x55\\x54\\x4b\\xbb\\xbb\\xb4\\x45\\x54\\
+\\x45\\x45\\x55\\x44\\x55\\x44\\x55\\x55\\
+\\x44\\x55\\x55\\x45\\x55\\x54\\x55\\x55\\
 '
 
 green16Pixels = b'\\
