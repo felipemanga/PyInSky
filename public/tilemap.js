@@ -57,7 +57,7 @@ while True:
 
     # Check the map tile under the girl.
     girlCenterInMapX = (heroOnScreenX + 6) - x
-    girlCerterInMapY = (herthe OnScreenY + 7) - y
+    girlCerterInMapY = (heroOnScreenY + 7) - y
     tileId = tilemap.get_tile_id(girlCenterInMapX, girlCerterInMapY, 16)
 
     # If the tile is not grass, do not move.

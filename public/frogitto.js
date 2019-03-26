@@ -10,7 +10,6 @@ examples.Frogitto = {
 # Go to https://creativecommons.org/licenses/by/4.0/ for the full license details.
 
 import upygame as pygame
-import framebuf
 import urandom as random
 import example_data as spritedata
 import sprite
