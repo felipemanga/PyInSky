@@ -47,8 +47,6 @@ using namespace Pokitto;
 // Ring buffer size
 #define EVENT_RING_BUFFER_SIZE 10
 
-void SDL_RenderCopySolid( const uint8_t *data, uint32_t width, uint32_t height, int32_t x, int32_t y );
-
 // Ring buffer Local data
 EventRingBufferItem eventRingBuffer[EVENT_RING_BUFFER_SIZE];
 int rbNextFreeItemIndex = 0;
@@ -140,6 +138,42 @@ uint16_t Pok_Display_getHeight() {
     return Display::getHeight();
 }
 
+void Pok_Display_setForegroundColor(int16_t color_) {
+    Display::color = (uint8_t)color_;
+}
+
+void Pok_Display_setBackgroundColor(int16_t color) {
+    Display::bgcolor = (uint8_t)color;
+}
+
+void Pok_Display_setInvisibleColor(int16_t color) {
+    Display::invisiblecolor = (uint8_t)color;
+}
+
+void Pok_Display_drawPixel(int16_t x,int16_t y) {
+    Display::drawPixel(x,y);
+}
+
+void Pok_Display_drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {
+    Display::drawLine(x0, y0, x1, y1);
+}
+
+void Pok_Display_drawRectangle(int16_t x0, int16_t y0, int16_t w, int16_t h) {
+    Display::drawRectangle(x0, y0, w, h);
+}
+
+void Pok_Display_fillRectangle(int16_t x, int16_t y, int16_t w, int16_t h) {
+    Display::fillRectangle(x, y, w, h);
+}
+
+void Pok_Display_drawCircle(int16_t x0, int16_t y0, int16_t r) {
+    Display::drawCircle(x0, y0, r);
+}
+
+void Pok_Display_fillCircle(int16_t x0, int16_t y0, int16_t r) {
+    Display::fillCircle(x0, y0, r);
+}
+
 void Pok_Display_write(const uint8_t *buffer, uint8_t size) {
 
     Display::write(buffer, size);
@@ -147,18 +181,21 @@ void Pok_Display_write(const uint8_t *buffer, uint8_t size) {
 
 void Pok_Display_print(uint8_t x, uint8_t y, const char str[], uint8_t color) {
 
-    Display::color = color;
+    if( color != -1)
+        Display::color = color;
     Display::print( x, y, str );
 }
 
-void Pok_Display_blitFrameBuffer(int16_t x, int16_t y, int16_t w, int16_t h, int16_t invisiblecol_, const uint8_t *buffer) {
-    if( invisiblecol_ >= 16 )
-    	SDL_RenderCopySolid( buffer, w, h, x, y );
-    else{
-        if( invisiblecol_ != -1)
-            Display::invisiblecolor = (uint8_t)invisiblecol_;
+void Pok_Display_blitFrameBuffer(int16_t x, int16_t y, int16_t w, int16_t h, bool flipH, bool flipV, int16_t invisiblecol_, const uint8_t *buffer) {
+    if( invisiblecol_ != -1)
+        Display::invisiblecolor = (uint8_t)invisiblecol_;
+
+    if(flipH)
+        Display::drawBitmapDataXFlipped(x, y, w, h, buffer );
+    else if(flipV)
+        Display::drawBitmapDataYFlipped(x, y, w, h, buffer );
+    else
         Display::drawBitmapData(x, y, w, h, buffer );
-    }
 }
 
 void Pok_Display_setSprite(uint8_t index, int16_t x, int16_t y, int16_t w, int16_t h, int16_t invisiblecol_, uint8_t *buffer, uint16_t* palette16x16bit, bool doResetDirtyRect) {
@@ -169,12 +206,6 @@ void Pok_Display_setSprite(uint8_t index, int16_t x, int16_t y, int16_t w, int16
 void Pok_Display_setSpritePos(uint8_t index, int16_t x, int16_t y) {
     Display::setSpritePos(index, x, y);
 }
-
-void Pok_Display_fillRectangle(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color) {
-    Display::color = color;
-    Display::fillRectangle(x, y, w, h);
-}
-
 
 uint16_t POK_game_display_RGBto565(uint8_t r, uint8_t g, uint8_t b) {
     return Display::RGBto565(r, g, b);
@@ -235,7 +266,7 @@ void Pok_Sound_Reset() {
 
     #if POK_STREAMING_MUSIC > 0
 
-    // Zero buffers. TODO: Should I initialize to 128 instead?
+    // Init buffers to an empty value: 128.
     #if POK_HIGH_RAM == HIGH_RAM_MUSIC
     memset(buffers[0], 128, BUFFER_SIZE);
     memset(buffers[1], 128, BUFFER_SIZE);
@@ -272,7 +303,9 @@ void Pok_Sound_Reset() {
 
 void Pok_Sound_PlayMusicFromSD(char* filePath) {
     #if POK_STREAMING_MUSIC > 0
-    Pokitto::Sound::playMusicStream(filePath);
+    Pokitto::Sound::pauseMusicStream();
+    int ok = Pokitto::Sound::playMusicStream(filePath);
+    if(ok) Pokitto::Sound::playMusicStream();
     #endif
 }
 

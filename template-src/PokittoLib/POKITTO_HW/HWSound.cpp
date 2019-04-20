@@ -420,7 +420,12 @@ inline void pokSoundIRQ() {
                 else {
                     sfxSample = (*Pokitto::Sound::sfxDataPtr++);  // 8-bit sample
                 }
+            #ifdef PROJ_SDFS_STREAMING
                 int32_t s = (int32_t(output) + int32_t(sfxSample)) - 128;
+            #else
+                int32_t s = (127 + int32_t(sfxSample)) - 128;
+            #endif
+
                 if( s < 0 ) s = 0;
                 else if( s > 255 ) s = 255;
                 output = s;
@@ -433,7 +438,6 @@ inline void pokSoundIRQ() {
                 streambyte = 0; // duty cycle
                 output = 0;
             }
-
             if (currentPtr >= endPtr)
             {
             currentBuffer++;

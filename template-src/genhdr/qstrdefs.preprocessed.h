@@ -1044,6 +1044,8 @@ Q(__name__)
 
 Q(__name__)
 
+Q(__name__)
+
 Q(__new__)
 
 Q(__new__)
@@ -1168,6 +1170,8 @@ Q(centery)
 
 Q(chr)
 
+Q(circle)
+
 Q(classmethod)
 
 Q(classmethod)
@@ -1215,6 +1219,10 @@ Q(display)
 Q(display)
 
 Q(divmod)
+
+Q(draw)
+
+Q(draw)
 
 Q(draw)
 
@@ -1398,6 +1406,8 @@ Q(len)
 
 Q(line)
 
+Q(line)
+
 Q(list)
 
 Q(list)
@@ -1472,6 +1482,8 @@ Q(pend_throw)
 
 Q(pixel)
 
+Q(pixel)
+
 Q(play)
 
 Q(play_from_sd)
@@ -1499,6 +1511,8 @@ Q(range)
 Q(range)
 
 Q(range)
+
+Q(rect)
 
 Q(rect)
 
@@ -1538,7 +1552,11 @@ Q(setHwSprite)
 
 Q(setHwSpritePos)
 
+Q(set_background_color)
+
 Q(set_clip)
+
+Q(set_foreground_color)
 
 Q(set_mode)
 
@@ -1547,6 +1565,8 @@ Q(set_palette)
 Q(set_palette_16bit)
 
 Q(set_tile)
+
+Q(set_transparent_color)
 
 Q(setattr)
 
@@ -1593,6 +1613,8 @@ Q(super)
 Q(surface)
 
 Q(surface)
+
+Q(text)
 
 Q(text)
 

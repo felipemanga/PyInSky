@@ -1,74 +1,95 @@
+# uPyGame performance test
 # Copyright (C) 2019 Hannu Viitala
 #
 # The source code in this file is released under the MIT license.
 # Go to http://opensource.org/licenses/MIT for the full license details.
 #
+# The graphics in this file are released under the Creative Commons Attribution license (CC-BY).
+# Go to https://creativecommons.org/licenses/by/4.0/ for the full license details.
 
-# *** A TILEMAP DEMO FOR THE POKITTO MICROPYTHON ***
+# 1) Drawing a surface of 16x16 pixels 100 times a frame gives 16 Fps (full speed). 4-bit colors for both screen and the surface.
+# 2) Drawing a surface of 16x16 pixels 200 times a frame gives 12 Fps (full speed). 4-bit colors for both screen and the surface.
 
-import upygame as pygame
-import example_data as data
+import upygame as upg
+import urandom as random
 
-# Setup the screen buffer
-pygame.display.init(False)
-pygame.display.set_palette_16bit([
-	4195,16678,12717,19017,13092,33382,53801,29580,23545,54245,33972,27973,28185,54611,57003,57210
-]);
-screen = pygame.display.set_mode() # full screen
+upg.display.init()
+screen_sf = upg.display.set_mode() # full screen
 
-# Initialise the mp.
-tilemap = pygame.tilemap.Tilemap(16,16,data.mapPixels1)
-tilemap.set_tile(0xb, 16, 16, data.green16);
-tilemap.set_tile(0x5, 16, 16, data.tree16);
-tilemap.set_tile(0x4, 16, 16, data.grass16);
-tilemap.set_tile(0x8, 16, 16, data.water16);
+# Set palette
+upg.display.set_palette_16bit([0,4124,1984,65535]);
 
-# Sound
-g_sound = pygame.mixer.Sound()
-g_sound.reset()
-g_sound.play()
+# pokitto picture
+w2 = 16
+h2 = 16
+pokittoPixels = b'\
+\x00\x03\x33\x33\x33\x33\x33\x00\
+\x00\x32\x22\x22\x22\x22\x32\x00\
+\x00\x32\x33\x33\x33\x33\x22\x00\
+\x00\x32\x31\x11\x11\x11\x22\x00\
+\x00\x32\x31\x13\x11\x31\x22\x00\
+\x02\x32\x31\x11\x11\x11\x22\x23\
+\x03\x32\x31\x13\x33\x11\x22\x30\
+\x00\x32\x31\x11\x11\x11\x22\x00\
+\x00\x32\x22\x22\x22\x22\x22\x00\
+\x00\x32\x23\x22\x22\x23\x32\x00\
+\x00\x32\x33\x32\x23\x33\x32\x00\
+\x00\x32\x23\x22\x23\x32\x22\x00\
+\x00\x32\x22\x23\x32\x22\x22\x00\
+\x00\x32\x22\x22\x22\x22\x32\x00\
+\x00\x33\x33\x33\x33\x33\x33\x00\
+\x00\x32\x00\x00\x00\x00\x32\x00\
+'
 
-#g_sound.play_from_sd("/sd/audio.wav")
-#g_sound.play_from_sd("beat.wav")
-#g_sound.play_from_sd("test3.raw")
-#g_sound.play_from_sd("/sd/test3.raw")
+hero_sf = upg.surface.Surface(w2, h2, pokittoPixels)
+#hero_sf.fill(2)
 
-# The main loop
+x=20
+y=20
 vx = 0;
 vy = 0;
-x = -200;
-y = -200;
-mapW = 16*16 # 16 tiles of 16 pixels
-mapH = 16*16 # 16 tiles of 16 pixels
+hmirr = False
+vmirr = False
 while True:
 
-    # Read keys
-    eventtype = pygame.event.poll()
-    if eventtype != pygame.NOEVENT:
-        if eventtype.type == pygame.KEYDOWN:
-            if eventtype.key == pygame.K_RIGHT: vx = -1
-            if eventtype.key == pygame.K_LEFT:  vx = 1
-            if eventtype.key == pygame.K_UP:    vy = 1
-            if eventtype.key == pygame.K_DOWN:  vy = -1
-            if eventtype.key == pygame.BUT_A:
-                g_sound.play_sfx(data.sound1, len(data.sound1), False)
-            if eventtype.key == pygame.BUT_B:
-                g_sound.play_sfx(data.sound2, len(data.sound2), True)
-        if eventtype.type == pygame.KEYUP:
-            if eventtype.key == pygame.K_RIGHT: vx = 0
-            if eventtype.key == pygame.K_LEFT:  vx = 0
-            if eventtype.key == pygame.K_UP:    vy = 0
-            if eventtype.key == pygame.K_DOWN:  vy = 0
+    eventtype = upg.event.poll()
+    if eventtype != upg.NOEVENT:
+        if eventtype.type== upg.KEYDOWN:
+            if eventtype.key == upg.K_RIGHT:
+                vx = 1
+            if eventtype.key == upg.K_LEFT:
+                vx = -1
+            if eventtype.key == upg.K_UP:
+                vy = -1
+            if eventtype.key == upg.K_DOWN:
+                vy = 1
+            if eventtype.key == upg.BUT_A:
+                if(vmirr):
+                    vmirr= False
+                    hmirr= False
+                elif(hmirr):
+                    vmirr= True
+                    hmirr= False
+                else:
+                    hmirr= True
+                    vmirr= False
+        if eventtype.type == upg.KEYUP:
+            if eventtype.key == upg.K_RIGHT:
+                vx = 0
+            if eventtype.key == upg.K_LEFT:
+                vx = 0
+            if eventtype.key == upg.K_UP:
+                vy = 0
+            if eventtype.key == upg.K_DOWN:
+                vy = 0
 
-    # Move
-    x += vx
-    if(x>0): x=0
-    if(x + mapW < 110): x = 110 - mapW
-    y += vy
-    if(y>0): y=0
-    if(y + mapH < 88): y = 88- mapH
+    for i in range(1,200):
+        x2 = random.getrandbits(6) + 20
+        y2 = random.getrandbits(6) + 5
+        screen_sf.blit(hero_sf, x2, y2,0,hmirr, vmirr)
 
-    # Draw
-    tilemap.draw(x, y)
-    screen.blit(data.girl12x15, 55, 44)
-    pygame.display.flip()
+    x = x + vx
+    y = y + vy
+    screen_sf.blit(hero_sf, x, y)
+
+    upg.display.flip()

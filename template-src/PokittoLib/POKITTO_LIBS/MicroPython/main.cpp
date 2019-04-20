@@ -57,33 +57,7 @@ extern "C" int PythonMain(int argc, char **argv);
 
 int main () {
 
-    //game.sound.playMusicStream("test.raw"); //!!HV
-
-    #if POK_STREAMING_MUSIC > 0
-
-    // Set global variables
-    currentBuffer = 0;
-    currentPtr = buffers[currentBuffer];
-    endPtr = currentPtr + BUFFER_SIZE;
-
-    // Zero buffers
-    #if POK_HIGH_RAM == HIGH_RAM_MUSIC
-    memset(buffers[0], 128, BUFFER_SIZE);
-    memset(buffers[1], 128, BUFFER_SIZE);
-    memset(buffers[2], 128, BUFFER_SIZE);
-    memset(buffers[3], 128, BUFFER_SIZE);
-    #else
-    memset(&(buffers[0]), 128, BUFFER_SIZE);
-    memset(&(buffers[1]), 128, BUFFER_SIZE);
-    memset(&(buffers[2]), 128, BUFFER_SIZE);
-    memset(&(buffers[3]), 128, BUFFER_SIZE);
-    #endif
-    Pokitto::Sound::pauseMusicStream();
-    #endif
-
     game.begin();
-
-    //game.sound.playMusicStream(); //!!HV
 
     game.display.persistence = 0;
 
