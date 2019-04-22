@@ -304,8 +304,12 @@ void Pok_Sound_Reset() {
 void Pok_Sound_PlayMusicFromSD(char* filePath) {
     #if POK_STREAMING_MUSIC > 0
     Pokitto::Sound::pauseMusicStream();
+    fileClose(); // Close the file always just in case the same file is loaded again.
     int ok = Pokitto::Sound::playMusicStream(filePath);
-    if(ok) Pokitto::Sound::playMusicStream();
+    if(ok)
+        Pokitto::Sound::playMusicStream();
+    else
+        Pokitto::Sound::pauseMusicStream();
     #endif
 }
 
