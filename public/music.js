@@ -1,5 +1,5 @@
 examples["Music"] = {
-    "main.mpy":`# Copyright (C) 2019 Hannu Viitala
+    "main.py":`# Copyright (C) 2019 Hannu Viitala
 #
 # The source code in this file is released under the MIT license.
 # Go to http://opensource.org/licenses/MIT for the full license details.
