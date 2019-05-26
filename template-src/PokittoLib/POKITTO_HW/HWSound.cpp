@@ -100,6 +100,8 @@ bool volpotError=false; //test for broken MCP4018
 
 uint16_t soundbyte;
 
+sampletype Pokitto::snd[4]; // up to 4 sounds at once?
+
 
 #if POK_USE_DAC > 0
 #if POK_BOARDREV == 1
@@ -362,10 +364,42 @@ void pokPlayStream() {
     streamon=1;
 }
 
+uint8_t mixSound()
+{
+    int temp = 0;
+    signed int ss[4];
+    for(int s=0; s<4; s++){
+        snd[s].soundPoint++;
+
+        int currentPos = (snd[s].soundPoint*snd[s].speed)>>8;
+
+        if( currentPos >= snd[s].currentSoundSize){
+            if(snd[s].repeat){
+                snd[s].soundPoint = snd[s].repeat;
+            }else{
+                snd[s].playSample=0;
+                snd[s].soundPoint=0;
+            }
+        }
+
+        ss[s] = snd[s].currentSound[currentPos] -128;
+        ss[s] *= snd[s].volume;
+        ss[s] = ss[s]>>8;
+        ss[s] *= snd[s].playSample; // will be 1 or 0, if not playing, will silence
+
+     }
+    temp = (ss[0] + ss[1] + ss[2] + ss[3])/4;
+    return temp +128;
+}
 
 
 inline void pokSoundBufferedIRQ() {
+
+#if POK_AUD_TRACKER
+           uint32_t output = mixSound();
+#else
            uint32_t output = soundbuf[soundbufindex+=Pokitto::streamon];
+#endif
            if (soundbufindex==SBUFSIZE) soundbufindex=0;
            //if (p==sizeof(beat_11025_raw)) p=0;
            //soundbuf[soundbufindex++] = output;
@@ -402,7 +436,12 @@ inline void pokSoundIRQ() {
         #endif // POK_STREAMFREQ_HALVE
         streamstep &= streamon; // streamon is used to toggle SD music streaming on and off
         if (streamstep) {
+
+            #ifdef PROJ_DISABLE_SD_STREAMING
+            output = 0;
+            #else
             output = (*currentPtr++);
+            #endif
 
             // If exists, mix the sound effect to the output.
             if( Pokitto::Sound::sfxDataPtr != Pokitto::Sound::sfxEndPtr ){
@@ -420,15 +459,15 @@ inline void pokSoundIRQ() {
                 else {
                     sfxSample = (*Pokitto::Sound::sfxDataPtr++);  // 8-bit sample
                 }
-            #ifdef PROJ_SDFS_STREAMING
-                int32_t s = (int32_t(output) + int32_t(sfxSample)) - 128;
-            #else
-                int32_t s = (127 + int32_t(sfxSample)) - 128;
-            #endif
 
+                #ifdef PROJ_DISABLE_SD_STREAMING
+                output = int32_t(sfxSample);
+                #else
+                int32_t s = (int32_t(output) + int32_t(sfxSample)) - 128;
                 if( s < 0 ) s = 0;
                 else if( s > 255 ) s = 255;
                 output = s;
+                #endif
             }
 
             if(streamvol && streamon) {
@@ -438,13 +477,15 @@ inline void pokSoundIRQ() {
                 streambyte = 0; // duty cycle
                 output = 0;
             }
-            if (currentPtr >= endPtr)
-            {
-            currentBuffer++;
-            if (currentBuffer==4) currentBuffer=0;
-            currentPtr = buffers[currentBuffer];
-            endPtr = currentPtr + BUFFER_SIZE;
+
+            #ifndef PROJ_DISABLE_SD_STREAMING
+            if (currentPtr >= endPtr) {
+                currentBuffer++;
+                if (currentBuffer==4) currentBuffer=0;
+                currentPtr = buffers[currentBuffer];
+                endPtr = currentPtr + BUFFER_SIZE;
             }
+            #endif
         }
     #endif // POK_STREAMING_MUSIC
 

@@ -79,6 +79,29 @@
     //#define NUM_CHANNELS 2
 #endif
 
+#ifdef PROJ_ENABLE_SFX
+	#ifndef PROJ_ENABLE_SOUND
+		#define PROJ_ENABLE_SOUND 1
+	#endif
+
+	#ifndef PROJ_STREAMING_MUSIC
+		#define PROJ_STREAMING_MUSIC 1
+	#endif
+
+	#ifndef PROJ_ENABLE_SD_MUSIC
+		#define PROJ_DISABLE_SD_STREAMING 1
+	#endif
+#endif
+
+#ifdef PROJ_ENABLE_SD_MUSIC
+	#ifndef PROJ_ENABLE_SOUND
+		#define PROJ_ENABLE_SOUND 1
+	#endif
+
+	#ifndef PROJ_STREAMING_MUSIC
+		#define PROJ_STREAMING_MUSIC 1
+	#endif
+#endif
 
 #ifndef PROJ_STREAMING_MUSIC
         #define POK_STREAMING_MUSIC 0 // Define true to stream music from SD
@@ -462,6 +485,10 @@
     #define POK_AUD_FREQ 22050 //Valid values: 8000, 11025, 16000, 22050 // audio update frequency in Hz
 #else
     #define POK_AUD_FREQ PROJ_AUD_FREQ
+#endif
+
+#if PROJ_AUD_TRACKER > 0
+    #define POK_AUD_TRACKER 1
 #endif
 
 
