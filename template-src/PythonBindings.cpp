@@ -309,7 +309,10 @@ void Pok_Sound_PlayMusicFromSD(char* filePath) {
     if(ok)
         Pokitto::Sound::playMusicStream();
     else
+    {
         Pokitto::Sound::pauseMusicStream();
+        Pok_Sound_Reset();
+    }
     #endif
 }
 
@@ -373,6 +376,12 @@ void Pok_Sound_playSFX(void *sfxdata, uint32_t length, bool is4bitSample) {
         Pokitto::Sound::playSFX4bit( (const uint8_t*)sfxdata, length );
     else
         Pokitto::Sound::playSFX( (const uint8_t*)sfxdata, length );
+    #endif
+}
+
+void Pok_Sound_playSFX(const uint8_t *sfxdata, uint32_t length) {
+    #if POK_STREAMING_MUSIC > 0
+    Pokitto::Sound::playSFX( sfxdata, length );
     #endif
 }
 
