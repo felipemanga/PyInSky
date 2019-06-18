@@ -51,8 +51,6 @@ using namespace Pokitto;
 EventRingBufferItem eventRingBuffer[EVENT_RING_BUFFER_SIZE];
 int rbNextFreeItemIndex = 0;
 int rbOldestItemIndex = -1; // empty
-
-extern "C" {
     
 // Add item to the end of ring buffer
 bool Pok_addToRingBuffer(uint8_t type, uint8_t key) {
@@ -444,6 +442,7 @@ void Pok_GetTileIds( void* _this, int32_t tlx, int32_t tly, int32_t brx, int32_t
 
 
 // For compatibility in linking
+extern "C" {
 
 struct tm * localtime_cpp(const time_t * timer)
 {
