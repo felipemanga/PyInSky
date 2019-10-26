@@ -37,6 +37,11 @@ let settings = `
 
 $flags
 
+#if PROJ_HIRES>0
+#undef PROJ_HIRES
+#define PROJ_MODE15 1
+#endif
+
 #endif
 `;
 
