@@ -37,6 +37,7 @@
 #include "PokittoCore.h"
 #include "PokittoDisplay.h"
 #include "Tilemap.hpp"
+#include "PokittoCookie.h"
 #include "PythonBindings.h"
 #include "time.h"
 
@@ -51,7 +52,7 @@ using namespace Pokitto;
 EventRingBufferItem eventRingBuffer[EVENT_RING_BUFFER_SIZE];
 int rbNextFreeItemIndex = 0;
 int rbOldestItemIndex = -1; // empty
-    
+
 // Add item to the end of ring buffer
 bool Pok_addToRingBuffer(uint8_t type, uint8_t key) {
 
@@ -440,9 +441,35 @@ void Pok_GetTileIds( void* _this, int32_t tlx, int32_t tly, int32_t brx, int32_t
                     /*OUT*/ *tileIdTl, *tileIdTr, *tileIdBl, *tileIdBr );
  }
 
+//*** EEPROM reading and writing ***
+
+void* Pok_CreateCookie(char* name, uint8_t* cookieBufPtr, uint32_t cookieBufLen)
+{
+    Pokitto::Cookie* mycookiePtr = new Pokitto::Cookie;
+    
+    //initialize cookie
+    if(mycookiePtr )mycookiePtr->beginWithData(name, cookieBufLen, (char*)cookieBufPtr); 
+
+    return (void*)mycookiePtr;
+}
+
+void Pok_DeleteCookie(void* mycookiePtr )
+{
+    delete((Pokitto::Cookie*)mycookiePtr);
+}
+
+void Pok_LoadCookie(void* mycookiePtr)
+{
+    ((Pokitto::Cookie*)mycookiePtr)->loadCookie();
+}
+
+void Pok_SaveCookie(void* mycookiePtr)
+{
+    // Save cookie if this is the best time
+    ((Pokitto::Cookie*)mycookiePtr)->saveCookie();
+}
 
 // For compatibility in linking
-extern "C" {
 
 struct tm * localtime_cpp(const time_t * timer)
 {
@@ -453,6 +480,5 @@ time_t time_cpp(time_t* timer){
     return(time(timer));
 }
 
-}
 
 #endif // MICROPY_ENABLE_GC

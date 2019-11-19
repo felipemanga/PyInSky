@@ -58,6 +58,7 @@ CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoBattery.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoButtons.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoConsole.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoCore.cpp');
+CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoCookie.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoDisk.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoDisplay.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoItoa.cpp');
@@ -139,7 +140,7 @@ CSOURCES.push('PokittoLib/mbed-pokitto/targets/hal/TARGET_NXP/TARGET_LPC11U6X/sl
 CSOURCES.push('PokittoLib/mbed-pokitto/targets/hal/TARGET_NXP/TARGET_LPC11U6X/spi_api.c');
 CSOURCES.push('PokittoLib/mbed-pokitto/targets/hal/TARGET_NXP/TARGET_LPC11U6X/us_ticker.c');
 CXXSOURCES.push('main.cpp');
-CXXSOURCES.push('PythonBindings.cpp');
+CXXSOURCES.push('PokittoLib/POKITTO_LIBS/MicroPython/PythonBindings.cpp');
 CXXSOURCES.push('UartSerialPrint.cpp');
 CSOURCES.push('frozen_mpy.c');
 

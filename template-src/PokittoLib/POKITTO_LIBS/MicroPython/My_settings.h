@@ -13,23 +13,21 @@
 #define MY_SETTINGS_H
 
 #define PROJ_HIRES 0 //1 = high resolution (220x176) , 0 = low resolution fast mode (110x88)
+#define DISABLEAVRMIN 1
 
 // Sound
 #define PROJ_ENABLE_SOUND 1     // 0 = all sound functions disabled
 #define PROJ_STREAMING_MUSIC 1  // Use streaming music (either SD or filling buffers programmaticly)
 #define PROJ_AUD_FREQ 8000
+//#define PROJ_SDFS_STREAMING 1
 
 #ifndef POK_SIM
 #define PROJ_HIGH_RAM HIGH_RAM_MUSIC
-#define PROJ_FPS 200
-#else
-#define PROJ_FPS 10
 #endif
 
-#define PROJ_SHOW_FPS_COUNTER
+//#define PROJ_SHOW_FPS_COUNTER
+#define PROJ_FPS 200
 //#define PROJ_FPS 20
-
-#define _OSCT 2
 
 // Python specific
 

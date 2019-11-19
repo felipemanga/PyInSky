@@ -714,6 +714,10 @@ Q(BaseException)
 
 Q(BaseException)
 
+Q(Cookie)
+
+Q(Cookie)
+
 Q(EOFError)
 
 Q(EOFError)
@@ -766,18 +770,6 @@ Q(Exception)
 
 Q(Exception)
 
-Q(FrameBuffer)
-
-Q(FrameBuffer)
-
-Q(FrameBuffer1)
-
-Q(GS2_HMSB)
-
-Q(GS4_HMSB)
-
-Q(GS8)
-
 Q(GeneratorExit)
 
 Q(GeneratorExit)
@@ -826,14 +818,6 @@ Q(LookupError)
 
 Q(LookupError)
 
-Q(MONO_HLSB)
-
-Q(MONO_HMSB)
-
-Q(MONO_VLSB)
-
-Q(MVLSB)
-
 Q(MemoryError)
 
 Q(MemoryError)
@@ -873,8 +857,6 @@ Q(PinBase)
 Q(PinBase)
 
 Q(QUIT)
-
-Q(RGB565)
 
 Q(Rect)
 
@@ -948,6 +930,8 @@ Q(__contains__)
 
 Q(__del__)
 
+Q(__del__)
+
 Q(__delitem__)
 
 Q(__delitem__)
@@ -1005,8 +989,6 @@ Q(__main__)
 Q(__main__)
 
 Q(__module__)
-
-Q(__name__)
 
 Q(__name__)
 
@@ -1123,8 +1105,6 @@ Q(append)
 Q(args)
 
 Q(bin)
-
-Q(blit)
 
 Q(blit)
 
@@ -1248,19 +1228,13 @@ Q(extend)
 
 Q(fill)
 
-Q(fill)
-
 Q(fill_buffer)
-
-Q(fill_rect)
 
 Q(find)
 
 Q(flip)
 
 Q(format)
-
-Q(framebuf)
 
 Q(from_bytes)
 
@@ -1336,8 +1310,6 @@ Q(height)
 
 Q(hex)
 
-Q(hline)
-
 Q(id)
 
 Q(index)
@@ -1406,8 +1378,6 @@ Q(len)
 
 Q(line)
 
-Q(line)
-
 Q(list)
 
 Q(list)
@@ -1415,6 +1385,8 @@ Q(list)
 Q(little)
 
 Q(little)
+
+Q(load)
 
 Q(locals)
 
@@ -1482,8 +1454,6 @@ Q(pend_throw)
 
 Q(pixel)
 
-Q(pixel)
-
 Q(play)
 
 Q(play_from_sd)
@@ -1514,8 +1484,6 @@ Q(range)
 
 Q(rect)
 
-Q(rect)
-
 Q(remove)
 
 Q(replace)
@@ -1538,7 +1506,7 @@ Q(rsplit)
 
 Q(rstrip)
 
-Q(scroll)
+Q(save)
 
 Q(seed)
 
@@ -1616,8 +1584,6 @@ Q(surface)
 
 Q(text)
 
-Q(text)
-
 Q(throw)
 
 Q(throw)
@@ -1675,8 +1641,6 @@ Q(value)
 Q(value)
 
 Q(values)
-
-Q(vline)
 
 Q(wait)
 

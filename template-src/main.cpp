@@ -2,7 +2,7 @@
 
 #include "PythonBindings.h"
 
-extern "C" int PythonMain( unsigned int heapSize, char *heapMem );
+extern "C" int PyInSkyMain( unsigned int heapSize, char *heapMem );
 
 int main () {
     int *tmp = new int;
@@ -13,7 +13,7 @@ int main () {
     game.begin();
     game.display.persistence = 0;
     
-    PythonMain( p, new char[p] );
+    PyInSkyMain( p, new char[p] );
     return 1;
 }
 
