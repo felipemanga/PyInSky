@@ -204,6 +204,7 @@ html, body {
     box-sizing: border-box;
     font: inherit;
     color: inherit;
+    line-height: 0.7em;
 }
 
 #headPane button::after {
@@ -257,8 +258,7 @@ html, body {
     display: none;
 }
 
-#fileListContainer::after {
-    content: "Current file";
+#fileListLabel {
     position: absolute;
     bottom: 0px;
     left: 0px;
@@ -421,11 +421,10 @@ html, body {
     background-color: #f3e97a9e;
     border: 1px solid;
     border-radius: 2px;
-    width: 120px;
+    width: 160px;
     height: 40px;
-    font-size: 2em;
+    font-size: 1.5em;
 }
-
 
 #exampleApply {
     position: absolute;
@@ -436,7 +435,7 @@ html, body {
     border-radius: 3px;
     width: 120px;
     height: 40px;
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 #examplesWin::after {
@@ -622,6 +621,7 @@ input[type="color"]::-webkit-color-swatch {
     margin-right: 5px;
     position: relative;
 }
+
 #activeColor::after {
     content: attr(colorIndex);
     position: absolute;
