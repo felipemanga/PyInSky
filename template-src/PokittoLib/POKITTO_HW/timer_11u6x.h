@@ -40,7 +40,6 @@
 /* External data/function define */
 #define EXTERN extern
 #define INLINE inline
-#define bool uint8_t
 
 #ifdef __cplusplus
 extern "C" {

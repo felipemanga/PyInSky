@@ -2,6 +2,17 @@
 
 #include "PythonBindings.h"
 
+#if PROJ_SCREENMODE == TASMODE
+namespace Pokitto {
+
+    void Display::drawPixel(int16_t x,int16_t y, uint8_t col){}
+    void Display::drawPixel(int16_t x,int16_t y){}
+    void Display::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {}
+    void Display::drawCircle(int16_t x0, int16_t y0, int16_t r){}
+    void Display::fillCircle(int16_t x0, int16_t y0, int16_t r){}
+}
+#endif
+
 extern "C" int PyInSkyMain( unsigned int heapSize, char *heapMem );
 
 int main () {
@@ -12,6 +23,7 @@ int main () {
     Pokitto::Core game;
     game.begin();
     game.display.persistence = 0;
+    Pokitto::Display::setColorDepth(4);
     
     PyInSkyMain( p, new char[p] );
     return 1;

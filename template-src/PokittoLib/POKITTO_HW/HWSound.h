@@ -41,7 +41,7 @@
 
 #define SPEAKER 3
 #if POK_HIGH_RAM == HIGH_RAM_MUSIC
-	#define BUFFER_SIZE 256*4
+	#define BUFFER_SIZE 512
 	#define SBUFSIZE 256*4
 #else
 	#define BUFFER_SIZE 512*4 //*8 //*8 // 512 // was 512 (works really well with crabator) was 256
@@ -139,7 +139,10 @@ extern int setHWvolume(uint8_t);
 extern uint8_t getHWvolume();
 extern void changeHWvolume(int8_t);
 
+#if POK_USE_PWM
 extern pwmout_t audiopwm;
+#endif
+
 extern uint8_t pokAmpIsOn();
 extern void pokAmpEnable(uint8_t);
 

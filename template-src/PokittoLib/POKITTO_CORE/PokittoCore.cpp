@@ -36,7 +36,11 @@
 
 #include "Pokitto_settings.h"
 #include "PokittoCore.h"
-#include "PokittoConsole.h"
+
+#if POK_USE_CONSOLE > 0
+    #include "PokittoConsole.h"
+#endif
+
 #include "PokittoFonts.h"
 #include "PokittoTimer.h"
 #include "PokittoLogos.h"
@@ -145,9 +149,12 @@ using namespace Pokitto;
 bool Core::run_state; // this definition needed
 
 /** Components */
-Backlight Core::backlight;
+#if (PROJ_GAMEBUINO > 0)
+    Backlight Core::backlight;
+    Battery Core::battery;
+#endif
+
 Buttons Core::buttons;
-Battery Core::battery;
 #if POK_ENABLE_SOUND > 0
 Sound Core::sound;
 #endif
@@ -261,6 +268,9 @@ void Core::jumpToLoader() {
     //display.setFont(font5x7);
     //display.adjustCharStep=1;
     //display.adjustLineStep=2;
+	#ifndef POK_SIM
+    NVIC_DisableIRQ(IRQn_Type::CT32B0_IRQn); // Stop sound interrupt
+	#endif
     display.fontSize=1;
     display.directbgcolor=COLOR_BLACK;
     display.directcolor=COLOR_GREEN;
@@ -470,7 +480,7 @@ void Core::setVolLimit() {
     //sound.setMaxVol(VOLUME_HEADPHONE_MAX);
     int dstate=1;
     bool wipe = true;
-    float vol = sound.getVolume();
+    uint16_t vol = sound.getVolume();
     //#ifndef POK_SIM
     vol=eeprom_read_byte((uint16_t*)EESETTINGS_VOL);
     Pokitto::Sound::globalVolume=vol;
@@ -610,28 +620,44 @@ void Core::begin() {
 	//frameCount = 0;
 	frameEndMicros = 1;
 	startMenuTimer = 255;
+
 	//read default settings from flash memory (set using settings.hex)
 	readSettings();
+#if (PROJ_GAMEBUINO > 0)
 	//init everything
 	backlight.begin();
 	backlight.set(BACKLIGHT_MAX);
+#endif
 	buttons.begin();
 	buttons.update();
+#if (PROJ_GAMEBUINO > 0)
 	battery.begin();
+#endif
 	display.begin();
 
-	if( !IS_EMULATOR ){
+        char logoFlag = IS_EMULATOR ? 1 : eeprom_read_byte((uint16_t*)EESETTINGS_SKIPINTRO);
+	if( logoFlag&2 ){ // toggle flag set, change value for next boot
+	    eeprom_write_byte((uint16_t*)EESETTINGS_SKIPINTRO, !(logoFlag&1));
+	}
+	logoFlag &= 1;
+	
+	#if POK_DISPLAYLOGO
+        #if PROJ_DEVELOPER_MODE != 1
+	if( logoFlag == 0 ){	
 	    showLogo();
 	}
+        #endif // PROJ_DEVELOPER_MODE
+	#endif // POK_DISPLAYLOGO
 
+	
 	display.enableDirectPrinting(true);
     display.directbgcolor = COLOR_BLACK;
+    display.clearLCD();
     display.setFont(fntC64UIGfx);
 
     display.enableDirectPrinting(true);
     display.directbgcolor = COLOR_BLACK;
     display.directcolor = COLOR_GREEN;
-    display.clearLCD();
     display.setFont(fntC64UIGfx);
     display.adjustCharStep=0;
     display.adjustLineStep=1;
@@ -639,9 +665,20 @@ void Core::begin() {
 	jumpToLoader();
 	#endif
 
-	if( !IS_EMULATOR ){
-	    
+    #ifndef DISABLE_LOADER
+    #if PROJ_DEVELOPER_MODE != 1
+	if( logoFlag == 0 ){
 	    askLoader();
+	}
+    #endif // PROJ_DEVELOPER_MODE
+    #endif
+
+	#if PROJ_DEVELOPER_MODE==1
+	sound.setMaxVol(VOLUME_SPEAKER_MAX);
+	sound.setVolume(VOLUME_SPEAKER_MAX);
+	#else
+	if( logoFlag == 0 ){
+	    //showWarning();
 	    setVolLimit();
 	    display.clear();
 	    display.update();
@@ -650,34 +687,33 @@ void Core::begin() {
 	    {
 		buttons.update();
 	    }
-
 	}else{
-	
-	    sound.setMaxVol(VOLUME_SPEAKER_MAX);
-	    sound.setVolume(VOLUME_SPEAKER_MAX);
-	
+	    sound.setVolume(sound.getVolume());//make sure we're at set volume before continue
 	}
 
+	#endif
+	
 	display.enableDirectPrinting(false);
 	display.adjustCharStep=1;
 	display.adjustLineStep=1;
 	display.fontSize=1;
 	display.textWrap=true;
 	#if POK_GAMEBUINO_SUPPORT > 0
-	// display.setFont(font5x7);
+	display.setFont(font5x7);
 	#else
-	// display.setFont(fontC64);
-    #endif
         display.setFont(DEFAULT_FONT);
 
+    	#endif
 	#if POK_ENABLE_SOUND > 0
         sound.begin();
-
+#if (PROJ_GAMEBUINO > 0)
 	//mute when B is held during start up or if battery is low
 	battery.update();
+#endif
 	if(buttons.pressed(BTN_B)){
 		sound.setVolume(0);
 	}
+
 	else{ //play the startup sound on each channel for it to be louder
 		#if POK_GBSOUND > 0
 		#if(NUM_CHANNELS > 0)
@@ -780,6 +816,7 @@ void Core::showLogo() {
     }
 }
 
+
 void Core::readSettings() {
     // ToDo
         /*display.contrast = SCR_CONTRAST;
@@ -799,6 +836,7 @@ void Core::readSettings() {
 		battery.thresolds[3] = BAT_LVL_FULL;*/
 }
 
+#if (PROJ_GAMEBUINO > 0)
 void Core::titleScreen(const char* name){
 	titleScreen(name, 0);
 }
@@ -811,6 +849,7 @@ void Core::titleScreen(){
 	titleScreen((""));
 }
 
+
 void Core::titleScreen(const char*  name, const uint8_t *logo){
 	display.setFont(font5x7);
 	while(buttons.aBtn()) wait(10); //don't accidentally skip menu
@@ -818,6 +857,7 @@ void Core::titleScreen(const char*  name, const uint8_t *logo){
 		display.fontSize = 1;
 		display.textWrap = false;
 		display.persistence = false;
+
 		battery.show = false;
 		display.setColor(BLACK);
 		while(isRunning()){
@@ -872,8 +912,10 @@ void Core::titleScreen(const char*  name, const uint8_t *logo){
 			}
 		}
 		battery.show = true;
+
 	}
 }
+#endif
 
 /**
  * Update all the subsystems, like graphics, audio, events, etc.
@@ -898,9 +940,13 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
 		frameCount++;
 
 		frameEndMicros = 0;
+#if (PROJ_GAMEBUINO > 0)
 		backlight.update();
+#endif
 		buttons.update();
+#if (PROJ_GAMEBUINO > 0)
 		battery.update();
+#endif
 
         // FPS counter
 		#if defined(PROJ_USE_FPS_COUNTER) ||  defined(PROJ_SHOW_FPS_COUNTER)
@@ -919,6 +965,7 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
 
 	} else {
 		if (!frameEndMicros) { //runs once at the end of the frame
+        #if (PROJ_GAMEBUINO > 0)
 			#if POK_ENABLE_SOUND > 0
 			sound.updateTrack();
 			sound.updatePattern();
@@ -926,8 +973,8 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
 			#endif
 			updatePopup();
 			displayBattery();
-
-            display.update(useDirectMode, updRectX, updRectY, updRectW, updRectH); //send the buffer to the screen
+        #endif
+            display.update(useDirectMode); //send the buffer to the screen
 
             frameEndMicros = 1; //jonne
 
@@ -936,6 +983,7 @@ bool Core::update(bool useDirectMode, uint8_t updRectX, uint8_t updRectY, uint8_
 	}
 }
 
+#if (PROJ_GAMEBUINO > 0)
 void Core::displayBattery(){
 #if (ENABLE_BATTERY > 0)
 	//display.setColor(BLACK, WHITE);
@@ -976,6 +1024,9 @@ display.cursorX = ox;
 display.cursorY = oy;
 #endif
 }
+#endif //(PROJ_GAMEBUINO > 0)
+
+#if (ENABLE_GUI > 0)
 
 char* Core::filemenu(char *ext) {
     uint8_t oldPersistence = display.persistence;
@@ -1008,10 +1059,14 @@ char* Core::filemenu(char *ext) {
 			if (buttons.pressed(BTN_A) || buttons.pressed(BTN_B) || buttons.pressed(BTN_C)) {
 				exit = true; //time to exit menu !
 				if (buttons.pressed(BTN_A)) {
+                    #if (POK_GBSOUND > 0)
 					sound.playOK();
+                    #endif
 				} else {
 				    *selectedfile = 0;
+                    #if (POK_GBSOUND > 0)
 					sound.playCancel();
+                    #endif
 				}
 				updated = true; // update screen
 			}
@@ -1019,13 +1074,17 @@ char* Core::filemenu(char *ext) {
 				if (buttons.repeat(BTN_DOWN,4)) {
                     if( ++activeItem >= numOfItemsFound ) activeItem = numOfItemsFound - 1;
 					if( activeItem >= currentTopItem + itemsPerScreen) currentTopItem += itemsPerScreen; // next page
+                    #if (POK_GBSOUND > 0)
 					sound.playTick();
+                    #endif
                     updated = true; // update screen
 				}
 				if (buttons.repeat(BTN_UP,4)) {
 				    if( --activeItem < 0 ) activeItem = 0;
  					if( activeItem < currentTopItem) currentTopItem -= itemsPerScreen;  // previous page
+                     #if (POK_GBSOUND > 0)
 					sound.playTick();
+                    #endif
                     updated = true; // update screen
 				}
 
@@ -1123,19 +1182,27 @@ if (display.color>3) display.color=1;
 				targetY = - display.fontHeight * length - 2; //send the menu out of the screen
 				if (buttons.pressed(BTN_A)) {
 					answer = activeItem;
+                    #if (POK_GBSOUND > 0)
 					sound.playOK();
+                    #endif
 				} else {
+                    #if (POK_GBSOUND > 0)
 					sound.playCancel();
+                    #endif
 				}
 			}
 			if (exit == false) {
 				if (buttons.repeat(BTN_DOWN,4)) {
 					activeItem++;
+                    #if (POK_GBSOUND > 0)
 					sound.playTick();
+                    #endif
 				}
 				if (buttons.repeat(BTN_UP,4)) {
 					activeItem--;
+                    #if (POK_GBSOUND > 0)
 					sound.playTick();
+                    #endif
 				}
 				//don't go out of the menu
 				if (activeItem == length) activeItem = 0;
@@ -1153,8 +1220,8 @@ if (display.color>3) display.color=1;
 			display.textWrap = false;
 			uint16_t fc,bc;
 			fc = display.color;
-            bc = display.bgcolor;
-			for (byte i = 0; i < length; i++) {
+                        bc = display.bgcolor;
+			for (uint8_t i = 0; i < length; i++) {
 				display.cursorY = currentY + rowh * i;
 				if (i == activeItem){
 					display.cursorX = 3;
@@ -1197,19 +1264,27 @@ void Core::keyboard(char* text, uint8_t length) {
 			//move the character selector
 			if (buttons.repeat(BTN_DOWN, 4)) {
 				activeY++;
+                #if (POK_GBSOUND > 0)
 				sound.playTick();
+                #endif
 			}
 			if (buttons.repeat(BTN_UP, 4)) {
 				activeY--;
+                #if (POK_GBSOUND > 0)
 				sound.playTick();
+                #endif
 			}
 			if (buttons.repeat(BTN_RIGHT, 4)) {
 				activeX++;
+                #if (POK_GBSOUND > 0)
 				sound.playTick();
+                #endif
 			}
 			if (buttons.repeat(BTN_LEFT, 4)) {
 				activeX--;
+                #if (POK_GBSOUND > 0)
 				sound.playTick();
+                #endif
 			}
 			//don't go out of the keyboard
 			if (activeX == KEYBOARD_W) activeX = 0;
@@ -1225,21 +1300,25 @@ void Core::keyboard(char* text, uint8_t length) {
 			//type character
 			if (buttons.pressed(BTN_A)) {
 				if (activeChar < (length-1)) {
-					byte thisChar = activeX + KEYBOARD_W * activeY;
+					int thisChar = activeX + KEYBOARD_W * activeY;
 					if((thisChar == 0)||(thisChar == 10)||(thisChar == 13)) //avoid line feed and carriage return
 					continue;
 					text[activeChar] = thisChar;
 					text[activeChar+1] = '\0';
 				}
 				activeChar++;
+                #if (POK_GBSOUND > 0)
 				sound.playOK();
+                #endif
 				if (activeChar > length)
 				activeChar = length;
 			}
 			//erase character
 			if (buttons.pressed(BTN_B)) {
 				activeChar--;
+                #if (POK_GBSOUND > 0)
 				sound.playCancel();
+                #endif
 				if (activeChar >= 0)
 				text[activeChar] = 0;
 				else
@@ -1247,7 +1326,9 @@ void Core::keyboard(char* text, uint8_t length) {
 			}
 			//leave menu
 			if (buttons.pressed(BTN_C)) {
+                #if (POK_GBSOUND > 0)
 				sound.playOK();
+                #endif
 				while (1) {
 					if (update()) {
 						//display.setCursor(0,0);
@@ -1255,11 +1336,15 @@ void Core::keyboard(char* text, uint8_t length) {
 						display.print(text);
 						display.println(("\n\n\n\x15:okay \x16:edit"));
 						if(buttons.pressed(BTN_A)){
+                            #if (POK_GBSOUND > 0)
 							sound.playOK();
+                            #endif
 							return;
 						}
 						if(buttons.pressed(BTN_B)){
+                            #if (POK_GBSOUND > 0)
 							sound.playCancel();
+                            #endif
 							break;
 						}
 					}
@@ -1335,11 +1420,14 @@ void Core::updatePopup(){
 	}
 #endif
 }
+#endif //(ENABLE_GUI > 0)
 
 void Core::setFrameRate(uint8_t fps) {
 	timePerFrame = 1000 / fps;
+#if (PROJ_GAMEBUINO > 0)
 	sound.prescaler = fps / 20;
 	sound.prescaler = __avrmax(1, sound.prescaler);
+#endif
 }
 
 uint8_t Core::getFrameRate() {

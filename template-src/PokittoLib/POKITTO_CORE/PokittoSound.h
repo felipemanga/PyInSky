@@ -110,7 +110,7 @@ public:
     static bool sfxIs4bitSamples;
     static void playSFX( const uint8_t *sfx, uint32_t length ){
         #if POK_STREAMING_MUSIC > 0
-        streamon=1; // force enable stream
+        //streamon=1; // force enable stream
         sfxIs4bitSamples = false;
         sfxDataPtr = sfx;
         sfxEndPtr = sfx + length;
@@ -119,7 +119,7 @@ public:
     };
     static void playSFX4bit( const uint8_t *sfx, uint32_t length ){
         #if POK_STREAMING_MUSIC > 0
-        streamon=1; // force enable stream
+        //streamon=1; // force enable stream
         sfxIs4bitSamples = true;
         sfxDataPtr = sfx;
         sfxEndPtr = sfx + length;
@@ -140,7 +140,9 @@ public:
     static void loadSampleToOsc(uint8_t os, uint8_t* sampdata, uint32_t sampsize);
 
 	// Original functions
-	static void updateStream();
+    static void defaultUpdateStream();
+    static inline void (*updateStream)() = &Sound::defaultUpdateStream;
+
     static void playTone(uint8_t os, int frq, uint8_t amp, uint8_t wav,uint8_t arpmode);
     static void playTone(uint8_t os, uint16_t freq, uint8_t volume, uint32_t duration);
     static uint8_t ampIsOn();
@@ -152,6 +154,11 @@ public:
     static uint32_t getMusicStreamElapsedSec();
     static uint32_t getMusicStreamElapsedMilliSec();
 
+	static uint16_t globalVolume;
+	static void setVolume(int16_t volume);
+	static uint16_t getVolume();
+
+#if (POK_GBSOUND > 0)
 	// GB compatibility functions
 	static void playTrack(const uint16_t* track, uint8_t channel);
 	static void updateTrack(uint8_t channel);
@@ -182,8 +189,7 @@ public:
 
 	static void setMasterVolume(uint8_t);
 	static uint8_t GetMasterVolume();
-	static void setVolume(int16_t volume);
-	static uint16_t getVolume();
+
 	static void setVolume(int8_t volume, uint8_t channel);
 	static uint8_t getVolume(uint8_t channel);
 
@@ -195,8 +201,9 @@ public:
 
 	static void setChannelHalfPeriod(uint8_t channel, uint8_t halfPeriod);
 
+
 	static void generateOutput(); //!\\ DO NOT USE
-	static uint16_t globalVolume;
+
 
 
 #if (NUM_CHANNELS > 0)
@@ -241,6 +248,9 @@ public:
 
 	static uint8_t chanVolumes[NUM_CHANNELS];
 #endif
+
+#endif // Gamebuino sound
+
 	static void updateOutput();
 };
 

@@ -40,6 +40,4 @@
 #define USE_USB_SERIAL_PRINT (0)
 #endif
 
-#define DEFAULT_FONT fontTiny
-
 #endif

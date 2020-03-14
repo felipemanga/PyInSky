@@ -10,13 +10,16 @@ const PORT = process.env.PORT || 5000;
 let nbid = 1;
 let queue = [], builders = {}, busy = false;
 let projects = {};
+let deprecatedFlags = {
+    "PROJ_HIRES":1,
+    "POK_ENABLE_FPSCOUNTER":1
+};
 
 let settings = `
 #ifndef MY_SETTINGS_H
 #define MY_SETTINGS_H
 
 #define PROJ_BUTTONS_POLLING_ONLY 1
-#define PROJ_HIRES 0
 #define PROJ_STARTUPLOGO 1
 #define PROJ_GAMEBUINO 0
 #define PROJ_HIGH_RAM HIGH_RAM_MUSIC
@@ -36,11 +39,6 @@ let settings = `
 #define USE_USB_SERIAL_PRINT (0)
 
 $flags
-
-#if PROJ_HIRES>0
-#undef PROJ_HIRES
-#define PROJ_MODE15 1
-#endif
 
 #endif
 `;
@@ -156,6 +154,8 @@ function Builder( PROJ_ID ){
 
         let strflags = '';
         for( let k in flags ){
+            if(k in deprecatedFlags)
+                continue;
             strflags += `
 #if defined(${k})
 #undef ${k}

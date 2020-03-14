@@ -43,7 +43,7 @@
  *
  * License for Gamebuino-identical code:
  *
- * (C) Copyright 2014 Aurélien Rodot. All rights reserved.
+ * (C) Copyright 2014 Aurï¿½lien Rodot. All rights reserved.
  *
  * This file is part of the Gamebuino Library (http://gamebuino.com)
  *
@@ -64,7 +64,9 @@
 #include "PokittoSound.h"
 #include "Pokitto_settings.h"
 #include "PokittoCore.h"
+#if (POK_ENABLE_SYNTH == 1)
 #include "Synth.h"
+#endif
 
 #ifndef POK_SIM
 #include "HWSound.h"
@@ -73,9 +75,14 @@
 #include "SDFSDisk.h"
 #endif
 
+#ifdef PROJ_FILE_STREAMING
+#include "FileDisk.h"
+#endif
+
 #else
 #include "SimSound.h"
 #include "PokittoSimulator.h"
+#include "FileIO.h"
 #endif
 
 typedef uint8_t byte;
@@ -100,10 +107,13 @@ const uint8_t *Sound::sfxEndPtr = 0;
 bool Sound::sfxIs4bitSamples = false;
 uint8_t Sound::sfxBytePos = 0;
 
-uint8_t Sound::prescaler;
 uint16_t Sound::globalVolume;
 uint16_t Sound::volumeMax = VOLUME_HEADPHONE_MAX;
 uint8_t Sound::headPhoneLevel=1;
+
+#if (POK_GBSOUND > 0)
+
+uint8_t Sound::prescaler;
 
 bool Sound::trackIsPlaying[NUM_CHANNELS];
 bool Sound::patternIsPlaying[NUM_CHANNELS];
@@ -148,6 +158,8 @@ int8_t Sound::stepVolume[NUM_CHANNELS];
 uint8_t Sound::stepPitch[NUM_CHANNELS];
 uint8_t Sound::chanVolumes[NUM_CHANNELS];
 
+#endif
+
 #if (POK_ENABLE_SOUND < 1)
  #ifdef NUM_CHANNELS
  #undef NUM_CHANNELS
@@ -181,6 +193,7 @@ const uint16_t playOKPattern[]  = {0x0005,0x138,0x168,0x0000};
 const uint16_t playCancelPattern[]  = {0x0005,0x168,0x138,0x0000};
 const uint16_t playTickP[]  = {0x0045,0x168,0x0000};
 #endif
+
 #if(EXTENDED_NOTE_RANGE > 0)
 //extended note range
 #define NUM_PITCH 59
@@ -219,7 +232,7 @@ void Pokitto::audio_IRQ() {
         }
 
     #endif // POK_STREAMING_MUSIC
-    #if (NUM_CHANNELS > 0)
+    #if (NUM_CHANNELS > 0) && (PROJ_GAMEBUINO > 0)
 	Sound::generateOutput();
     #endif
 }
@@ -255,13 +268,10 @@ uint16_t Sound::getMaxVol() {
     return volumeMax;
 }
 
-void Sound::updateStream() {
+void Sound::defaultUpdateStream() {
      #if POK_STREAMING_MUSIC
     if (oldBuffer != currentBuffer) {
-        if (currentBuffer==0) fileReadBytes(&buffers[3][0],BUFFER_SIZE);
-        else if (currentBuffer==1) fileReadBytes(&buffers[0][0],BUFFER_SIZE);
-        else if (currentBuffer==2) fileReadBytes(&buffers[1][0],BUFFER_SIZE);
-        else fileReadBytes(&buffers[2][0],BUFFER_SIZE);
+        fileReadBytes(&buffers[(currentBuffer-1)&3][0],BUFFER_SIZE);
         oldBuffer = currentBuffer;
         streamcounter += BUFFER_SIZE;
     }
@@ -301,6 +311,8 @@ ampEnable(true);
 #endif //POK_ENABLE_SOUND
 #endif
 }
+
+#if (POK_GBSOUND > 0)
 
 void Sound::playTrack(const uint16_t* track, uint8_t channel){
 #if(NUM_CHANNELS > 0)
@@ -757,7 +769,7 @@ void Sound::updateOutput() {
     #if POK_ENABLE_SOUND
     /** HARDWARE **/
 
-        #if POK_STREAMING_MUSIC
+        #if POK_STREAMING_MUSIC && POK_USE_PWM
             if (streamstep) {
                 //pwmout_write(&audiopwm,(float)(sbyte>>headPhoneLevel)/(float)255);
                 sbyte *= discrete_vol_multipliers[discrete_vol];
@@ -817,6 +829,8 @@ void Sound::playTick(){
 #endif // POK_GBSOUND
 }
 
+#endif //(POK_GBSOUND > 0)
+
 void Sound::setVolume(int16_t volume) {
 //#if NUM_CHANNELS > 0
 	if (volume<0) volume = 0;
@@ -844,6 +858,7 @@ uint16_t Sound::getVolume() {
 //#endif
 }
 
+#if (POK_GBSOUND > 0)
 void Sound::setVolume(int8_t volume, uint8_t channel) {
 #if(NUM_CHANNELS > 0)
 	if(channel>=NUM_CHANNELS)
@@ -863,7 +878,9 @@ uint8_t Sound::getVolume(uint8_t channel) {
 	return 0;
 #endif
 }
+#endif //(POK_GBSOUND > 0)
 
+#if (POK_ENABLE_SYNTH == 1)
 void Sound::playTone(uint8_t os, int frq, uint8_t amp, uint8_t wav,uint8_t arpmode)
 {
     if (wav>MAX_WAVETYPES) wav=0;
@@ -879,6 +896,8 @@ void Sound::playTone(uint8_t os, uint16_t frq, uint8_t volume, uint32_t duration
     else if (os==2) setOSC(&osc2,1,WTRI,frq,volume,duration);
     else if (os==3) setOSC(&osc3,1,WTRI,frq,volume,duration);
 }
+
+#endif
 
 uint8_t Sound::ampIsOn()
 {
@@ -931,13 +950,8 @@ int Sound::playMusicStream(char* filename, uint8_t options)
 
         uint8_t result;
         result = pokInitSD();
-        if (!isThisFileOpen(filename)) {
-            fileClose(); // close any open files
-            result = fileOpen(filename,FILE_MODE_READONLY | FILE_MODE_BINARY);
-        }else{
-	    fileRewind();
-	    result = 0;
-	}
+        fileClose(); // close any open files
+        result = fileOpen(filename,FILE_MODE_READONLY | FILE_MODE_BINARY);
 
         if (result) {
                 currentPtr = 0; // mark that no stream is available
@@ -973,6 +987,7 @@ uint32_t Sound::getMusicStreamElapsedMilliSec() {
     return 0;
 }
 
+#if (POK_ENABLE_SYNTH == 1)
 void Sound::loadSampleToOsc(uint8_t os, uint8_t* data, uint32_t datasize) {
     OSC* o;
     if (os==3) o = &osc3;
@@ -982,3 +997,4 @@ void Sound::loadSampleToOsc(uint8_t os, uint8_t* data, uint32_t datasize) {
     o->samplelength = datasize;
     o->samplepos = 0;
 }
+#endif

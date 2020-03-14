@@ -5,14 +5,17 @@ const process = require("process");
 
 const CSOURCES = []
 , CXXSOURCES = []
+, ASMSOURCES = []
 , FLAGS=[]
 , C_FLAGS=[]
 , CXX_FLAGS=[]
+, ASM_FLAGS=[]
 ;
 
 let cleanBuild = process.argv[2] == 1;
 console.log(cleanBuild + " " + process.argv[2]);
 let CC='../../gcc-arm-none-eabi/bin/arm-none-eabi-gcc';
+let AS='../../gcc-arm-none-eabi/bin/arm-none-eabi-as';
 let CPP='../../gcc-arm-none-eabi/bin/arm-none-eabi-g++';
 let LD='../../gcc-arm-none-eabi/bin/arm-none-eabi-gcc';
 let ELF2BIN = '../../gcc-arm-none-eabi/bin/arm-none-eabi-objcopy';
@@ -25,6 +28,24 @@ let LD_FLAGS ='-Wl,--gc-sections -Wl,--wrap,main -Wl,--wrap,_memalign_r -Wl,-n -
 
 let LD_SYS_LIBS ='-Wl,--start-group -lstdc++ -lsupc++ -lm -lc -lgcc -lnosys  -Wl,--end-group';
 
+ASMSOURCES.push(
+    'PokittoLib/POKITTO_HW/asm/mode15.s',
+    'PokittoLib/POKITTO_HW/asm/mode13.s',
+    'PokittoLib/POKITTO_HW/asm/unlz4.s',
+    'PokittoLib/POKITTO_HW/asm/mode2.s',
+    'PokittoLib/POKITTO_HW/asm/flushLine2X.s',
+    'PokittoLib/POKITTO_HW/asm/mode1.s',
+    'PokittoLib/POKITTO_HW/asm/pixelCopySolid.s',
+    'PokittoLib/POKITTO_HW/asm/mode64c.s',
+    'PokittoLib/POKITTO_HW/asm/pixelCopy.s',
+    'PokittoLib/POKITTO_HW/asm/flushLine.s',
+    'PokittoLib/POKITTO_HW/asm/mode1c.s',
+    'PokittoLib/POKITTO_HW/asm/mode2c.s',
+    'PokittoLib/POKITTO_HW/asm/pixelCopyMirror.s',
+    'PokittoLib/POKITTO_HW/asm/mode13c.s',
+    'PokittoLib/POKITTO_HW/asm/mode15c.s',
+    'PokittoLib/POKITTO_HW/asm/mode64.s',    
+);
 
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/FONTS/TIC806x6.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/FONTS/ZXSpec.cpp');
@@ -61,6 +82,8 @@ CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoCore.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoCookie.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoDisk.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoDisplay.cpp');
+CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoFramebuffer.cpp');
+CXXSOURCES.push('PokittoLib/POKITTO_CORE/TASMODE.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoItoa.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoLogos.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_CORE/PokittoPalette.cpp');
@@ -149,6 +172,10 @@ let forceCompile = [
     'frozen_mpy.c'
 ];
 
+ASM_FLAGS.push(
+    "-mcpu=cortex-m0plus",
+    "-mthumb"
+);
 
 C_FLAGS.push(
     '-c',             
@@ -174,7 +201,7 @@ C_FLAGS.push(
 );
 
 CXX_FLAGS.push(
-    '-std=c++11',
+    '-std=c++17',
     '-fno-rtti',
     '-Wvla',
     '-c',
@@ -232,7 +259,7 @@ C_FLAGS.push('-DDEVICE_PWMOUT=1');
 C_FLAGS.push('-DTARGET_LIKE_CORTEX_M0');
 
 
-CXX_FLAGS.push('-std=c++11');
+CXX_FLAGS.push('-std=c++17');
 CXX_FLAGS.push('-fno-rtti');
 CXX_FLAGS.push('-Wvla');
 CXX_FLAGS.push('-DTARGET_LPC11U68');
@@ -274,6 +301,8 @@ FLAGS.push('-I./PokittoLib/POKITTO_CORE/PALETTES');
 FLAGS.push('-I./PokittoLib/POKITTO_HW');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS/Tilemap');
+FLAGS.push('-I./PokittoLib/POKITTO_LIBS/MemOps');
+FLAGS.push('-I./PokittoLib/POKITTO_LIBS/File');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS/ImageFormat');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS/Synth');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS/USBDevice');
@@ -309,13 +338,28 @@ function obj(src){
 }
 
 CSOURCES.forEach( src => {
-    let outFile = obj(src)
+    let outFile = obj(src);
     if( forceCompile.indexOf(src) == -1 && !cleanBuild && fs.existsSync(outFile) )
         return;
         
     execSync([
         CC,
         C_FLAGS.join(" "),
+        FLAGS.join(" "),
+        "-o", outFile,
+        src
+    ].join(" "));
+});
+
+
+ASMSOURCES.forEach( src => {
+    let outFile = obj(src);
+    if( forceCompile.indexOf(src) == -1 && !cleanBuild && fs.existsSync(outFile) )
+        return;
+        
+    execSync([
+        AS,
+        ASM_FLAGS.join(" "),
         FLAGS.join(" "),
         "-o", outFile,
         src
@@ -352,6 +396,7 @@ execSync([
     '--output build.elf',
     CSOURCES.map(obj).join(" "),
     CXXSOURCES.map(obj).join(" "),
+    ASMSOURCES.map(obj).join(" "),
     LD_SYS_LIBS,
     LIBRARIES
 ].join(" "));

@@ -4,9 +4,6 @@
 
 void SDL_RenderCopySolid( const uint8_t *data, uint32_t width, uint32_t height, int32_t x, int32_t y )
 {
-    if( x <= -int32_t(width) || x > Pokitto::Display::width || y <= -int32_t(height) || y > Pokitto::Display::height )
-        return;
-    
     struct rect {
         uint32_t x, y, w, h;
     };

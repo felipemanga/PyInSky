@@ -1,95 +1,204 @@
-# uPyGame performance test
-# Copyright (C) 2019 Hannu Viitala
-#
-# The source code in this file is released under the MIT license.
-# Go to http://opensource.org/licenses/MIT for the full license details.
-#
-# The graphics in this file are released under the Creative Commons Attribution license (CC-BY).
-# Go to https://creativecommons.org/licenses/by/4.0/ for the full license details.
+print('test 1')
 
-# 1) Drawing a surface of 16x16 pixels 100 times a frame gives 16 Fps (full speed). 4-bit colors for both screen and the surface.
-# 2) Drawing a surface of 16x16 pixels 200 times a frame gives 12 Fps (full speed). 4-bit colors for both screen and the surface.
-
-import upygame as upg
+import upygame as pygame
+import framebuf
 import urandom as random
+import example_data as spritedata
+import sprite
+import gc
 
-upg.display.init()
-screen_sf = upg.display.set_mode() # full screen
+print('test 2')
 
-# Set palette
-upg.display.set_palette_16bit([0,4124,1984,65535]);
+pygame.display.init()
+pygame.display.set_palette_16bit([
+    0, 6438, 18917, 10825, 47398, 688, 41764, 17475,
+    58225, 13598, 60486, 40179, 42596, 46845, 63245, 65535
+]);
 
-# pokitto picture
-w2 = 16
-h2 = 16
-pokittoPixels = b'\
-\x00\x03\x33\x33\x33\x33\x33\x00\
-\x00\x32\x22\x22\x22\x22\x32\x00\
-\x00\x32\x33\x33\x33\x33\x22\x00\
-\x00\x32\x31\x11\x11\x11\x22\x00\
-\x00\x32\x31\x13\x11\x31\x22\x00\
-\x02\x32\x31\x11\x11\x11\x22\x23\
-\x03\x32\x31\x13\x33\x11\x22\x30\
-\x00\x32\x31\x11\x11\x11\x22\x00\
-\x00\x32\x22\x22\x22\x22\x22\x00\
-\x00\x32\x23\x22\x22\x23\x32\x00\
-\x00\x32\x33\x32\x23\x33\x32\x00\
-\x00\x32\x23\x22\x23\x32\x22\x00\
-\x00\x32\x22\x23\x32\x22\x22\x00\
-\x00\x32\x22\x22\x22\x22\x32\x00\
-\x00\x33\x33\x33\x33\x33\x33\x00\
-\x00\x32\x00\x00\x00\x00\x32\x00\
-'
+screen = pygame.display.set_mode() # full screen
 
-hero_sf = upg.surface.Surface(w2, h2, pokittoPixels)
-#hero_sf.fill(2)
+print('test 3')
+# Initialize sound
+g_sound = pygame.mixer.Sound()
+print('test 4')
 
-x=20
-y=20
+g_sound.play_from_sd("intro44.snd")
+print('test 5')
+g_sound.play()
+
+print('display ready')
+
+class GameObject(sprite.Sprite):
+    def __init__(self, surfaces, frameOffsets):
+        sprite.Sprite.__init__(self)
+        self.frames = surfaces
+        self.frameOffsets = frameOffsets
+        self.currentFrameNum = 0;
+        self.image = self.frames[self.currentFrameNum]  # current image
+        self.animDur = 3;
+        self.animDurCounter = self.animDur;
+        self.vx = 0
+        self.vy = 0
+        self.rect = self.frames[0].get_rect()
+
+    def setvel(self, vx, vy):
+        self.vx = vx
+        self.vy = vy
+
+    def update(self):
+
+        # Advance frame if animation is set
+        if self.animDur > 0:
+
+            # if animation duration has elapsed, advance frame
+            if self.animDurCounter == 0:
+                self.currentFrameNum += 1
+                if self.currentFrameNum >= len(self.frames):
+                    self.currentFrameNum = 0
+
+                #
+                self.animDurCounter = self.animDur
+
+                # Set current image
+                self.image = self.frames[self.currentFrameNum]
+                self.rect.x += self.frameOffsets[self.currentFrameNum][0]
+                self.rect.y += self.frameOffsets[self.currentFrameNum][1]
+            else:
+                self.animDurCounter -= 1
+
+        # Advance position
+        self.rect.x += self.vx
+        self.rect.y += self.vy
+
+#
+all_sprites = sprite.Group()
+all_frogittos = sprite.Group()
+all_cars = sprite.Group()
+
+# Create frogitto sprites
+for i in range(1):
+    frogittoGob = GameObject(
+        [spritedata.frogittoSurf_f1, spritedata.frogittoSurf_f2, spritedata.frogittoSurf_f3],
+        [[0,0],[0,0],[0,0]])
+
+    # out of screen
+    frogittoGob.rect.x = 50
+    frogittoGob.rect.y = 70
+
+    frogittoGob.animDur = 2;
+
+    all_sprites.add(frogittoGob)
+    all_frogittos.add(frogittoGob)
+
+# Create blue and red car sprites
+for i in range(10):
+    carGob = GameObject(
+        [spritedata.bluecarSurf_f1, spritedata.bluecarSurf_f2],
+        [[0,0],[0,0]])
+
+    # out of screen
+    carGob.rect.x = -100
+    carGob.rect.y = -100
+
+    all_sprites.add(carGob)
+    all_cars.add(carGob)
+
+    carGob = GameObject(
+        [spritedata.redcarSurf_f1, spritedata.redcarSurf_f2],
+        [[0,0],[0,0]])
+
+    # out of screen
+    carGob.rect.x = -100
+    carGob.rect.y = -100
+
+    all_sprites.add(carGob)
+    all_cars.add(carGob)
+
+print('all_frogittos len=', len(all_frogittos))
+
 vx = 0;
 vy = 0;
-hmirr = False
-vmirr = False
+frameNum = 0;
+lastY = 0
 while True:
 
-    eventtype = upg.event.poll()
-    if eventtype != upg.NOEVENT:
-        if eventtype.type== upg.KEYDOWN:
-            if eventtype.key == upg.K_RIGHT:
+    #print('frameNum=',frameNum)vx
+
+    hit = sprite.spritecollideany(frogittoGob, all_cars)
+    #print ('hit',hit.rect)
+    #print ('frogitto',frogittoGob.rect)
+    if hit != None:
+        frogittoGob.rect.x = 50
+        frogittoGob.rect.y = 70
+        g_sound.play_sfx(spritedata.sound1, len(spritedata.sound1), True)
+
+
+    eventtype = pygame.event.poll()
+    if eventtype != pygame.NOEVENT:
+        if eventtype.type == pygame.KEYDOWN:
+            if eventtype.key == pygame.K_RIGHT:
                 vx = 1
-            if eventtype.key == upg.K_LEFT:
+            if eventtype.key == pygame.K_LEFT:
                 vx = -1
-            if eventtype.key == upg.K_UP:
+            if eventtype.key == pygame.K_UP:
                 vy = -1
-            if eventtype.key == upg.K_DOWN:
+            if eventtype.key == pygame.K_DOWN:
                 vy = 1
-            if eventtype.key == upg.BUT_A:
-                if(vmirr):
-                    vmirr= False
-                    hmirr= False
-                elif(hmirr):
-                    vmirr= True
-                    hmirr= False
-                else:
-                    hmirr= True
-                    vmirr= False
-        if eventtype.type == upg.KEYUP:
-            if eventtype.key == upg.K_RIGHT:
+            if eventtype.key == pygame.BUT_A:
+                g_sound.play_from_sd("intro44.snd")
+                g_sound.play()
+            if eventtype.key == pygame.BUT_B:
+                g_sound.play_from_sd("scary.snd")
+                g_sound.play()
+
+        if eventtype.type == pygame.KEYUP:
+            if eventtype.key == pygame.K_RIGHT:
                 vx = 0
-            if eventtype.key == upg.K_LEFT:
+            if eventtype.key == pygame.K_LEFT:
                 vx = 0
-            if eventtype.key == upg.K_UP:
+            if eventtype.key == pygame.K_UP:
                 vy = 0
-            if eventtype.key == upg.K_DOWN:
+            if eventtype.key == pygame.K_DOWN:
                 vy = 0
 
-    for i in range(1,200):
-        x2 = random.getrandbits(6) + 20
-        y2 = random.getrandbits(6) + 5
-        screen_sf.blit(hero_sf, x2, y2,0,hmirr, vmirr)
+    frogittoGob.setvel(vx,vy);
 
-    x = x + vx
-    y = y + vy
-    screen_sf.blit(hero_sf, x, y)
 
-    upg.display.flip()
+    # Launch new frogitto after n frames
+#    if (frameNum % 20) == 0:
+#        # Get first free frogitto
+#        for s in all_frogittos:
+#            if s.y < -8:
+#                s.x = 40 + random.getrandbits(4)
+#                s.y = 88
+#                s.currentFrameNum = 0
+#
+#                break
+
+    # Launch new car after n frames
+    if (frameNum % 13) == 0:
+        # Get first free car and set the starting position
+        for s in all_cars:
+            if s.rect.x < -16:
+                s.rect.x = 110
+                y = 10 + random.getrandbits(8) * 60 // 256
+                if abs(y - lastY) < 7:
+                    if y < lastY:
+                        y -= 7
+                    else:
+                        y += 7
+                s.rect.y = y
+                lastY = y
+                s.setvel(-1,0)
+                s.currentFrameNum = 0
+
+                break
+
+    all_sprites.update()
+    all_sprites.draw(screen)
+
+    pygame.display.flip()
+
+    frameNum += 1
+    if frameNum > 1000000:
+        frameNum = 0;

@@ -35,7 +35,6 @@
 #include "lpc_defs.h"
 #define STATIC static
 #define INLINE inline
-#define bool unsigned char
 
 #ifdef __cplusplus
 extern "C" {
