@@ -57,12 +57,13 @@ extern const unsigned char fontZXSpec[];
 extern const unsigned char fontTIC806x6[];
 extern const unsigned char fontMonkey[];
 
-#if POK_GAMEBUINO_SUPPORT > 0
+#ifdef PROJ_FONT
+#define DEFAULT_FONT PROJ_FONT
+#elif POK_GAMEBUINO_SUPPORT > 0
 #define DEFAULT_FONT font3x5
 #else
 #define DEFAULT_FONT font5x7
-#endif // POK_GAMEBUINO_SUPPORT
-
+#endif
 
 #endif
 
