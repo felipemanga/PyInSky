@@ -135,7 +135,11 @@ function loadExample( name ){
     let example = examples[name];
     
     for( let fileName in example ){
-        createFile( fileName, example[fileName] );
+        if(/.*\.ppp/i.test(fileName)){
+            importPPP(example[fileName]);
+        }else{
+            createFile( fileName, example[fileName] );
+        }
     }
 
     DOM.projectName.value = name;
@@ -262,24 +266,7 @@ function importFile( file, reader, paletteMode=false ){
     
     switch( ext ){
     case 'ppp':
-        try{
-            let tmp = JSON.parse( abtostr(reader) );
-            delete tmp.files;
-            delete tmp.id;
-            Object.assign(project, tmp);
-        }catch(ex){
-            console.warn(ex);
-        }
-
-        DOM.projectName.value = project.name;
-        if( !project.flags || typeof project.flags != "object" )
-            project.flags = {};
-
-        for( let k in project.flags ){
-            if( DOM[k] )
-                DOM[k].value = project.flags[k];
-        }
-
+        importPPP(abtostr(reader));
         break;
 
     case 'pal':
@@ -405,6 +392,26 @@ function importFile( file, reader, paletteMode=false ){
         
     }
 
+}
+
+function importPPP(str){
+    try{
+        let tmp = JSON.parse( str );
+        delete tmp.files;
+        delete tmp.id;
+        Object.assign(project, tmp);
+    }catch(ex){
+        console.warn(ex);
+    }
+
+    DOM.projectName.value = project.name;
+    if( !project.flags || typeof project.flags != "object" )
+        project.flags = {};
+
+    for( let k in project.flags ){
+        if( DOM[k] )
+            DOM[k].value = project.flags[k];
+    }
 }
 
 function importPalette( pal, name ){

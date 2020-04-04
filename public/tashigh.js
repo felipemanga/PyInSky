@@ -1,15 +1,17 @@
-
-examples["Tilemap"] = {
-    "PokittoPythonProject.ppp": `{"flags":{"PROJ_SCREENMODE":"MODE_FAST_16COLOR","PROJ_MAX_SPRITES":"100"}}`,
-    
+examples["Tilemap TAS"] = {
     "main.py": `# Copyright (C) 2020 Hannu Viitala
 #
 # The source code in this file is released under the MIT license.
 # Go to http://opensource.org/licenses/MIT for the full license details.
 #
 
-# *** A TILEMAP DEMO FOR THE POKITTO MICROPYTHON ***
-# Note: Works in the lores or the hires mode, both in TAS and normal.
+# *** A TILEMAP TAS DEMO FOR THE POKITTO MICROPYTHON ***
+#
+# Note: This demo uses TAS (Tiles And Sprites) High resolution mode. The TAS mode does not use
+#       a screen buffer at all so it gives about 4 KB more memory for Python! TAS imposes limits also
+#       as you can use only tiles or sprites (i.e bitmaps) for drawing to the screen. Not any graphics
+#       primitives, like lines or circles, can be used. Text can be drawn but each character is an own
+#       sprite so there cannot be a lot of text.
 
 import upygame as pygame
 import data
@@ -80,11 +82,11 @@ while True:
 
     # Draw
     tilemap.draw(x, y)
-    pygame.draw.text(0, 0, "Tilemap demo", 15);
+    pygame.draw.text(0, 0, "Tilemap TAS demo", 15);
     screen.blit(data.girl12x15, heroOnScreenX, heroOnScreenY)
     pygame.display.flip()
 `,
-    "data.py": `# Graphics by Lanea Zimmerman
+    "data.py":`# Graphics by Lanea Zimmerman
 # https://opengameart.org/content/tiny-16-basic
 # Licensed under CC-BY 3.0, https://creativecommons.org/licenses/by/3.0/
 
@@ -217,5 +219,7 @@ girl12x15Pixels = b'\
 \\x07\\x11\\xcc\\xcc\\x11\\x70\
 \\x07\\x77\\x11\\x11\\x77\\x70\
 '
-girl12x15 = upygame.surface.Surface(12, 15, girl12x15Pixels)`
+girl12x15 = upygame.surface.Surface(12, 15, girl12x15Pixels)`,
+
+    "PokittoPythonProject.ppp":`{"name":"Tilemap TAS","flags":{"PROJ_SCREENMODE":"TASMODE","PROJ_MAX_SPRITES":"100"}}`
 };
