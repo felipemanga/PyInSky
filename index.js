@@ -40,6 +40,12 @@ let settings = `
 
 $flags
 
+#if (PROJ_SCREENMODE == TASMODE) || (PROJ_SCREENMODE == TASMODELOW)
+#define TASUI
+#define TASUI_CLUT 0
+#define TASUI_TILE_DELTA 0
+#endif
+
 #endif
 `;
 

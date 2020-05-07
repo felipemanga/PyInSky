@@ -2,15 +2,12 @@
 
 #include "PythonBindings.h"
 
-#if PROJ_SCREENMODE == TASMODE
-namespace Pokitto {
-
-    void Display::drawPixel(int16_t x,int16_t y, uint8_t col){}
-    void Display::drawPixel(int16_t x,int16_t y){}
-    void Display::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {}
-    void Display::drawCircle(int16_t x0, int16_t y0, int16_t r){}
-    void Display::fillCircle(int16_t x0, int16_t y0, int16_t r){}
-}
+#ifdef TASUI
+// Include for the TASUI API.
+#include <tasui>
+// Include for the Tileset.
+#include <puits_UltimateUtopia4.h>
+#include <ptui_StandardUITilesetDefinition.hpp>
 #endif
 
 extern "C" int PyInSkyMain( unsigned int heapSize, char *heapMem );
@@ -24,6 +21,15 @@ int main () {
     game.begin();
     game.display.persistence = 0;
     Pokitto::Display::setColorDepth(4);
+
+    #ifdef TASUI
+    // TAS UI
+    using PUI=Pokitto::UI;
+    // Select the tileset.
+    PUI::setTilesetImage(puits::UltimateUtopia4::tileSet);
+    // Show the Tilemap, the Sprites, then the UI.
+    PUI::showTileMapSpritesUI();
+    #endif
     
     PyInSkyMain( p, new char[p] );
     return 1;

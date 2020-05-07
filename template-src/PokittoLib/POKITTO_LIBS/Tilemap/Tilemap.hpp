@@ -49,6 +49,8 @@ public:
 class Tilemap : public BaseTilemap {
 public:
 
+    int fillOutOfBounds = 0;
+
     void setColorTile(uint8_t index, uint8_t color){
         uint32_t color32 = color;
         this->tiles[index] = reinterpret_cast<const uint8_t*>(color32);
@@ -69,7 +71,6 @@ public:
         if( !map ) return;
         x = -x;
         y = -y;
-
         std::int32_t tileX = x / std::int32_t(POK_TILE_W);
         std::int32_t tileY = y / std::int32_t(POK_TILE_H);
         std::int32_t maxX = POK_LCD_W / POK_TILE_W + 2;
@@ -99,11 +100,11 @@ public:
 
         for(y = 0; y < maxY; ++y){
             for(x = 0; x < maxX; ++x){
-                std::int32_t tile = 0;
                 auto tx = tileX + x;
 
                 if( tx >= 0 && tx < width &&
                     (y+tileY) >= 0 && (y+tileY) < height ){
+                    std::int32_t tile = 0;
 
 #if MAX_TILE_COUNT == 16
                     tile = (tx&1)
@@ -112,9 +113,11 @@ public:
 #else
                     tile = map[i+x];
 #endif
+                    PD::drawTile(x, y, tiles[tile]);
+                } else if(fillOutOfBounds > -1) {
+                    PD::drawTile(x, y, tiles[fillOutOfBounds]);
                 }
 
-                PD::drawTile(x, y, tiles[tile]);
             }
             
 #if MAX_TILE_COUNT == 16

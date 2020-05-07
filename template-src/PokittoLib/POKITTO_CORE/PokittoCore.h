@@ -103,9 +103,6 @@ namespace Pokitto {
 class Core
 {
 public:
-  /** Create a Core runtime instance
-  */
-  Core();
 #if (PROJ_GAMEBUINO > 0)
   /** Backlight component of the Core runtime */
   static Backlight backlight;
@@ -227,15 +224,17 @@ public:
     static void titleScreen();
     static bool update(bool useDirectMode=false, uint8_t updRectX=0, uint8_t updRectY=0, uint8_t updRectW=LCDWIDTH, uint8_t updRectH=LCDHEIGHT);
     static uint32_t frameCount;
-#if (ENABLE_GUI > 0)
+#ifdef ENABLE_GUI
+
     static int8_t menu(const char* const* items, uint8_t length);
     static char* filemenu(char*);
     static char* filemenu();
     static void keyboard(char* text, uint8_t length);
     static void popup(const char* text, uint8_t duration);
+
 #endif
     static void setFrameRate(uint8_t fps);
-    static uint8_t getFrameRate();	
+    static uint8_t getFrameRate();
 	  static void pickRandomSeed();
 
 	  static uint8_t getCpuLoad();
@@ -255,7 +254,6 @@ private:
     static uint16_t frameDurationMicros;
     static uint32_t frameStartMicros, frameEndMicros;
     static uint8_t startMenuTimer;
-    static int updateLoader(uint32_t,uint32_t);
     static uint32_t fps_refreshtime;
     static uint32_t fps_frameCount;
 

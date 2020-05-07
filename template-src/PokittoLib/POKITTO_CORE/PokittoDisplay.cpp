@@ -83,7 +83,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 extern "C" void CheckStack();
 extern char _ebss[];  // In map file
-extern void _vStackTop(void);
+extern "C" {
+    extern void _vStackTop(void);
+}
 
 using core = Pokitto::Core;
 using _pdsound = Pokitto::Sound;
@@ -116,23 +118,13 @@ uint8_t Display::m_colordepth = PROJ_COLORDEPTH;
 uint8_t Display::width = LCDWIDTH;
 uint8_t Display::height = LCDHEIGHT;
 
+#if PROJ_SCREENMODE != TASMODE
+#ifndef POK_SIM
 uint8_t __attribute__((section (".bss"))) __attribute__ ((aligned)) Display::screenbuffer[POK_SCREENBUFFERSIZE]; // maximum resolution
-
-Display::Display() {
-    m_scrbuf = screenbuffer;
-    setDefaultPalette();
-    m_mode = 1; // direct printing on by default
-    m_w = POK_LCD_W;
-    m_h = POK_LCD_H;
-    setFont(DEFAULT_FONT);
-    invisiblecolor=17;
-    bgcolor=0;
-    if (PROJ_COLORDEPTH) m_colordepth = PROJ_COLORDEPTH;
-    else m_colordepth = 4;
-    #if POK_GAMEBUINO_SUPPORT
-    setColorDepth(1);
-    #endif // POK_GAMEBUINO_SUPPORT
-}
+#else
+uint8_t Display::screenbuffer[POK_SCREENBUFFERSIZE]; // maximum resolution
+#endif // POK_SIM
+#endif // TASMODE
 
 uint16_t Display::getWidth() {
     return width;
@@ -178,6 +170,21 @@ void Display::directRectangle(int16_t x, int16_t y,int16_t x2, int16_t y2, uint1
 }
 
 void Display::begin() {
+#if PROJ_SCREENMODE != TASMODE
+    m_scrbuf = screenbuffer;
+#endif
+    setDefaultPalette();
+    m_mode = 1; // direct printing on by default
+    m_w = POK_LCD_W;
+    m_h = POK_LCD_H;
+    setFont(DEFAULT_FONT);
+    invisiblecolor=17;
+    bgcolor=0;
+    if (PROJ_COLORDEPTH) m_colordepth = PROJ_COLORDEPTH;
+    else m_colordepth = 4;
+#if POK_GAMEBUINO_SUPPORT
+    setColorDepth(1);
+#endif // POK_GAMEBUINO_SUPPORT
     lcdInit();
 }
 
@@ -198,7 +205,7 @@ void Display::setCursor(int16_t x,int16_t y) {
  * @param updRectH The update rect.
  */
 void Display::update(bool useDirectDrawMode) {
-    
+
     if (!useDirectDrawMode)
         lcdRefresh(m_scrbuf, useDirectDrawMode);
 
@@ -365,7 +372,7 @@ int Display::directChar(int16_t x, int16_t y, uint16_t index){
 
 
 void Display::clear() {
-
+#if PROJ_SCREENMODE != TASMODE
     uint8_t c=0;
     c = bgcolor & (PALETTE_SIZE-1) ; //don't let palette go out of bounds
     if (m_colordepth==1 && bgcolor) {
@@ -380,7 +387,7 @@ void Display::clear() {
 
     memset((void*)m_scrbuf, c, POK_SCREENBUFFERSIZE);
     setCursor(0,0);
-
+#endif
 }
 
 void Display::scroll(int16_t pixelrows) {
@@ -394,12 +401,14 @@ void Display::scroll(int16_t pixelrows) {
     color = bgcolor;
     if (pixelrows>0) {
         for (uint16_t y=0;y<height-pixelrows;y++) {
-            for (uint16_t x=0;x<(width/8)*m_colordepth;x++) screenbuffer[index++]=screenbuffer[index2++];
+            for (uint16_t x=0;x<(width/8)*m_colordepth;x++)
+                m_scrbuf[index++]=m_scrbuf[index2++];
         }
         fillRect(0,cursorY,width,height);
     } else {
         for (uint16_t y=pixelrows;y<height;y++) {
-            for (uint16_t x=0;x<(width*m_colordepth)/8;x++) screenbuffer[index2++]=screenbuffer[index++];
+            for (uint16_t x=0;x<(width*m_colordepth)/8;x++)
+                m_scrbuf[index2++]=m_scrbuf[index++];
         }
         fillRect(0,0,width,pixelrows);
     }
@@ -407,6 +416,7 @@ void Display::scroll(int16_t pixelrows) {
 }
 
 void Display::fillScreen(uint16_t c) {
+    #if PROJ_SCREENMODE != TASMODE
     c = c & (PALETTE_SIZE-1) ; //don't let palette go out of bounds
     if (m_colordepth==1 && c) c=0xFF; // set all pixels
     else if (m_colordepth==2) {
@@ -417,6 +427,7 @@ void Display::fillScreen(uint16_t c) {
         c = (c & 0x0F) | (c << 4);
     }
     memset((void*)m_scrbuf, c, POK_SCREENBUFFERSIZE);
+    #endif
 }
 
 void Display::setDefaultPalette() {
@@ -571,7 +582,7 @@ void Display::drawBitmap(int16_t x, int16_t y, const uint8_t* bitmap)
     int16_t w = *bitmap;
     int16_t h = *(bitmap + 1);
     //add an offset to the pointer to start after the width and height
-    bitmap = bitmap + 2; 
+    bitmap = bitmap + 2;
     drawBitmapData(x, y, w, h, bitmap);
 }
 
@@ -594,7 +605,7 @@ void Display::drawBitmapDataXFlipped(int16_t x, int16_t y, int16_t w, int16_t h,
     else if (m_colordepth==4) drawBitmapDataXFlipped4BPP(x, y, w, h, bitmap);
     /** 8 bpp mode */
     else if (m_colordepth==8) drawBitmapDataXFlipped8BPP(x, y, w, h, bitmap);
-    
+
 }
 
 void Display::drawBitmapXFlipped(int16_t x, int16_t y, const uint8_t* bitmap)
@@ -1051,11 +1062,14 @@ void Display::lcdRefresh(const unsigned char* scr, bool useDirectDrawMode) {
     lcdPrepareRefresh();
 #endif
 #if PROJ_SCREENMODE == TASMODE
-    lcdRefreshTASMode(const_cast<uint8_t*>(scr), paletteptr);
+    lcdRefreshTASMode(paletteptr);
+    #ifdef POK_SIM
+    simulator.refreshDisplay();
+    #endif
 #endif
 
 #if PROJ_SCREENMODE == MODE_HI_4COLOR
-    lcdRefreshMode1(scr, paletteptr);
+    lcdRefreshMode1(scr, 0, 0, 220, 176, paletteptr);
 #endif
 
 #if PROJ_SCREENMODE == MODE13
@@ -1162,7 +1176,7 @@ void CheckStack() {
         const int infoStringLen = 8+1+8;
         static char infoString[infoStringLen+1];
         memset(infoString,0,infoStringLen+1);
-        const int stackSize = reinterpret_cast<uintptr_t>(_vStackTop) - reinterpret_cast<uintptr_t>(&currStackTop);
+        const int stackSize = reinterpret_cast<uintptr_t>(&_vStackTop) - reinterpret_cast<uintptr_t>(&currStackTop);
         const int tmpStrLen = 8;
         static char tmpStr[tmpStrLen+1];
         memset(tmpStr,0,tmpStrLen+1);

@@ -146,6 +146,21 @@ int random(int minVal, int maxVal)
 
 using namespace Pokitto;
 
+__attribute__ ((weak)) void init(){}
+__attribute__ ((weak)) void update(){}
+__attribute__ ((weak)) int main(){
+    Core::begin();
+    init();
+    while(true){
+        if(Core::update())
+            update();
+    }
+}
+
+int SDL_main(){
+    return main();
+}
+
 bool Core::run_state; // this definition needed
 
 /** Components */
@@ -176,13 +191,8 @@ bool Core::fps_counter_updated;
 uint32_t Core::fps_refreshtime;
 uint32_t Core::fps_frameCount;
 
-Core::Core() {
-
-}
-
-
-int Core::updateLoader (uint32_t version, uint32_t jumpaddress) {
-    #ifndef POK_SIM
+static int updateLoader (uint32_t version, uint32_t jumpaddress) {
+#ifndef POK_SIM
     uint32_t counter=0;
     uint8_t data[256];
     /** prepare the flash writing **/
@@ -193,30 +203,27 @@ int Core::updateLoader (uint32_t version, uint32_t jumpaddress) {
     fsize = fileGetPosition();
     if (fsize>0x40000-jumpaddress) fsize = 0x40000-jumpaddress; // shouldn't happen!!
     fileRewind();
-    display.println("PLEASE WAIT");
+    Display::println("PLEASE WAIT");
     while (1) {
-        //if (counter >= fsize-0x200) {
-        //    display.println("gotcha");
-        //}
         if (counter >= fsize) {
-                break;
+            break;
         }
         opg=progress;
         if (fileReadBytes(&data[0],0x100)<0x100) {
-                if (fsize-counter>0x100) {
-                        display.println("ERROR READING LOA.DER FILE");
-                        return 1; // 1 means error
-                }
+            if (fsize-counter>0x100) {
+                Display::println("ERROR READING LOA.DER FILE");
+                return 1; // 1 means error
+            }
         }
         if (CopyPageToFlash(jumpaddress+counter,data)) {
-                    display.println("FLASH WRITE ERROR");
-                    return 1;
+            Display::println("FLASH WRITE ERROR");
+            return 1;
         } else {
             counter += 0x100;
-            display.print(".");
+            Display::print(".");
         }
-        }
-        #endif // POK_SIM
+    }
+#endif // POK_SIM
     return 0; //success
 }
 
@@ -264,27 +271,32 @@ void Core::showWarning() {
     display.enableDirectPrinting(false);
 }
 
-void Core::jumpToLoader() {
-    //display.setFont(font5x7);
-    //display.adjustCharStep=1;
-    //display.adjustLineStep=2;
-	#ifndef POK_SIM
+void pokitto_jumpToLoader(bool wasInit) {
+    if(!wasInit){
+#ifndef POK_SIM
+        SPI device(CONNECT_MOSI, CONNECT_MISO, CONNECT_SCK);
+#endif
+        Core::init();
+        Display::begin();
+    }
+
+#ifndef POK_SIM
     NVIC_DisableIRQ(IRQn_Type::CT32B0_IRQn); // Stop sound interrupt
-	#endif
-    display.fontSize=1;
-    display.directbgcolor=COLOR_BLACK;
-    display.directcolor=COLOR_GREEN;
-    display.clearLCD();
-    display.setCursor(0,0);
-    display.enableDirectPrinting(true);
-    #ifdef POK_SIM
-    display.println("LOADER IS NOT AVAILABLE ON THE SIMULATOR. PRESS A TO RETURN.");
-    #else
+#endif
+    Display::fontSize=1;
+    Display::directbgcolor=COLOR_BLACK;
+    Display::directcolor=COLOR_GREEN;
+    Display::clearLCD();
+    Display::setCursor(0,0);
+    Display::enableDirectPrinting(true);
+#ifdef POK_SIM
+    Display::println("LOADER IS NOT AVAILABLE ON THE SIMULATOR. PRESS A TO RETURN.");
+#else
     uint32_t* bootinfo;
     uint32_t bootversion=0, sdversion=0, sdjump=0;
     bool flashloader=false, checkforboot=true;
     //check for loa.der on SD card
-    #if POK_ENABLE_LOADER_UPDATES > 0
+#if POK_ENABLE_LOADER_UPDATES > 0
     pokInitSD();
     if (fileOpen("LOA.DER", FILE_MODE_BINARY)==0) {
         //LOA.DER found on SD
@@ -296,72 +308,77 @@ void Core::jumpToLoader() {
         fileReadBytes((uint8_t*)tptr,4); //read jump address of loader on sd card
         fileRewind();
     }
-    #endif
+#endif
     //now start searching for bootkey
     while (checkforboot)
     {
-    checkforboot=false; flashloader=false;
-    bootinfo = (uint32_t*)0x3FFF4;
-    if (*bootinfo != 0xB007AB1E) bootinfo = (uint32_t*)0x3FF04; //allow couple of alternative locations
-    if (*bootinfo != 0xB007AB1E) bootinfo = (uint32_t*)0x3FE04; //allow couple of alternative locations
-    if (*bootinfo != 0xB007AB1E) bootinfo = (uint32_t*)0x3F004; //for futureproofing
-    if (*bootinfo != 0xB007AB1E) {
-        // no bootkey found at all
-        display.directcolor=COLOR_YELLOW;
-        display.println("NO LOADER INSTALLED");
-        if (sdversion==0 || sdjump < 0x38000) {
+        checkforboot=false;
+        flashloader=false;
+        bootinfo = (uint32_t*)0x3FFF4;
+        if (*bootinfo != 0xB007AB1E) bootinfo = (uint32_t*)0x3FF04; //allow couple of alternative locations
+        if (*bootinfo != 0xB007AB1E) bootinfo = (uint32_t*)0x3FE04; //allow couple of alternative locations
+        if (*bootinfo != 0xB007AB1E) bootinfo = (uint32_t*)0x3F004; //for futureproofing
+        if (*bootinfo != 0xB007AB1E) {
+            // no bootkey found at all
+            Display::directcolor=COLOR_YELLOW;
+            Display::println("NO LOADER INSTALLED");
+            if (sdversion==0 || sdjump < 0x38000) {
                 //file open of loader failed
-                display.println("NO VALID LOA.DER ON SD");
-                display.println("");
-                display.directcolor=COLOR_GREEN;
-                display.println("PUT LOA.DER ON SD & REBOOT");
-        } else flashloader=true;
-    } else {
-        //loader was found
-        //check if we should update the loader
-        display.directcolor=COLOR_CYAN;
-        display.print("LOADER V.");
-        display.directcolor=COLOR_WHITE;
-        display.println(*(bootinfo+1));
-        #if POK_ENABLE_LOADER_UPDATES
-        if (sdversion>(*(bootinfo+1))) flashloader=true;
-        else start_application(*(bootinfo+2)); //never returns
-        #else
-        start_application(*(bootinfo+2)); //never returns
-        #endif
-    }
-    // update loader if it was requested
-    if(flashloader) {
-            display.directcolor=COLOR_MAGENTA;
-            display.print("NEW LOADER ON SD V.");
-            display.directcolor=COLOR_WHITE;
-            display.println(sdversion);
-            display.directcolor=COLOR_GREEN;
-            display.println("UPDATE LOADER?\n(UP=YES, DOWN=CANCEL)");
+                Display::println("NO VALID LOA.DER ON SD");
+                Display::println("");
+                Display::directcolor=COLOR_GREEN;
+                Display::println("PUT LOA.DER ON SD & REBOOT");
+            } else flashloader=true;
+        } else {
+            //loader was found
+            //check if we should update the loader
+            Display::directcolor=COLOR_CYAN;
+            Display::print("LOADER V.");
+            Display::directcolor=COLOR_WHITE;
+            Display::println(*(bootinfo+1));
+#if POK_ENABLE_LOADER_UPDATES
+            if (sdversion>(*(bootinfo+1))) flashloader=true;
+            else start_application(*(bootinfo+2)); //never returns
+#else
+            start_application(*(bootinfo+2)); //never returns
+#endif
+        }
+        // update loader if it was requested
+        if(flashloader) {
+            Display::directcolor=COLOR_MAGENTA;
+            Display::print("NEW LOADER ON SD V.");
+            Display::directcolor=COLOR_WHITE;
+            Display::println(sdversion);
+            Display::directcolor=COLOR_GREEN;
+            Display::println("UPDATE LOADER?\n(UP=YES, DOWN=CANCEL)");
             while(1) {
-                    if (buttons.upBtn()) {
-                        if (updateLoader(sdversion,sdjump)) {
-                            display.println("PUT LOA.DER ON SD AND RETRY");
-                        } else {
-                        display.println("SUCCESS!!");
+                if (Buttons::upBtn()) {
+                    if (updateLoader(sdversion,sdjump)) {
+                        Display::println("PUT LOA.DER ON SD AND RETRY");
+                    } else {
+                        Display::println("SUCCESS!!");
                         checkforboot=true; //recheck
-                        }
-                    break;
                     }
-                    if (buttons.downBtn()) return;
+                    break;
+                }
+                if (Buttons::downBtn()) return;
             }
-    } // if flashloader
+        } // if flashloader
     } // while checkforboot
-    #endif // POK_SIM
-    while (!buttons.aBtn()) {
-        buttons.pollButtons();
-        if (buttons.aBtn()) {
-            while (buttons.aBtn()) {
-                buttons.pollButtons();
+#endif // POK_SIM
+    while (!Buttons::aBtn()) {
+        Buttons::pollButtons();
+        if (Buttons::aBtn()) {
+            while (Buttons::aBtn()) {
+                Buttons::pollButtons();
             }
             return;
         }
     }
+}
+
+void Core::jumpToLoader(){
+    pokitto_jumpToLoader(true);
 }
 
 void Core::askLoader() {
@@ -406,7 +423,12 @@ void Core::askLoader() {
             countd--;
         }
         if (cBtn()) {while (cBtn()) buttons.pollButtons();jumpToLoader();countd=0;}
-        if (aBtn()) {while (aBtn()) buttons.pollButtons();countd=0;}
+        if (aBtn()) {
+                while (aBtn()) {
+                        buttons.pollButtons();
+                }
+                        countd=0;
+                }
         if (bBtn()) {while (bBtn()) buttons.pollButtons();countd=0;}
     }
     display.fontSize=1;
@@ -615,6 +637,7 @@ void Core::setVolLimit() {
 void Core::begin() {
 
     init(); // original functions
+    display.begin();
     timePerFrame = POK_FRAMEDURATION;
 	//nextFrameMillis = 0;
 	//frameCount = 0;
@@ -628,28 +651,26 @@ void Core::begin() {
 	backlight.begin();
 	backlight.set(BACKLIGHT_MAX);
 #endif
-	buttons.begin();
 	buttons.update();
 #if (PROJ_GAMEBUINO > 0)
 	battery.begin();
 #endif
-	display.begin();
 
         char logoFlag = IS_EMULATOR ? 1 : eeprom_read_byte((uint16_t*)EESETTINGS_SKIPINTRO);
 	if( logoFlag&2 ){ // toggle flag set, change value for next boot
 	    eeprom_write_byte((uint16_t*)EESETTINGS_SKIPINTRO, !(logoFlag&1));
 	}
 	logoFlag &= 1;
-	
+
 	#if POK_DISPLAYLOGO
         #if PROJ_DEVELOPER_MODE != 1
-	if( logoFlag == 0 ){	
+	if( logoFlag == 0 ){
 	    showLogo();
 	}
         #endif // PROJ_DEVELOPER_MODE
 	#endif // POK_DISPLAYLOGO
 
-	
+
 	display.enableDirectPrinting(true);
     display.directbgcolor = COLOR_BLACK;
     display.clearLCD();
@@ -692,7 +713,7 @@ void Core::begin() {
 	}
 
 	#endif
-	
+
 	display.enableDirectPrinting(false);
 	display.adjustCharStep=1;
 	display.adjustLineStep=1;
@@ -701,8 +722,7 @@ void Core::begin() {
 	#if POK_GAMEBUINO_SUPPORT > 0
 	display.setFont(font5x7);
 	#else
-        display.setFont(DEFAULT_FONT);
-
+	display.setFont(fontC64);
     	#endif
 	#if POK_ENABLE_SOUND > 0
         sound.begin();
@@ -1026,7 +1046,7 @@ display.cursorY = oy;
 }
 #endif //(PROJ_GAMEBUINO > 0)
 
-#if (ENABLE_GUI > 0)
+#ifdef ENABLE_GUI
 
 char* Core::filemenu(char *ext) {
     uint8_t oldPersistence = display.persistence;
@@ -1168,7 +1188,7 @@ char* Core::filemenu() {
 
 int8_t Core::menu(const char* const* items, uint8_t length) {
 if (display.color>3) display.color=1;
-#if (ENABLE_GUI > 0)
+#ifdef ENABLE_GUI
 	display.persistence = false;
 	int8_t activeItem = 0;
 	int16_t currentY = display.height;
@@ -1244,7 +1264,7 @@ if (display.color>3) display.color=1;
 }
 
 void Core::keyboard(char* text, uint8_t length) {
-#if (ENABLE_GUI > 0)
+#ifdef ENABLE_GUI
 	display.persistence = false;
 	//memset(text, 0, length); //clear the text
 	text[length-1] = '\0';
@@ -1395,14 +1415,14 @@ void Core::keyboard(char* text, uint8_t length) {
 }
 
 void Core::popup(const char* text, uint8_t duration){
-#if (ENABLE_GUI > 0)
+#ifdef ENABLE_GUI
 	popupText = text;
 	popupTimeLeft = duration+12;
 #endif
 }
 
 void Core::updatePopup(){
-#if (ENABLE_GUI > 0)
+#ifdef ENABLE_GUI
 	if (popupTimeLeft){
 		uint8_t yOffset = 0;
 		if(popupTimeLeft<12){

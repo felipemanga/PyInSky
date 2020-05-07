@@ -87,9 +87,9 @@ pwmout_t* obj = &audiopwm;
 #if POK_HIGH_RAM == HIGH_RAM_MUSIC
 unsigned char *buffers[4] = {
     (unsigned char *) 0x20000000,
-    (unsigned char *) 0x20000200,
-    (unsigned char *) 0x20000000,
-    (unsigned char *) 0x20000200
+    (unsigned char *) 0x20000400,
+    (unsigned char *) 0x20004000,
+    (unsigned char *) 0x20004400
 };
 #else
     unsigned char buffers[4][BUFFER_SIZE];

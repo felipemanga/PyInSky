@@ -80,9 +80,15 @@
 #endif
 
 #else
+
 #include "SimSound.h"
 #include "PokittoSimulator.h"
+
+#if defined(PROJ_FILE_STREAMING)
+#include "FileDisk.h"
+#else
 #include "FileIO.h"
+#endif
 #endif
 
 typedef uint8_t byte;
@@ -268,10 +274,13 @@ uint16_t Sound::getMaxVol() {
     return volumeMax;
 }
 
-void Sound::defaultUpdateStream() {
+void Sound::updateStream() {
      #if POK_STREAMING_MUSIC
     if (oldBuffer != currentBuffer) {
-        fileReadBytes(&buffers[(currentBuffer-1)&3][0],BUFFER_SIZE);
+        if (currentBuffer==0) fileReadBytes(&buffers[3][0],BUFFER_SIZE);
+        else if (currentBuffer==1) fileReadBytes(&buffers[0][0],BUFFER_SIZE);
+        else if (currentBuffer==2) fileReadBytes(&buffers[1][0],BUFFER_SIZE);
+        else fileReadBytes(&buffers[2][0],BUFFER_SIZE);
         oldBuffer = currentBuffer;
         streamcounter += BUFFER_SIZE;
     }

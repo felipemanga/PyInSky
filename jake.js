@@ -37,6 +37,7 @@ ASMSOURCES.push(
     'PokittoLib/POKITTO_HW/asm/mode1.s',
     'PokittoLib/POKITTO_HW/asm/pixelCopySolid.s',
     'PokittoLib/POKITTO_HW/asm/mode64c.s',
+    'PokittoLib/POKITTO_HW/asm/pixelExpand.s',
     'PokittoLib/POKITTO_HW/asm/pixelCopy.s',
     'PokittoLib/POKITTO_HW/asm/flushLine.s',
     'PokittoLib/POKITTO_HW/asm/mode1c.s',
@@ -100,6 +101,7 @@ CSOURCES.push('PokittoLib/POKITTO_HW/dma_11u6x.c');
 CXXSOURCES.push('PokittoLib/POKITTO_HW/iap.cpp');
 CSOURCES.push('PokittoLib/POKITTO_HW/timer_11u6x.c');
 CXXSOURCES.push('PokittoLib/POKITTO_LIBS/Tilemap/Tilemap.cpp');
+CXXSOURCES.push('PokittoLib/POKITTO_LIBS/PokittoTUI/tasui_UI.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_LIBS/Synth/Synth.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_LIBS/Synth/Synth_envfuncs.cpp');
 CXXSOURCES.push('PokittoLib/POKITTO_LIBS/Synth/Synth_helpers.cpp');
@@ -300,6 +302,8 @@ FLAGS.push('-I./PokittoLib/POKITTO_CORE/FONTS');
 FLAGS.push('-I./PokittoLib/POKITTO_CORE/PALETTES');
 FLAGS.push('-I./PokittoLib/POKITTO_HW');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS');
+FLAGS.push('-I./PokittoLib/POKITTO_LIBS/PokittoTUI');
+FLAGS.push('-I./PokittoLib/POKITTO_LIBS/PokittoTUI/UITILESETS');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS/Tilemap');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS/MemOps');
 FLAGS.push('-I./PokittoLib/POKITTO_LIBS/File');

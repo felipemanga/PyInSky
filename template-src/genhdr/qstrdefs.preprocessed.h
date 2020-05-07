@@ -714,9 +714,15 @@ Q(BaseException)
 
 Q(BaseException)
 
+Q(CHECKED_TILE)
+
 Q(Cookie)
 
 Q(Cookie)
+
+Q(DOWN_ARROW_TILE)
+
+Q(EMPTY_TILE)
 
 Q(EOFError)
 
@@ -814,6 +820,8 @@ Q(KeyboardInterrupt)
 
 Q(KeyboardInterrupt)
 
+Q(LEFT_ARROW_TILE)
+
 Q(LookupError)
 
 Q(LookupError)
@@ -858,6 +866,8 @@ Q(PinBase)
 
 Q(QUIT)
 
+Q(RIGHT_ARROW_TILE)
+
 Q(Rect)
 
 Q(Rect)
@@ -865,6 +875,8 @@ Q(Rect)
 Q(RuntimeError)
 
 Q(RuntimeError)
+
+Q(SPACE_TILE)
 
 Q(Signal)
 
@@ -890,6 +902,10 @@ Q(SystemExit)
 
 Q(SystemExit)
 
+Q(TAS)
+
+Q(TAS)
+
 Q(Tilemap)
 
 Q(Tilemap)
@@ -897,6 +913,10 @@ Q(Tilemap)
 Q(TypeError)
 
 Q(TypeError)
+
+Q(UNCHECKED_TILE)
+
+Q(UP_ARROW_TILE)
 
 Q(ValueError)
 
@@ -989,6 +1009,8 @@ Q(__main__)
 Q(__main__)
 
 Q(__module__)
+
+Q(__name__)
 
 Q(__name__)
 
@@ -1160,6 +1182,8 @@ Q(clear)
 
 Q(clear)
 
+Q(clear)
+
 Q(close)
 
 Q(close)
@@ -1206,6 +1230,10 @@ Q(draw)
 
 Q(draw)
 
+Q(drawBox)
+
+Q(drawGauge)
+
 Q(draw_text)
 
 Q(enable)
@@ -1227,6 +1255,8 @@ Q(extend)
 Q(extend)
 
 Q(fill)
+
+Q(fillRectTiles)
 
 Q(fill_buffer)
 
@@ -1472,6 +1502,10 @@ Q(pow)
 
 Q(print)
 
+Q(printInteger)
+
+Q(printString)
+
 Q(qstr_info)
 
 Q(quit)
@@ -1516,9 +1550,9 @@ Q(send)
 
 Q(sep)
 
-Q(setHwSprite)
+Q(setCursor)
 
-Q(setHwSpritePos)
+Q(setTile)
 
 Q(set_background_color)
 

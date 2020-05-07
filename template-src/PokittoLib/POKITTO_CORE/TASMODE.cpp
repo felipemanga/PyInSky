@@ -3,7 +3,11 @@
 #if PROJ_SCREENMODE == TASMODE
 
 #include <MemOps>
+#ifndef POK_SIM
 #include "HWLCD.h"
+#else
+#include "../POKITTO_SIM/SimLCD.h"
+#endif // POK_SIM
 
 using namespace Pokitto;
 
@@ -24,13 +28,48 @@ const uint8_t *tilemap[mapH * mapW];
 uint32_t cameraX;
 uint32_t cameraY;
 
-struct Sprite { 
+struct Sprite {
     int16_t x, y;
     const void *data;
     draw_t draw;
     uint8_t maxY;
     uint8_t b1, b2, b3;
 };
+
+void blit1BPP(uint8_t *line, Sprite &s, int y){
+    auto data = static_cast<const uint8_t*>(s.data);
+    int w = s.b2;
+    const uint8_t *src = data + (y * w >> 3);
+    if(s.x < 0){
+        src -= s.x >> 3;
+        w += s.x;
+    }else if(s.x > 0){
+        line += s.x;
+    }
+    if(s.x + w >= screenWidth+8){
+        w = (screenWidth+8) - s.x;
+    }
+
+    if(w&7) w += 8;
+    w >>= 3;
+#ifndef POK_SIM
+    pixelExpand(line, src, w, s.b1, 8);
+#else
+    auto recolor = s.b1;
+    while(w--){
+        unsigned int b = *src++;
+        if(b&1) line[7] = recolor; b >>= 1;
+        if(b&1) line[6] = recolor; b >>= 1;
+        if(b&1) line[5] = recolor; b >>= 1;
+        if(b&1) line[4] = recolor; b >>= 1;
+        if(b&1) line[3] = recolor; b >>= 1;
+        if(b&1) line[2] = recolor; b >>= 1;
+        if(b&1) line[1] = recolor; b >>= 1;
+        if(b&1) line[0] = recolor;
+        line += 8;
+    }
+#endif
+}
 
 void blit(uint8_t *line, Sprite &s, int y){
     auto data = static_cast<const uint8_t*>(s.data);
@@ -57,6 +96,42 @@ void blit(uint8_t *line, Sprite &s, int y){
     /* */
 }
 
+
+void blitMirror1BPP(uint8_t *line, Sprite &s, int y){
+    auto data = static_cast<const uint8_t*>(s.data);
+    int w = s.b2;
+    const uint8_t *src = data + (y * w >> 3);
+    if(s.x < 0){
+        src -= s.x >> 3;
+        w += s.x;
+    }else if(s.x > 0){
+        line += s.x;
+    }
+    if(s.x + w >= screenWidth+8){
+        w = (screenWidth+8) - s.x;
+    }
+
+    line += w - 8;
+    w >>= 3;
+#ifndef POK_SIM
+    pixelExpand(line, src, w, s.b1, -8);
+#else
+    auto recolor = s.b1;
+    while(w--){
+        unsigned int b = *src++;
+        if(b&1) line[0] = recolor; b >>= 1;
+        if(b&1) line[1] = recolor; b >>= 1;
+        if(b&1) line[2] = recolor; b >>= 1;
+        if(b&1) line[3] = recolor; b >>= 1;
+        if(b&1) line[4] = recolor; b >>= 1;
+        if(b&1) line[5] = recolor; b >>= 1;
+        if(b&1) line[6] = recolor; b >>= 1;
+        if(b&1) line[7] = recolor;
+        line -= 8;
+    }
+#endif
+}
+
 void blitMirror(uint8_t *line, Sprite &s, int y){
     auto data = static_cast<const uint8_t*>(s.data);
 
@@ -64,11 +139,11 @@ void blitMirror(uint8_t *line, Sprite &s, int y){
     const uint8_t *src = data + y * w + w - 1;
     if(s.x < 0){
         w += s.x;
+        src += s.x;
     }else if(s.x > 0){
         line += s.x;
     }
     if(s.x + w >= screenWidth){
-        src -= screenWidth - (s.x + w);
         w = screenWidth - s.x;
     }
     /* */
@@ -83,11 +158,49 @@ void blitMirror(uint8_t *line, Sprite &s, int y){
     /* */
 }
 
+
+void blitFlip1BPP(uint8_t *line, Sprite &s, int y){
+    auto data = static_cast<const uint8_t*>(s.data);
+    int w = s.b2;
+    int h = s.maxY - s.y;
+
+    const uint8_t *src = data + ((h - 1 - y) * w >> 3);
+    if(s.x < 0){
+        src -= s.x >> 3;
+        w += s.x;
+    }else if(s.x > 0){
+        line += s.x;
+    }
+    if(s.x + w >= screenWidth+8){
+        w = (screenWidth+8) - s.x;
+    }
+
+    if(w&7) w += 8;
+    w >>= 3;
+#ifndef POK_SIM
+    pixelExpand(line, src, w, s.b1, 8);
+#else
+    auto recolor = s.b1;
+    while(w--){
+        unsigned int b = *src++;
+        if(b&1) line[7] = recolor; b >>= 1;
+        if(b&1) line[6] = recolor; b >>= 1;
+        if(b&1) line[5] = recolor; b >>= 1;
+        if(b&1) line[4] = recolor; b >>= 1;
+        if(b&1) line[3] = recolor; b >>= 1;
+        if(b&1) line[2] = recolor; b >>= 1;
+        if(b&1) line[1] = recolor; b >>= 1;
+        if(b&1) line[0] = recolor;
+        line += 8;
+    }
+#endif
+}
+
 void blitFlip(uint8_t *line, Sprite &s, int y){
     auto data = static_cast<const uint8_t*>(s.data);
 
     int w = s.b2;
-    int h = data[1];
+    int h = s.maxY - s.y;
     const uint8_t *src = data + (h - 1 - y) * w;
     if(s.x < 0){
         src -= s.x;
@@ -109,19 +222,55 @@ void blitFlip(uint8_t *line, Sprite &s, int y){
     */
 }
 
-void blitFlipMirror(uint8_t *line, Sprite &s, int y){
+void blitFlipMirror1BPP(uint8_t *line, Sprite &s, int y){
     auto data = static_cast<const uint8_t*>(s.data);
-
     int w = s.b2;
-    int h = data[1];
-    const uint8_t *src = data + (h - 1 - y) * w + w - 1;
+    int h = s.maxY - s.y;
+    const uint8_t *src = data + ((h - 1 - y) * w >> 3);
     if(s.x < 0){
+        src -= s.x >> 3;
         w += s.x;
     }else if(s.x > 0){
         line += s.x;
     }
+    if(s.x + w >= screenWidth+8){
+        w = (screenWidth+8) - s.x;
+    }
+
+    line += w - 8;
+    w >>= 3;
+#ifndef POK_SIM
+    pixelExpand(line, src, w, s.b1, -8);
+#else
+    auto recolor = s.b1;
+    while(w--){
+        unsigned int b = *src++;
+        if(b&1) line[0] = recolor; b >>= 1;
+        if(b&1) line[1] = recolor; b >>= 1;
+        if(b&1) line[2] = recolor; b >>= 1;
+        if(b&1) line[3] = recolor; b >>= 1;
+        if(b&1) line[4] = recolor; b >>= 1;
+        if(b&1) line[5] = recolor; b >>= 1;
+        if(b&1) line[6] = recolor; b >>= 1;
+        if(b&1) line[7] = recolor;
+        line -= 8;
+    }
+#endif
+}
+
+void blitFlipMirror(uint8_t *line, Sprite &s, int y){
+    auto data = static_cast<const uint8_t*>(s.data);
+
+    int w = s.b2;
+    int h = s.maxY - s.y;
+    const uint8_t *src = data + (h - 1 - y) * w + w - 1;
+    if(s.x < 0){
+        w += s.x;
+        src += s.x;
+    }else if(s.x > 0){
+        line += s.x;
+    }
     if(s.x + w >= screenWidth){
-        src -= screenWidth - (s.x + w);
         w = screenWidth - s.x;
     }
     /* */
@@ -167,7 +316,7 @@ void Display::shiftTilemap(int x, int y){
     if(x>=tileW) x=tileW-1;
     if(y<0) y = 0;
     if(y>=tileH) y=tileH-1;
-    
+
     cameraX = x % tileW;
     cameraY = y % tileH;
 }
@@ -180,7 +329,7 @@ void Display::drawColumn(int x, int sy, int ey){
 
     draw_t f = [](uint8_t *line, Sprite &s, int y){
                    line[s.x] = s.b1;
-               };    
+               };
     addSprite(Sprite{x, sy, nullptr, f, ey - sy, Display::color});
 }
 
@@ -197,7 +346,7 @@ void Display::drawRow(int sx, int ex, int y){
                    while(w--){
                        *line++ = c;
                    }
-               };    
+               };
     addSprite(Sprite{sx, y, nullptr, f, 1, Display::color, ex - sx});
 }
 
@@ -282,7 +431,7 @@ int Display::bufferChar(int16_t x, int16_t y, uint16_t index){
                 if( s.b1 + x > screenWidth )
                     numBytes = screenWidth - x;
 
-                uint8_t hbytes = ((h>>3) + ((h != 8) && (h != 16))) == 2;                   
+                uint8_t hbytes = ((h>>3) + ((h != 8) && (h != 16))) == 2;
                 for (int i = 0; i < numBytes; i++) {
                     uint32_t bitcolumn = *bitmap++;
                     if (hbytes)
@@ -477,11 +626,24 @@ void Display::drawTile(uint32_t x, uint32_t y, const uint8_t *data){
 }
 
 void Display::drawSprite(int x, int y, const uint8_t *data, bool flipped, bool mirrored, uint8_t recolor){
-    if(y >= screenHeight || y + data[1] < 0 || x >= screenWidth || x + data[0] < 0) return;
-    auto mode = flipped ?
-        (mirrored ? blitFlipMirror : blitFlip):
-        (mirrored ? blitMirror     : blit);
-    addSprite(Sprite{x, y, data+2, mode, data[1], recolor, data[0]});
+    drawSpriteBitmap(x, y, data[0], data[1], data + 2, flipped, mirrored, recolor);
+}
+
+void Display::drawSpriteBitmap(int x, int y, int width, int height, const uint8_t *data, bool flipped, bool mirrored, uint8_t recolor){
+    if(y >= screenHeight || y + height < 0 || x >= screenWidth || x + width < 0) return;
+    draw_t mode;
+
+    if(Display::m_colordepth == 1){
+        mode = flipped ?
+         (mirrored ? blitFlipMirror1BPP : blitFlip1BPP):
+         (mirrored ? blitMirror1BPP : blit1BPP);
+    }else{
+        mode = flipped ?
+            (mirrored ? blitFlipMirror : blitFlip):
+            (mirrored ? blitMirror     : blit);
+    }
+
+    addSprite(Sprite{x, y, data, mode, height, recolor, width});
 }
 
 void drawSprites(int16_t y, uint8_t *line, int max){
@@ -506,6 +668,21 @@ void drawSprites(int16_t y, uint8_t *line, int max){
         if(!--max) break;
     }
 }
+
+// STUBS - To-Do: implement these?
+void Display::drawPixel(int16_t,int16_t){}
+void Display::drawPixel(int16_t x,int16_t y, uint8_t col){}
+void Display::drawPixelRaw(int16_t x,int16_t y, uint8_t col){}
+void Display::drawPixelNOP(int16_t x,int16_t y, uint8_t col){}
+uint8_t Display::getPixel(int16_t,int16_t){ return 0; }
+void Display::drawLine(int16_t,int16_t,int16_t,int16_t){}
+void Display::drawCircle(int16_t x0, int16_t y0, int16_t r){}
+void Display::drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint16_t cornername){}
+void Display::fillCircle(int16_t x0, int16_t y0, int16_t r){}
+void Display::fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint16_t cornername, int16_t delta){}
+void Display::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2){}
+void Display::drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius){}
+void Display::fillRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h, int16_t radius){}
 
 namespace TAS {
     void DitherFiller(std::uint8_t* line, std::uint32_t y, bool skip){
@@ -605,16 +782,42 @@ namespace TAS {
 
 namespace Pokitto {
 
-void lcdRefreshTASMode(uint8_t *line, const uint16_t* palette){
+void lcdRefreshTASMode(const uint16_t* palette){
+    uint8_t lineBuffer[screenWidth + 16];
+    uint8_t *line = lineBuffer + 8;
     auto mask = Display::TASMask;
     bool disabled = mask & 1;
     uint32_t maskY = 8;
 
+    constexpr int lineFillerCount = sizeof(Display::lineFillers) / sizeof(Display::lineFillers[0]);
+    int fillerCount = 0;
+    TAS::LineFiller fillers[lineFillerCount];
+    for(int i=0; i<lineFillerCount; i++){
+        auto filler = Display::lineFillers[i];
+        if(!filler || filler == TAS::NOPFiller)
+            continue;
+        fillers[fillerCount++] = filler;
+    }
+
     for(uint32_t y=0; y<screenHeight; ++y ){
-        if(!maskY--){
-            maskY = 8;
+        #ifdef POK_SIM
+
+        if(screenHeight == 88){
+            Pokitto::setDRAMptr(0,y*2); //needs to be called explicitly for pokitto_sim (no real controller!)
+        }
+        else{
+            Pokitto::setDRAMptr(0,y); //needs to be called explicitly for pokitto_sim (no real controller!)
+        }
+        #if PROJ_LCDHEIGHT == 88 // Low Res
+        #else
+        #endif
+
+        #endif // POK_SIM
+        if(!--maskY){
+            maskY = 9;
             mask >>= 1;
             if( !(mask & 1) && disabled ){
+                #ifndef POK_SIM
                 write_command(0x20);  // Horizontal DRAM Address
                 write_data(y);
                 write_command(0x21);  // Vertical DRAM Address
@@ -622,18 +825,28 @@ void lcdRefreshTASMode(uint8_t *line, const uint16_t* palette){
                 write_command(0x22); // write data to DRAM
                 CLR_CS_SET_CD_RD_WR;
                 SET_MASK_P2;
+                #else
+
+                if(screenHeight == 88){
+                    Pokitto::setDRAMptr(0,y*2); //needs to be called explicitly for pokitto_sim (no real controller!)
+                }
+                else{
+                    Pokitto::setDRAMptr(0,y); //needs to be called explicitly for pokitto_sim (no real controller!)
+                }
+
+                #endif // POK_SIM
             }
             disabled = mask & 1;
         }
 
-        for( int i=0; i<sizeof(Display::lineFillers)/sizeof(TAS::LineFiller); ++i ){
-            Display::lineFillers[i]( line, y, disabled );
+        for( int i=0; i<fillerCount; ++i ){
+            fillers[i]( line, y, disabled );
         }
 
         if(disabled)
             continue;
 
-        if(screenWidth == 220){
+       if(screenWidth == 220){
             flushLine(palette, line);
         }else if(screenWidth == 110){
             flushLine2X(palette, line);
@@ -643,12 +856,14 @@ void lcdRefreshTASMode(uint8_t *line, const uint16_t* palette){
             if(screenWidth == 220){
                 flushLine(palette, line);
             }else if(screenWidth == 110){
+                #ifdef POK_SIM
+                Pokitto::setDRAMptr(0,y*2 + 1);
+                #endif
                 flushLine2X(palette, line);
             }
         }
     }
 }
-
 }
 
 #endif

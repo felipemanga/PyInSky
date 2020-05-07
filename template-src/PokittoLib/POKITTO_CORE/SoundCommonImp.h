@@ -41,6 +41,7 @@ inline void pokSoundIRQ() {
     #if POK_ENABLE_SOUND > 0
     uint32_t output=127;
     uint32_t op;
+    uint32_t o = 0;
     #ifndef POK_SIM
         #if POK_USE_PWM
         pwmout_t* obj = &audiopwm;
@@ -132,7 +133,6 @@ inline void pokSoundIRQ() {
         osc2.count += osc2.cinc + (osc2.pitchbend); // counts to 65535 and overflows to zero
         osc3.count += osc3.cinc + (osc3.pitchbend); // counts to 65535 and overflows to zero
         #if POK_ALT_MIXING > 0 // heaviest cpu load, recalculate envelopes on each cycle
-        uint32_t o = 0;
         Marr[3]();
         Marr[2]();
         Marr[1]();
@@ -188,7 +188,7 @@ inline void pokSoundIRQ() {
                     op *= discrete_vol_multipliers[discrete_vol];
                     op >>= 8;
                     uint32_t t_on = (uint32_t)((((obj->pwm->MATCHREL0)*op)>>8)); //cut out float
-                    obj->pwm->MATCHREL0 = t_on;
+                    obj->pwm->MATCHREL1 = t_on;
                 #endif
             #else // ! POK_STREAM_TO_DAC
                 op = 0x80 + ((((int32_t)(output) - 0x80) * discrete_vol_multipliers[discrete_vol]) >> 8);
@@ -203,10 +203,8 @@ inline void pokSoundIRQ() {
     #ifdef POK_SIM
     /** SIMULATOR **/
         #if POK_STREAMING_MUSIC
-            //if (streamstep) {
-                uint32_t o = output + streambyte;
-                output = o/2;
-            //}
+            o = output + streambyte;
+            output = o/2;
         #endif // STREAMING
         soundbyte = output;
         soundbuf[soundbufindex++]=soundbyte/3;

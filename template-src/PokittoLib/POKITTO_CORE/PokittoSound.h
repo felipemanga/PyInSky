@@ -140,9 +140,7 @@ public:
     static void loadSampleToOsc(uint8_t os, uint8_t* sampdata, uint32_t sampsize);
 
 	// Original functions
-    static void defaultUpdateStream();
-    static inline void (*updateStream)() = &Sound::defaultUpdateStream;
-
+	static void updateStream();
     static void playTone(uint8_t os, int frq, uint8_t amp, uint8_t wav,uint8_t arpmode);
     static void playTone(uint8_t os, uint16_t freq, uint8_t volume, uint32_t duration);
     static uint8_t ampIsOn();
